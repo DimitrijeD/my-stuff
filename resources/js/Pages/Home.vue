@@ -1,0 +1,81 @@
+<template>
+    <!-- <div class="flex flex-col ">
+        <div class="no"></div>
+        <div class="sm-cls"></div>
+        <div class="md-cls"></div>
+        <div class="lg-cls"></div>
+        <div class="xl-cls"></div>
+    </div>
+
+<div class="flex flex-col min-h-screen max-h-screen overflow-hidden bg-blue-900 ">
+    <nav>
+        <ul class="flex">
+            <li class="p-2">asd</li>
+            <li class="p-2">asd</li>
+            <li class="p-2">asd</li>
+            <li class="p-2">asd</li>
+        </ul>
+    </nav>
+    <main class="flex grow overflow-hidden">
+        <div class="flex  bg-white">
+
+            <div class="w-1/2 p-4 text-black">
+                <p>Left column</p>
+            </div>
+
+            <div class="flex flex-col w-1/2 p-4 overflow-hidden text-black">
+                <p>Right column</p>
+                <ul class="flex-1 overflow-y-auto">
+                    <li class="py-20">Item 1</li>
+                    <li class="py-20">Item 2</li>
+                    <li class="py-20">Item 3</li>
+                    <li class="py-20">Item 4</li>
+                    <li class="py-20">Item 5</li>
+                    <li class="py-20">Item 6</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</div> -->
+
+</template>
+
+<script>
+
+
+export default{
+    data(){
+        return {
+            updatedDims: null
+        }
+    },
+
+    computed:{
+
+    },
+
+    created(){
+     
+    },
+
+    mounted(){
+        window.onresize = () => {
+            // console.log(window.innerWidth)
+            // console.log(window.innerHeight)
+        }
+    },
+
+    methods: {
+
+    }
+}
+</script>
+
+<style scoped>
+.no      { @apply m-2 py-20    bg-blue-900;}
+.sm-cls  { @apply m-2 py-20 sm:bg-sky-900;}
+.md-cls  { @apply m-2 py-20 md:bg-red-900;}
+.lg-cls  { @apply m-2 py-20 lg:bg-green-900;}
+.xl-cls  { @apply m-2 py-20 xl:bg-orange-900;}
+
+</style>
