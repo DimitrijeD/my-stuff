@@ -17,7 +17,6 @@
         </div>
 
     </nav>
-    <ChatDropdown class="absolute " />
 </template>
 
 <script>
@@ -26,15 +25,12 @@ import { useDark, useToggle } from '@vueuse/core';
 import Logout from '@/Pages/Auth/Logout.vue';
 import ProfileDropdown from "@/Components/Nav/ProfileDropdown.vue";
 import ChatDropdownButton from '@/Components/Chat/ChatDropdown/ChatDropdownButton.vue';
-import ChatDropdown from '@/Components/Chat/ChatDropdown.vue';
 
 export default {
     components: {
         Logout,
-        ChatDropdown,
         ProfileDropdown,
         ChatDropdownButton,
-        ChatDropdown,
     },
 
     data(){

@@ -1,4 +1,4 @@
-# > MyStuff
+# MyStuff
 MyStuff is full Vue.Js SPA with Laravel backend API in Docker environment (Laravel Sail). 
 Features: 
 - Authentication 
@@ -60,16 +60,20 @@ Command
 ```
 ./vendor/bin/sail php artisan db:seed
 ```
-will create at least two users *( You can modify seeder class ./database/seeders/ChatGroupClusterSeeder )*:
-- *email* qwe@qwe
-- *password* qweqweqweQ1
+will create at least two users *( class ./database/seeders/ChatGroupClusterSeeder )*:
+```
+*email* qwe@qwe
+*password* qweqweqweQ1
 
-- *email* asd@asd
-- *password* qweqweqweQ1
+*email* asd@asd
+*password* qweqweqweQ1
+```
+
 Seeder will also 
 - create and store Chat Rules into Redis *(not required for app to function, but requests will be slower)*,
-- create Chat with auto generated messages,
+- create chat with auto generated messages,
 - create few users which have first name *"Test"*.
+
 You can run this seeder as many times as you like. Each time it will make more *"Test"* users and 1 more chat group
 in which *qwe@qwe* and *asd@asd* participate.
 

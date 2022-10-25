@@ -1,5 +1,5 @@
 <template>
-    <!-- <div class="flex flex-col ">
+    <div class="flex flex-col ">
         <div class="no"></div>
         <div class="sm-cls"></div>
         <div class="md-cls"></div>
@@ -17,26 +17,19 @@
         </ul>
     </nav>
     <main class="flex grow overflow-hidden">
-        <div class="flex  bg-white">
-
-            <div class="w-1/2 p-4 text-black">
-                <p>Left column</p>
-            </div>
-
-            <div class="flex flex-col w-1/2 p-4 overflow-hidden text-black">
-                <p>Right column</p>
-                <ul class="flex-1 overflow-y-auto">
-                    <li class="py-20">Item 1</li>
-                    <li class="py-20">Item 2</li>
-                    <li class="py-20">Item 3</li>
-                    <li class="py-20">Item 4</li>
-                    <li class="py-20">Item 5</li>
-                    <li class="py-20">Item 6</li>
-                </ul>
-            </div>
+        <div class="flex flex-col overflow-hidden text-black">
+            <p>Right column</p>
+            <ul class="flex-1 overflow-y-auto bg-green-900">
+                <li class="py-20">Item 1</li>
+                <li class="py-20">Item 2</li>
+                <li class="py-20">Item 3</li>
+                <li class="py-20">Item 4</li>
+                <li class="py-20">Item 5</li>
+                <li class="py-20">Item 6</li>
+            </ul>
         </div>
     </main>
-</div> -->
+</div> 
 
 </template>
 

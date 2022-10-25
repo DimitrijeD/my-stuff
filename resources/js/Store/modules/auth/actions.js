@@ -8,11 +8,15 @@ const actions = {
     logout(context) 
     {
         context.commit("logout")
-        localStorage.clear();
         
         axios.get('logout').then(()=>{
-            context.commit("logout")
-        });
+            const theme = localStorage.getItem('vueuse-color-scheme')
+            localStorage.clear()
+            localStorage.setItem('vueuse-color-scheme', theme)
+            localStorage.setItem('alreadyAttemptedGetUser', true)
+        }).catch((e) => {
+            localStorage.clear()
+        })
         
         context.dispatch(ns.groupsManager() + '/purgeAllChatData', null, {root:true}).then(() => {
             context.dispatch(ns.users()      + '/resetState', null, {root:true})

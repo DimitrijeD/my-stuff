@@ -1,7 +1,5 @@
 <template>
-    <span>
-        {{ displayTime }}
-    </span>
+    {{ displayTime }}
 </template>
 
 <script>
@@ -11,14 +9,13 @@ export default{
     data(){
         return {
             step: null,
-            intervalId: null,
             timeValue: null,
+            valueIntervalId: null,
 
             range: [
                 {
                     date: "moments",
                     sufix: "ago",
-                    desc: "Between now and one minute",
                     min: 0,
                     max: this.minute() - 1,
                     in: 'moments',
@@ -27,7 +24,6 @@ export default{
                 {
                     date: null,
                     sufix: "minutes ago",
-                    desc: "Between one minute and 60 minutes",
                     min: this.minute(),
                     max: this.hour() - 1,
                     in: 'minutes',
@@ -36,7 +32,6 @@ export default{
                 {
                     date: null,
                     sufix: "hours ago",
-                    desc: "Between 1 hour and 1 day",
                     min: this.hour(),
                     max: this.day() - 1,
                     in: 'hours',
@@ -45,7 +40,6 @@ export default{
                 {
                     date: null,
                     sufix: "days ago",
-                    desc: "Between 1 day and 20 days",
                     min: this.day(),
                     max: this.twentyDays() - 1,
                     in: 'days',
@@ -54,14 +48,28 @@ export default{
                 {
                     date: null,
                     sufix: "",
-                    desc: "Above 20 days just show date",
                     min: this.twentyDays(),
-                    max: null,
+                    max: true,
                     in: 'dates',
                 },
             ],
             
 
+        }
+    },
+
+    watch: {
+        /**
+         * If 'date' prop never changes, this watcher can be removed.
+         */
+        date(){
+            clearInterval(this.valueIntervalId)
+
+            this.step = null
+            this.timeValue = null
+            this.valueIntervalId = null
+
+            this.make()
         }
     },
 
@@ -71,12 +79,11 @@ export default{
 
     computed: {
         displayTime(){
-            clearInterval(this.intervalId)
-            
+            clearInterval(this.valueIntervalId)
+
             switch(this.range[this.step].in){
                 case 'moments':
                     return `${this.range[this.step].date} ${this.range[this.step].sufix}`
-
                 
                 case 'minutes':
                     return `${this.getTimeValue()} ${this.range[this.step].sufix}`
@@ -84,12 +91,11 @@ export default{
                 case 'hours':
                     return `${this.getTimeValue()} ${this.range[this.step].sufix}`
 
-
                 case 'days':
                     return `${this.getTimeValue()} ${this.range[this.step].sufix}`
 
                 default: // dates
-                    return this.date
+                    return this.staticDateTimeDisplay()
             } 
         }
     },
@@ -123,42 +129,35 @@ export default{
                     return this.range[this.step].date
                 
                 case 'minutes':
-                    if(this.timeValue == null) this.timeValue = this.getMinutesFromMS()
-
-                    this.timeValue = this.getMinutesFromMS()
-
-                    this.intervalId = setTimeout(() => {
-                        this.timeValue = this.getMinutesFromMS()
-                    }, this.getMStoNextMinute())
-
-                    return this.timeValue
+                    return this.activateTimeout(this.minute())
 
                 case 'hours':
-                    if(this.timeValue == null) this.timeValue = this.getHoursFromMS()
-
-                    this.timeValue = this.getHoursFromMS()
-
-                    this.intervalId = setTimeout(() => {
-                        this.timeValue = this.getHoursFromMS()
-                    }, this.getMStoNextHour())
-
-                    return this.timeValue
+                    return this.activateTimeout(this.hour())
 
                 case 'days':
-                    if(this.timeValue == null) this.timeValue = this.getDaysFromMS()
+                    return this.activateTimeout(this.day())
 
-                    this.timeValue = this.getDaysFromMS()
-
-                    this.intervalId = setTimeout(() => {
-                        this.timeValue = this.getDaysFromMS()
-                    }, this.getMStoNextDay())
-
-                    return this.timeValue
-
-                default: // dates
-                    return new Date(this.date)
+                /**
+                 * Here you can format date time display and no more changes to it will be applyed
+                 */
+                default: 
+                    return this.date
             }
 
+        },
+
+        staticDateTimeDisplay(){
+            return new Date(this.date)
+        },
+
+        activateTimeout(interval){
+            this.timeValue = this.getValueFromMS(interval)
+
+            this.valueIntervalId = setTimeout(() => {
+                this.timeValue = this.getValueFromMS(interval)
+            }, this.getRemainingMStoNextValue(interval))
+
+            return this.timeValue
         },
 
         /**
@@ -177,6 +176,9 @@ export default{
             }, delay)
         },
 
+        /**
+         * Returns miliseconds up to @prop date
+         */
         getMs(){ return Date.now() - (new Date(this.date)).getTime() },
 
         second()    { return 1000       }, // 1000 
@@ -185,19 +187,34 @@ export default{
         day()       { return 86400000   }, // 1000 * 60 * 60 * 24  
         twentyDays(){ return 1728000000 }, // 1000 * 60 * 60 * 24 * 20
 
-        getMinutesFromMS(){ return Math.floor(this.getMs() / this.minute()) },
-        getHoursFromMS()  { return Math.floor(this.getMs() / this.hour())   },
-        getDaysFromMS()   { return Math.floor(this.getMs() / this.day())    },
+        /**
+         * Returns current value of provided interval
+         * 
+         * Example:
+         *      1)
+         *      interval = 2 * hour() + 31 * minute()
+         *      return 2 
+         * 
+         *      2)
+         *      interval = 31 * minute() + 10 *second()
+         *      return 31
+         * 
+         * @param {Number} interval ( second(), minute(), hour(), day() or twentyDays() )
+         */
+        getValueFromMS(interval) { return Math.floor(this.getMs() / interval) },
 
-
-        getMStoNextMinute(){ return this.minute() - this.getMSRemainingInMinute() + 1 },
-        getMSRemainingInMinute(){ return this.getMs() % this.minute() },
-
-        getMStoNextHour(){ return this.hour() - this.getCurrentMSHour() },
-        getCurrentMSHour(){ return this.getMs() % this.hour() },
-
-        getMStoNextDay(){ return this.day() - this.getCurrentMSDay() },
-        getCurrentMSDay(){ return this.getMs() % this.day() },
+        /**
+         * Returns miliseconds required to reach next value
+         * 
+         * Example:
+         *      interval = minute()
+         *      (getMs() % interval ) = second() * 33
+         *      
+         *      return 1 minute - 33 seconds = 27 seconds = 27 000 miliseonds
+         * 
+         * @param {Number} interval  
+         */
+        getRemainingMStoNextValue(interval){ return interval - this.getMs() % interval  },
     }
 }
 </script>

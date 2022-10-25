@@ -1,6 +1,6 @@
 <template>
-    <div v-show="dropdown.isOpened" class="top-[3rem] grow flex flex-col px-2 z-10 border
-        w-full h-full lg:w-[40rem] lg:h-[45rem]
+    <div v-show="dropdown.isOpened" class="absolute left-0 grow flex flex-col px-2 z-10 border
+        w-full h-[95%] lg:w-[40rem] lg:h-[45rem] 
         border-blue-400 bg-white dark:border-blue-400 dark:bg-darker-100"
     >
         <div class="flex">

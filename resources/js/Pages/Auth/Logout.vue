@@ -6,8 +6,6 @@
 export default {
     methods: {
         logout(){
-            localStorage.clear()
-            
             this.$store.dispatch("logout").then(()=> {
                 this.$router.push({ name: 'Home' })
             })
