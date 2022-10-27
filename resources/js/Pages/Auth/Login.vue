@@ -50,7 +50,7 @@ export default {
     },
 
     created(){
-        // console.log(localStorage.getItem('token'))
+        
     },
 
     methods:
@@ -62,13 +62,12 @@ export default {
                     this.$store.dispatch('storeUser', res.data.user)
                     this.$router.push({ path: '/profile' });
                 }).catch((error) =>{
-                    this.errors = error.response.data.errors;
+                    this.errors = error.response.data.messages
                 })
             })
         },
 
-        bindFormInput(data)
-        {
+        bindFormInput(data){
             this.form[data.key] = data.value
         }
 

@@ -20,8 +20,6 @@ class ChangeRoleTest extends TestCase
 
         $this->chatGroupSeeder = (resolve(ChatGroupClusterSeeder::class));
 
-        $this->withHeaders([ 'Accept' => 'application/json', ]);
-
         $this->changeRoleEndpoint = '/api/chat/group/change-user-role';
     }
 

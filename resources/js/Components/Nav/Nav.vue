@@ -54,11 +54,5 @@ export default {
 
 <style >
 
-.nav-btn-active{ @apply bg-gradient-to-b 
-    from-white to-gray-300 
-    dark:from-darker-50 dark:to-darker-200;}
 
-.nav-btn { @apply def-nav-btn py-0.5 px-2 flex place-items-center font-medium
-    text-blue-600 
-    dark:text-gray-200 ; }
 </style>

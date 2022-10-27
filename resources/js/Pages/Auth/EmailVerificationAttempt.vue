@@ -1,6 +1,6 @@
 <template>
-    <div class="grid place-items-center h-screen">
-        <div class="w-3/4">
+    <div class="container-focus-center">
+        <div class="w-full">
 
             <div v-if="status == 'success'">
                 <p class="auth-status text-blue-500">
@@ -17,20 +17,15 @@
                     {{ email }}
                 </p>
 
-                <button
-                    class="p-4 bg-blue-400 hover:bg-blue-500 text-gray-100 hover:text-white w-full text-lg"
-                    @click="resendEmailVerification"
-                >
+                <button class="p-4 bg-blue-400 hover:bg-blue-500 text-gray-100 hover:text-white w-full text-lg" @click="resendEmailVerification">
                     Click here to request another verification link.
                 </button>
             </div>
 
-            <div v-if="status == ''">
-                <div class="text-center text-gray-500 bg-gradient-to-b from-gray-200 to-gray-100">
-                    <p class="px-3 py-8 text-2xl font-normal">
-                        An error occured during email verification :/
-                    </p>
-                </div>
+            <div v-if="status == ''" class="text-center text-gray-500 bg-gradient-to-b from-gray-200 to-gray-100">
+                <p class="px-3 py-8 text-2xl font-normal">
+                    An error occured during email verification :/
+                </p>
             </div>
         </div>
     </div>

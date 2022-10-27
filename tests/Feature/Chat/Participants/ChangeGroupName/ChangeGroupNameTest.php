@@ -20,8 +20,6 @@ class ChangeGroupNameTest extends TestCase
 
         $this->chatGroupSeeder = (resolve(ChatGroupClusterSeeder::class));
 
-        $this->withHeaders([ 'Accept' => 'application/json', ]);
-
         $this->changeNameEndpoint = '/api/chat/group/change-group-name';
     }
 

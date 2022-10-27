@@ -40,7 +40,6 @@ class EmailVerificationTest extends TestCase
         ]);
 
         $this->withHeaders([ 
-            'Accept' => 'application/json', 
             'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}" 
         ]);
         

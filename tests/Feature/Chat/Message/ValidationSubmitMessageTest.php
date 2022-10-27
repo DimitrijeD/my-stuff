@@ -48,7 +48,6 @@ class ValidationSubmitMessageTest extends TestCase
         ]);
 
         $this->withHeaders([
-            'Accept' => 'application/json',
             'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
         ]);
 
@@ -79,9 +78,10 @@ class ValidationSubmitMessageTest extends TestCase
         $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
 
         $response->assertStatus(422)->assertJson([
-            "errors" => [
+            'messages' => [
                 "text" => [__("The text must not be greater than 1000 characters.")]
             ],
+            'response_type' => 'error'
         ]);
     }
 
@@ -92,9 +92,10 @@ class ValidationSubmitMessageTest extends TestCase
         $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
 
         $response->assertStatus(422)->assertJson([
-            "errors" => [
+            'messages' => [
                 "text" => [__("The text field is required.")]
             ],
+            'response_type' => 'error'
         ]);
     }
 
@@ -105,9 +106,10 @@ class ValidationSubmitMessageTest extends TestCase
         $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
 
         $response->assertStatus(422)->assertJson([
-            "errors" => [
+            'messages' => [
                 "text" => [__("The text must be a string.")]
             ],
+            'response_type' => 'error'
         ]);
     }
 
@@ -118,9 +120,10 @@ class ValidationSubmitMessageTest extends TestCase
         $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
 
         $response->assertStatus(422)->assertJson([
-            "errors" => [
+            'messages' => [
                 "user_id" => [__("The user id field is required.")]
             ],
+            'response_type' => 'error'
         ]);
     }
 
@@ -131,9 +134,10 @@ class ValidationSubmitMessageTest extends TestCase
         $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
 
         $response->assertStatus(422)->assertJson([
-            "errors" => [
+            'messages' => [
                 "user_id" => [__("The user id must be an integer.")]
             ],
+            'response_type' => 'error'
         ]);
     }
 

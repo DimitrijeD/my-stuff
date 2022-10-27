@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!currentShow" class="grid grid-cols-2 gap-2">
+    <div v-if="!currentShow" class="w-full grid grid-cols-2 gap-2">
         <button 
             v-for="component in components"
             class="btn" 
@@ -14,7 +14,7 @@
                 {{ component }}
         </button>
     </div>
-    <div v-else >
+    <div v-else class="w-full">
         <button @click="currentShow = ''" class=" w-16 fill-gray-400 dark:fill-gray-400 hover:fill-gray-500 dark:hover:fill-gray-300 float-right ">
             <BackIcon class="" />
         </button>

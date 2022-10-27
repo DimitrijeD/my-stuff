@@ -17,8 +17,12 @@ use App\Http\Controllers\UsersController;
 Route::group(['middleware' => ['guest', 'throttle:10,1']], function () {  
     Route::post('register', [RegisterController::class, 'register']);
     Route::post('login', [LoginController::class, 'login']);
+    Route::post('forgot-password', [LoginController::class, 'forgotPasswordGiveMeEmail']);
 });
 
+Route::group(['middleware' => ['throttle:10,1']], function () {  
+    Route::post('reset-password', [LoginController::class, 'resetPassword']);
+});
 
 Route::group(['prefix' => 'email-verification', 'middleware' => ['throttle:10,1', 'auth:sanctum']], function () {
     Route::post('create-or-update', [AccountVerificationController::class, 'createOrUpdateForEmail']);

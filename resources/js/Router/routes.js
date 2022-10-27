@@ -1,12 +1,18 @@
-/* ------------------------Components------------------------ */
-import Home from '@/Pages/Home.vue';
-import NotFound from '@/Pages/NotFound.vue';
+/* ------------------------Pages------------------------ */
+
+/* ----- Auth ----- */
 import Register from '@/Pages/Auth/Register.vue';
 import Login from '@/Pages/Auth/Login.vue';
+import ForgotPassword from '@/Pages/Auth/ForgotPassword.vue';
+import PasswordReset from '@/Pages/Auth/PasswordReset.vue';
 import EmailVerification from '@/Pages/Auth/EmailVerification.vue';
 import EmailVerificationAttempt from '@/Pages/Auth/EmailVerificationAttempt.vue';
+/* ---------------- */
+
 import Profile from '@/Pages/Profile.vue';
 import AppCSSExamples from '@/Pages/AppCSSExamples/AppCSSExamples.vue';
+import Home from '@/Pages/Home.vue';
+import NotFound from '@/Pages/NotFound.vue';
 
 /* ----------------------------------------------------------- */
 
@@ -34,6 +40,17 @@ export default [
         name: "Register",
         component: Register,
         meta: { middleware: [guest] },
+    },    
+    {
+        path: '/forgot-password',
+        name: "ForgotPassword",
+        component: ForgotPassword,
+        meta: { middleware: [guest] },
+    },
+    {
+        path: '/reset-password',
+        name: "PasswordReset",
+        component: PasswordReset,
     },
     {
         path: '/login',

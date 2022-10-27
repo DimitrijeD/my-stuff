@@ -5,12 +5,12 @@
 @layer base {
     * { @apply def-trans; }
 
-    h1 { @apply text-gray-900 dark:text-blue-500 text-4xl  ;}
-    h2 { @apply text-gray-800 dark:text-blue-400 text-3xl  ;}
-    h3 { @apply text-gray-700 dark:text-blue-400 text-2xl  ;}
-    h4 { @apply text-gray-600 dark:text-blue-300 text-xl   ;}
-    h5 { @apply text-gray-500 dark:text-blue-200 text-lg   ;}
-    h6 { @apply text-gray-500 dark:text-blue-200 text-base ;}
+    h1 { @apply mb-4 text-gray-900 dark:text-blue-500 text-4xl  ;}
+    h2 { @apply mb-3 text-gray-800 dark:text-blue-400 text-3xl  ;}
+    h3 { @apply mb-2 text-gray-700 dark:text-blue-400 text-2xl  ;}
+    h4 { @apply mb-1 text-gray-600 dark:text-blue-300 text-xl   ;}
+    h5 { @apply mb-0 text-gray-500 dark:text-blue-200 text-lg   ;}
+    h6 { @apply mb-0 text-gray-500 dark:text-blue-200 text-base ;}
 
     input:-webkit-autofill,
     input:-webkit-autofill:focus {
@@ -69,7 +69,7 @@
 }
 
 @layer components {
-    
+    /*------------Defaults------------*/
     .def-trans { @apply transition ease-linear ; }
 
     .def-input { @apply placeholder:italic w-full outline-none rounded-xl; }
@@ -91,14 +91,16 @@
     .def-moments-ago { @apply text-sm font-extralight
         text-gray-900 
         dark:text-gray-400; }
+    /*--------------------------------------*/
     
-    /*              Containers              */
+    /*------------Containers------------*/
     .container-narrow { @apply w-[95%] md:w-[80%] lg:w-[70%] mx-auto;}
     .container-wide { @apply sm:w-[90%] mx-auto;}
     .container-focus-center { @apply h-full flex justify-center items-center my-auto
         w-[80%] sm:w-[80%] md:w-[80%] lg:w-[60%] xl:w-[50%] mx-auto;}
     /*--------------------------------------*/
 
+    /*------------Example Context------------*/
     .examples-span-emphasis { @apply text-blue-500 dark:text-blue-500; }
 
     .examples-ul { @apply list-disc mx-10 
@@ -116,19 +118,58 @@
     .examples-footer { @apply p-3 
         bg-blue-500 text-gray-200
         dark:bg-darker-200 dark:text-gray-200; }
+    /*--------------------------------------*/
 
+    /*------------Submit Buttons---------------*/
+    .disabled-btn { @apply def-btn text-lg font-light cursor-not-allowed 
+        text-gray-600 bg-gray-200
+        dark:bg-darker-50; }
+
+    .not-disabled-btn { @apply def-btn text-lg font-light
+        text-white bg-blue-500 hover:bg-blue-600  
+        dark:text-green-300 dark:bg-darker-400 dark:hover:text-green-500; }
+    /*-----------------------------------------*/
+
+    /*------------Naviation buttons------------*/
+    .nav-btn-active{ @apply bg-gradient-to-b 
+        from-white to-gray-300 
+        dark:from-darker-50 dark:to-darker-200;}
+    
+    .nav-btn { @apply def-nav-btn py-0.5 px-2 flex place-items-center font-medium
+        text-blue-600 
+        dark:text-gray-200 ; }
+                    
+    .nav-btn-svg { @apply h-[3rem] w-[3rem] stroke-transparent
+        fill-blue-500 hover:fill-blue-600 
+        dark:fill-gray-400 dark:hover:fill-gray-300 ;}
+
+    .small-nav-btn { @apply border-b def-nav-btn text-center py-1 px-3 flex-1; }
+
+    .small-nav-btn-active { @apply  
+        border-blue-500 text-blue-500
+        dark:border-blue-400 dark:text-blue-400; }
+
+    .small-nav-btn-inactive { @apply opacity-80 
+        border-gray-300 text-gray-600
+        dark:border-darker-500 dark:text-gray-400; }
+    /*--------------------------------------*/
+
+    /*------------Input------------*/
     .small-input { @apply def-input py-2 px-3 border-2 
         text-gray-700 placeholder:text-gray-500 border-blue-200
         dark:text-gray-400 dark:bg-darker-300 dark:border-darker-400; }
+    /*--------------------------------------*/
 
+    /*------------Lists------------*/
     .profile-dropdown-list-item { @apply py-2 w-full font-light select-none
         text-gray-400 hover:text-gray-500
         dark:text-gray-300 dark:hover:text-gray-100; }
+    /*--------------------------------------*/
 
-
-    .auth-input{ @apply def-input text-lg border p-3 placeholder:not-italic
-        placeholder:text-gray-500 text-gray-700  border-gray-400 
-        dark:placeholder:text-gray-300 dark:bg-darker-100 dark:text-gray-300 dark:border-darker-300; }
+    /*------------Auth------------*/
+    .auth-input{ @apply def-input text-lg border p-3 
+        placeholder:text-gray-400 text-gray-700 border-gray-400 
+        dark:placeholder:text-gray-400 dark:bg-darker-100 dark:text-gray-300 dark:border-darker-300; }
 
     .auth-status { @apply text-center bg-gradient-to-b text-2xl font-normal
         from-gray-200 to-gray-100  
@@ -138,22 +179,9 @@
     .btn-auth { @apply def-btn text-xl py-5 
         bg-blue-400 text-white hover:bg-blue-500 
         dark:text-gray-200 dark:bg-darker-200 dark:hover:text-green-500 dark:hover:bg-darker-300; }
-    
-    
-    .nav-btn-svg { @apply h-[3rem] w-[3rem] stroke-transparent
-        fill-blue-500 hover:fill-blue-600 
-        dark:fill-gray-400 dark:hover:fill-gray-300 ;}
+    /*--------------------------------------*/
 
-    .small-nav-btn { @apply def-nav-btn border-b text-center py-1 px-3 flex-1; }
-
-    .small-nav-btn-active { @apply  
-        border-blue-500 text-blue-500
-        dark:border-blue-400 dark:text-blue-400; }
-
-    .small-nav-btn-inactive { @apply opacity-80 
-        border-gray-300 text-gray-600
-        dark:border-darker-500 dark:text-gray-400; }
-    
+    /*------------User Selection------------*/
     .selected-user { @apply  
         text-green-500 bg-gray-200 
         dark:text-green-400 dark:bg-black; }
@@ -161,19 +189,10 @@
     .not-selected-user { @apply font-light
         text-blue-500 hover:bg-green-100
         dark:text-gray-300 dark:hover:bg-darker-200 dark:hover:text-green-300; }
+    /*------------------------------------*/
 
-    .disabled-btn { @apply def-btn text-lg font-light cursor-not-allowed 
-        text-gray-600 bg-gray-200
-        dark:bg-darker-50; }
 
-    .not-disabled-btn { @apply def-btn text-lg font-light
-        text-white bg-blue-500 hover:bg-blue-600  
-        dark:text-green-300 dark:bg-darker-400 dark:hover:text-green-500; }
-
-    /*---------------------------------------------------------- */
-    /*                    Chat Window classes                    */
-    /*---------------------------------------------------------- */
-
+    /*------------Chat Window classes------------*/
     .cw-head-btn{ @apply w-full h-full cursor-pointer; }
 
     .cw-head-btn-fill{ @apply cw-head-btn stroke-transparent
@@ -194,7 +213,6 @@
     .cw-header-clr { @apply bg-blue-400  
         dark:bg-gradient-to-b dark:bg-transparent dark:from-darker-600; }
 
-
     .cw-border { @apply border-l border-r
         border-blue-400
         dark:border-none;}
@@ -209,6 +227,7 @@
     .cw-footer-send-btn { @apply w-11 hover:scale-110
         fill-blue-100 stroke-blue-500
         dark:fill-darker-300 dark:stroke-blue-500; }
+    /*-------------------------------------------*/
 
 }
   

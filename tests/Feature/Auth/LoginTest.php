@@ -24,8 +24,6 @@ class LoginTest extends TestCase
             'password' => Hash::make($this->password),
         ]);
 
-        $this->withHeaders([ 'Accept' => 'application/json', ]);
-
         $this->userFormData = [
             'email' => $this->email,
             'password' => $this->password,
@@ -49,14 +47,12 @@ class LoginTest extends TestCase
 
         $response = $this->post($this->loginEndpoint, $this->userFormData);
         
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                "message" => __("The provided credentials are incorrect."),
-                "errors" => [
-                    "email" => [__("The provided credentials are incorrect.")]
-                ]
-            ]); 
+        $response->assertStatus(422)->assertJson([
+            'messages' => [
+                "email" => [__("The provided credentials are incorrect.")]
+            ],
+            'response_type' => 'error'
+        ]);
     }
 
     public function test_incorrect_password()
@@ -65,14 +61,12 @@ class LoginTest extends TestCase
 
         $response = $this->post($this->loginEndpoint, $this->userFormData);
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                "message" => __("The provided credentials are incorrect."),
-                "errors" => [
-                    "email" => [__("The provided credentials are incorrect.")]
-                ]
-            ]); 
+        $response->assertStatus(422)->assertJson([
+            'messages' => [
+                "email" => [__("The provided credentials are incorrect.")]
+            ],
+            'response_type' => 'error'
+        ]);
     }
 
     public function test_password_case_missmatch()
@@ -81,14 +75,12 @@ class LoginTest extends TestCase
 
         $response = $this->post($this->loginEndpoint, $this->userFormData);
 
-        $response
-            ->assertStatus(422)
-            ->assertJson([
-                "message" => __("The provided credentials are incorrect."),
-                "errors" => [
-                    "email" => [__("The provided credentials are incorrect.")]
-                ]
-            ]); 
+        $response->assertStatus(422)->assertJson([
+            'messages' => [
+                "email" => [__("The provided credentials are incorrect.")]
+            ],
+            'response_type' => 'error'
+        ]);
     }
 
 }

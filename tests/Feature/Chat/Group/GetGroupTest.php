@@ -48,7 +48,6 @@ class GetGroupTest extends TestCase
         ]);
 
         $this->withHeaders([
-            'Accept' => 'application/json',
             'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
         ]);
 
@@ -119,7 +118,6 @@ class GetGroupTest extends TestCase
     {
         $user1 = User::factory()->create();
         $this->withHeaders([
-            'Accept' => 'application/json',
             'Authorization' => "Bearer {$user1->createToken('app')->plainTextToken}"
         ]);
 

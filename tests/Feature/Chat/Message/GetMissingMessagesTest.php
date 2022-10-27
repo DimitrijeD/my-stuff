@@ -40,7 +40,6 @@ class GetMissingMessagesTest extends TestCase
         // Making this message only one which user doesn't have in chat window
         $this->last_message_in_group = $this->messages[count($this->messages) - 1];
         
-        $this->withHeaders([ 'Accept' => 'application/json', ]);
         $this->withHeader('Authorization', "Bearer {$this->user->createToken('app')->plainTextToken}");
         
         $this->getMissingMessagesEndpoint = "/api/chat/group/{$this->group->id}/from-msg/{$latest_msg_id}";

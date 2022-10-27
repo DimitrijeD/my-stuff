@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Auth\PasswordReset;
 
-class User extends Authenticatable
+class User extends Authenticatable 
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -35,7 +36,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'account_verification'
+        'account_verification',
+        'password_reset'
     ];
 
     /**
@@ -66,5 +68,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(ChatGroup::class, 'group_participants', 'user_id', 'group_id')
             ->withPivot(['last_message_seen_id', 'group_id', 'updated_at']);
+    }
+
+    public function password_resets()
+    {
+        return $this->hasOne(PasswordReset::class, 'email', 'email');
     }
 }
