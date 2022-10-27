@@ -1,26 +1,17 @@
 <template>
-    <div class="grid place-items-center h-screen">
-        <div class="w-3/4">
+    <div class="container-focus-center">
+        <div class="w-full">
             <p class="auth-status text-blue-500">
                 One step away, 
             </p>
 
-            <div 
-                class="text-center break-words text-lg py-16 shadow-inner dark:bg-blacker-100"
-                v-bind:class="{
-                    'text-green-600': status_type,
-                    'text-red-400':  !status_type,
-                }"
-            >
+            <div :class="['text-center break-words text-lg py-16 shadow-inner dark:bg-blacker-100', status_type ? 'text-green-600' : 'text-red-400' ]">
                 <p class="m-3">{{ status }}</p>
                 <p>{{ user.email }}</p>
             </div>
 
 
-            <p 
-                class="py-3 px-1 text-gray-600 dark:text-gray-400" 
-                v-if="!status"
-            >
+            <p class="py-3 px-1 text-gray-600 dark:text-gray-400" v-if="!status">
                 Before proceeding, please check your email for a verification link.
             </p>
 
@@ -74,7 +65,8 @@ export default {
 
         resendEmailVerification(){
             axios.post('email-verification/create-or-update', {}).then((res)=>{
-                this.status = 'Another email has been sent. Please check if you inserted correct email.'
+                this.status_type = Object.keys(res.data)[0] == "success" ? true : false
+                this.status = res.data[Object.keys(res.data)[0]]
             }).catch((error) =>{
                 if(error.response.status == 429){
                     this.status = "Please wait for 1 minute before requesting another email."

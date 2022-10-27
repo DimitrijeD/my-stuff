@@ -36,7 +36,6 @@ class GetUsersByStrTrimByIdsTest extends TestCase
         $this->userStructure = ['id', 'first_name', 'last_name', 'email', 'thumbnail', 'image'];
 
         $this->withHeaders([
-            'Accept' => 'application/json',
             'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
         ]);
         
@@ -190,11 +189,11 @@ class GetUsersByStrTrimByIdsTest extends TestCase
 
         $response = $this->post($this->getUsersEndpoint, $userInput);
 
-        $response->assertJson([
-            "message" => __(__("User ID-s provided in array must be numeric, '{$notInt}' given.")),
-            "errors" => [ 
+        $response->assertStatus(422)->assertJson([
+            'messages' => [
                 "i_have_ids" => [__("User ID-s provided in array must be numeric, '{$notInt}' given.")] 
-            ]
+            ],
+            'response_type' => 'error'
         ]);
     }
 

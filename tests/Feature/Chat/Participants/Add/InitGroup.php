@@ -38,7 +38,6 @@ trait InitGroup
         $this->group = $this->allChatData['group'];
 
         $this->withHeaders([
-            'Accept' => 'application/json',
             'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
         ]);
 

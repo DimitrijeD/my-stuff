@@ -13,7 +13,6 @@ class GetUserTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->withHeaders([ 'Accept' => 'application/json', ]);        
         $this->getUserEndpoint = "/api/user";
     }
 

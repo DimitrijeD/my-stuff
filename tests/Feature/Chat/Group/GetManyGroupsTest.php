@@ -31,7 +31,6 @@ class GetManyGroupsTest extends TestCase
             $this->markTestIncomplete("Cannot finish this test because target user doesn't exist");
 
         $this->withHeaders([
-            'Accept' => 'application/json',
             'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
         ]);
 

@@ -7,20 +7,20 @@
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-import axios from 'axios';
+import axios from 'axios'
 
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-axios.defaults.withCredentials = true;
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+axios.defaults.withCredentials = true
 
 window.axios = axios.create({
-    baseURL: "http://localhost/api/"
-});
+    baseURL: import.meta.env.VITE_APP_URL + '/api/'
+})
 
 window.axios.interceptors.request.use(function (config) {
-    config.headers.Authorization =  `Bearer ${localStorage.getItem("token")}`;
+    config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`
 
-    return config;
-});
+    return config
+})
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -28,10 +28,10 @@ window.axios.interceptors.request.use(function (config) {
  * allows your team to easily build robust real-time web applications.
  */
 
-import Echo from 'laravel-echo';
+import Echo from 'laravel-echo'
 
-import Pusher from 'pusher-js';
-window.Pusher = Pusher;
+import Pusher from 'pusher-js'
+window.Pusher = Pusher
 
 window.Echo = new Echo({
     broadcaster:  import.meta.env.VITE_PUSHER_BROADCASTER,
@@ -58,8 +58,8 @@ window.Echo = new Echo({
                 })
                 .catch(error => {
                     callback(true, error);
-                });
+                })
             }
-        };
+        }
     },
-});
+})

@@ -28,7 +28,6 @@ class ParticipantCanLeaveGroupTest extends TestCase
         $this->user = $this->participants->first();
 
         $this->withHeaders([
-            'Accept' => 'application/json',
             'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
         ]);
 

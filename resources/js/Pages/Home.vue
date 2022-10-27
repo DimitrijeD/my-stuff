@@ -7,7 +7,7 @@
         <div class="xl-cls"></div>
     </div>
 
-<div class="flex flex-col min-h-screen max-h-screen overflow-hidden bg-blue-900 ">
+<!-- <div class="flex flex-col min-h-screen max-h-screen overflow-hidden bg-blue-900 ">
     <nav>
         <ul class="flex">
             <li class="p-2">asd</li>
@@ -29,7 +29,7 @@
             </ul>
         </div>
     </main>
-</div> 
+</div>  -->
 
 </template>
 

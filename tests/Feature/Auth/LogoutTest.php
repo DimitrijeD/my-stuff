@@ -16,8 +16,6 @@ class LogoutTest extends TestCase
 
         $this->user = User::factory()->create();
 
-        $this->withHeaders([ 'Accept' => 'application/json', ]);
-        
         $this->logoutEndpoint = '/api/logout';
     }
 

@@ -31,7 +31,6 @@ class GetEariestMessagesTest extends TestCase
         $this->numMessages = count($this->allMessages);
         
         $this->withHeaders([
-            'Accept' => 'application/json',
             'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
         ]);
     }

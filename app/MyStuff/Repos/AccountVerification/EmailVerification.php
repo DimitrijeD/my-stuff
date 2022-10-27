@@ -5,7 +5,7 @@ namespace App\MyStuff\Repos\AccountVerification;
 use App\MyStuff\Repos\User\UserEloquentRepo;
 use App\MyStuff\Repos\AccountVerification\AccountVerificationEloquentRepo;
 use App\Models\AccountVerification;
-use App\Jobs\SendEmailJob;
+use App\Jobs\EmailVerificationJob;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -23,6 +23,8 @@ class EmailVerification
      */
     public function createOrUpdate(User $user)
     {
+        if(!$user) return ['error' => "You must be logged in in order to verify account."];
+
         $accoutVerification = $user->account_verification;
 
         if(!$accoutVerification && $user->email_verified_at){
@@ -54,7 +56,7 @@ class EmailVerification
             'url' => $this->makeUrlFromCode($user->id, $code)
         ];
         
-        dispatch(new SendEmailJob($emailData));
+        dispatch(new EmailVerificationJob($emailData));
 
         return ['success' => __('Email has been sent. Check your inbox.')];
     }

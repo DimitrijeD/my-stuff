@@ -22,7 +22,6 @@ class CreateChatGroupTest extends TestCase
         $chatParticipant = User::factory()->create();
 
         $this->withHeaders([
-            'Accept' => 'application/json',
             'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
         ]);
 

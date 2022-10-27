@@ -4,7 +4,7 @@ module.exports = {
 
     content: [
         './resources/js/**/*.vue',
-        './resources/views/emails/verifyMail.blade.php'
+        './resources/views/emails/*'
     ],
 
     theme: {

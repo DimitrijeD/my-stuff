@@ -108,7 +108,7 @@ export default {
                         this.$router.push({ path: '/email-verification/init' });
                     })
                 }).catch((error) =>{
-                    this.errors = error.response.data.errors;
+                    this.errors = error.response.data.messages
                 });
             });
         },
