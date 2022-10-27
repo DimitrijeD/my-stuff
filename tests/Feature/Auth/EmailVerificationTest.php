@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\AccountVerification;
 use Illuminate\Support\Facades\Hash;
+use Database\Factories\UserFactory;
 
 class EmailVerificationTest extends TestCase
 {
@@ -19,8 +20,8 @@ class EmailVerificationTest extends TestCase
     {
         parent::setUp();
 
-        $this->email = 'qwe@qwe';
-        $this->password = 'qweqweqweQ1';
+        $this->email =  UserFactory::getDefUser()['email'];
+        $this->password = UserFactory::getDefUser()['password'];
 
         $this->user = User::factory()->create([
             'email' => $this->email,

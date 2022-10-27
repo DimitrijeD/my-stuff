@@ -3,14 +3,11 @@
 namespace Tests\Feature\Chat\Group;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 use Database\Seeders\ChatGroupClusterSeeder;
 
 use App\Models\User;
-use App\Models\ChatGroup;
-use App\Models\ParticipantPivot;
+use Database\Factories\UserFactory;
 
 class GetInitialGroupsWithLatestMessageTest extends TestCase
 {
@@ -27,7 +24,7 @@ class GetInitialGroupsWithLatestMessageTest extends TestCase
             $this->groups[] = $chatGroupSeeder->run();
         }
 
-        if(!$this->user = User::where(['email' => 'qwe@qwe'])->first())
+        if(!$this->user = User::where(['email' => UserFactory::getDefUser()['email']])->first())
             $this->markTestIncomplete("Cannot finish this test because target user doesn't exist");
 
         $this->withHeaders([

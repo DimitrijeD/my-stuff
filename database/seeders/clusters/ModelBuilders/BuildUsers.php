@@ -61,12 +61,8 @@ class BuildUsers
     private function useDefault()
     {
         return [
-            [
-                'first_name' => 'Qwe',
-                'last_name' => 'Qwe',
-                'email' => 'qwe@qwe', 
-                'participant_role' => ChatRole::CREATOR
-            ],
+            array_merge(UserFactory::getDefUser(), ['participant_role' => ChatRole::CREATOR]),
+
             [
                 'first_name' => 'Asd',
                 'last_name' => 'Asd',

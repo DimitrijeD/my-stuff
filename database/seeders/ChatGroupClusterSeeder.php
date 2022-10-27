@@ -21,6 +21,8 @@ use Database\Seeders\clusters\Init\GroupCreatorId;
 use Database\Seeders\clusters\Init\NumOfMessages;
 use Database\Seeders\clusters\Init\TextLen;
 
+use Database\Factories\UserFactory;
+
 class ChatGroupClusterSeeder extends Seeder
 {
     const DISTRIBUTION_MAX_ACTIVITY = 'MAX-ACTIVITY';
@@ -65,7 +67,7 @@ class ChatGroupClusterSeeder extends Seeder
             ->resolve()
             ->build(); 
 
-        $this->creator_id = (new GroupCreatorId($this->users, 'qwe@qwe'))->get();
+        $this->creator_id = (new GroupCreatorId($this->users, UserFactory::getDefUser()['email']))->get();
 
         $this->timeInterval = (new TimeInterval(null, null, true))->createTimeInterval();
 

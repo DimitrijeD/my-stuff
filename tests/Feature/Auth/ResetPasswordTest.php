@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Auth\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Database\Factories\UserFactory;
 
 class ResetPasswordTest extends TestCase
 {
@@ -18,8 +19,8 @@ class ResetPasswordTest extends TestCase
     {
         parent::setUp();
 
-        $this->email = 'qwe@qwe';
-        $this->password = 'qweqweqweQ1';
+        $this->email = UserFactory::getDefUser()['email'];
+        $this->password = UserFactory::getDefUser()['password'];
         $this->newPassword = $this->password . 's';
 
         $this->token = Str::random(PasswordReset::EMAIL_HASH_LENGTH);

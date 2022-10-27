@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\ChatGroup;
 use App\Models\ParticipantPivot;
 use App\Models\ChatRole;
+use Database\Factories\UserFactory;
 
 /**
  * Helper trait for creating specific groups in tests such as:
@@ -65,13 +66,7 @@ trait InitGroup
     {
         return [
             'participants' => [
-                [
-                    'first_name' => 'Qwe',
-                    'last_name' => 'Qwe',
-                    'email' => 'qwe@qwe',
-                    'participant_role' => ChatRole::CREATOR
-                ],
-
+                array_merge(UserFactory::getDefUser(), ['participant_role' => ChatRole::CREATOR]),
                 [
                     'first_name' => 'Asd',
                     'last_name' => 'Asd',
@@ -86,13 +81,7 @@ trait InitGroup
     {
         return [
             'participants' => [
-                [
-                    'first_name' => 'Qwe',
-                    'last_name' => 'Qwe',
-                    'email' => 'qwe@qwe',
-                    'participant_role' => ChatRole::CREATOR
-                ],
-
+                array_merge(UserFactory::getDefUser(), ['participant_role' => ChatRole::CREATOR]),
                 [
                     'first_name' => 'Asd',
                     'last_name' => 'Asd',
@@ -107,13 +96,7 @@ trait InitGroup
     {
         return [
             'participants' => [
-                [
-                    'first_name' => 'Qwe',
-                    'last_name' => 'Qwe',
-                    'email' => 'qwe@qwe',
-                    'participant_role' => ChatRole::CREATOR
-                ],
-
+                array_merge(UserFactory::getDefUser(), ['participant_role' => ChatRole::CREATOR]),
                 [
                     'first_name' => 'Asd',
                     'last_name' => 'Asd',

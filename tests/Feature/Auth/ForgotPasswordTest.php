@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Auth\PasswordReset;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Database\Factories\UserFactory;
 
 class ForgotPasswordTest extends TestCase
 {
@@ -17,8 +18,8 @@ class ForgotPasswordTest extends TestCase
     {
         parent::setUp();
 
-        $this->email = 'qwe@qwe';
-        $this->password = 'qweqweqweQ1';
+        $this->email = UserFactory::getDefUser()['email'];
+        $this->password = UserFactory::getDefUser()['password'];
 
         $this->user = User::factory()->create([
             'email' => $this->email,

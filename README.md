@@ -63,10 +63,10 @@ Command
 will create at least two users *( class ./database/seeders/ChatGroupClusterSeeder )*:
 ```
 *email* qwe@qwe
-*password* qweqweqweQ1
+*password* qweqweqwe
 
 *email* asd@asd
-*password* qweqweqweQ1
+*password* qweqweqwe
 ```
 
 Seeder will also 

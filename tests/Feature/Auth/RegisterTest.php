@@ -3,15 +3,12 @@
 namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use \Illuminate\Routing\Middleware\ThrottleRequests;
+use Database\Factories\UserFactory;
 
 class RegisterTest extends TestCase
 {
@@ -25,13 +22,12 @@ class RegisterTest extends TestCase
         $image = UploadedFile::fake()->image('avatar.jpg');
 
         $this->userFormData = [
-            'first_name' => 'Qwe',
-            'last_name' => 'Qwe',
-            'email' => 'qwe@qwe',
-            'password' => 'qweqweqweQ1',
-            'password_confirmation' => 'qweqweqweQ1',
+            'first_name' => UserFactory::getDefUser()['first_name'],
+            'last_name'  => UserFactory::getDefUser()['last_name'],
+            'email'      => UserFactory::getDefUser()['email'],
+            'password'              => UserFactory::getDefUser()['password'],
+            'password_confirmation' => UserFactory::getDefUser()['password'],
             'profilePicture' => $image
-
         ];
         
         $this->registerEndpoint = '/api/register';

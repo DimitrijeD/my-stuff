@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Database\Factories\UserFactory;
 
 class LoginTest extends TestCase
 {
@@ -16,8 +17,8 @@ class LoginTest extends TestCase
     {
         parent::setUp();
 
-        $this->email = 'qwe@qwe';
-        $this->password = 'qweqweqweQ1';
+        $this->email = UserFactory::getDefUser()['email'];
+        $this->password = UserFactory::getDefUser()['password'];
 
         $this->user = User::factory()->create([
             'email' => $this->email,

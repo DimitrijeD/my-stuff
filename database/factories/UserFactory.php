@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\File;
  */
 class UserFactory extends Factory
 {
-    const PASSWORD = '$2y$10$OzosT7AoTUDVzRfml.zozOlsxSljp4q3zVOhC5TuZvmrNl.MknU9G'; // qweqweqweQ1
+    const PASSWORD = 'qweqweqwe';
+    const PASSWORD_HASH = '$2y$10$9X9xGbzD/tR4oMPEuhCNqe4Mkc08YyE8PkG5BOWrUX0tcaVrFxRNa'; 
 
     /**
      * Define the model's default state.
@@ -27,7 +28,7 @@ class UserFactory extends Factory
             'last_name' => $this->faker->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => self::PASSWORD,
+            'password' => self::PASSWORD_HASH,
             'remember_token' => Str::random(10),
             'image' => $pic,
             'thumbnail' => $pic,
@@ -52,5 +53,14 @@ class UserFactory extends Factory
         $randomFile = $files[rand(0, count($files) - 1)];
 
         return "/basic-images/" . $randomFile->getRelativePathName();
+    }
+
+    public static function getDefUser(){
+        return [
+            'first_name' => "Qwerty",
+            'last_name' => "Qweerrtttyyyyyyyy",
+            'email' => "qwe@qwe",
+            'password' => self::PASSWORD,
+        ];
     }
 }
