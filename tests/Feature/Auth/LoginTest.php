@@ -37,8 +37,15 @@ class LoginTest extends TestCase
     {
         $response = $this->post($this->loginEndpoint, $this->userFormData);
 
+        $response->assertStatus(200);
+        $response->assertJsonFragment([
+            'messages' => [ 'success' => [__('auth.loggedin')] ],
+        ]);
+
         $response->assertJsonStructure([
-            'user', 'token',
+            'messages' => [],
+            'data' => ['user', 'token'],
+            'response_type'
         ]);
     }
 

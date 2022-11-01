@@ -1,7 +1,7 @@
 <template>
-    <div class="cw-footer-bg-color px-2 pb-2 flex gap-2">
+    <div class="dark:bg-gradient-to-t dark:bg-transparent dark:from-neutral-800 px-2 pb-2 flex gap-2">
         <textarea
-            class="cw-footer-text-area"
+            class="flex-grow p-4 resize-none rounded-2xl outline-none bg-white border border-blue-400 text-gray-700 dark:bg-darker-400 dark:text-gray-300 dark:border-none"
             rows="3"
             @keyup.enter.exact.prevent="sendMessageEvent()"
             @keydown.enter.shift.exact.prevent="message += '\n'"
@@ -11,7 +11,7 @@
             placeholder="Message ..."
         ></textarea>
 
-        <SendMessageIcon @click="sendMessageEvent()" class="cw-footer-send-btn " />
+        <SendMessageIcon @click="sendMessageEvent()" class="w-11 hover:scale-110 fill-blue-100 stroke-blue-500 dark:fill-darker-300 dark:stroke-blue-500 " />
     </div>
 </template>
 

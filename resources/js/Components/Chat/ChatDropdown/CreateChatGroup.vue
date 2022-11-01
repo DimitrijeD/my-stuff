@@ -91,8 +91,8 @@ export default {
 
             input: {
                 actions: {
-                    api: ns.users() + '/searchForAddUsersInApi',
-                    store: ns.users() + '/searchForAddUsersInStore'
+                    api: ns.users('searchForAddUsersInApi'),
+                    store: ns.users('searchForAddUsersInApi')
                 },
                 placeholder: "Find users to add",
             },
@@ -103,7 +103,7 @@ export default {
     computed: {
         ...mapGetters({ 
             user: "user",
-            groupTypes: ns.chat_rules() + "/StateGroupTypes",
+            groupTypes: ns.chat_rules('StateGroupTypes'),
         }),
 
         getHumanReadableGroupTypes(){
@@ -119,33 +119,26 @@ export default {
             return groupTypes
         },
 
-        users(){ return this.$store.getters[ns.users() + '/getFilterForAddUsers'] },
+        users(){ return this.$store.getters[ns.users('getFilterForAddUsers')] },
 
         canCreate(){ return this.newChatGroup.users_ids.length }
-
     },
 
-    created(){
-        
-    },
-
-    mounted()
-    {
-
-    },
-
-    methods:
-    {        
+    methods:{        
         capitalizeFirstLetter(string) {
            return string.charAt(0).toUpperCase() + string.slice(1);
         },
 
         createNewChatGroup(){
             this.checkForErrors()
+
             if(this.errors.length > 0) return
             this.resolveGroupParams()
-            this.$store.dispatch(ns.groupsManager() + '/storeGroup', this.newChatGroup)
-            this.resetComponentVars()
+
+            this.$store.dispatch(ns.groupsManager('storeGroup'), this.newChatGroup).then(() => {
+                this.resetComponentVars()
+                this.$emit('closeDropdown')
+            })
         },
 
         checkForErrors(){
@@ -184,7 +177,7 @@ export default {
 
         },
 
-        getUser(id) { return this.$store.getters[ns.users() + '/getById'](id)},
+        getUser(id) { return this.$store.getters[ns.users('getById')](id)},
 
         selectOrDeseceltUser(id){
             this.newChatGroup.users_ids.includes(id) 

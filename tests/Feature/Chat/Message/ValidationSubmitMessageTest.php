@@ -141,25 +141,15 @@ class ValidationSubmitMessageTest extends TestCase
         ]);
     }
 
-    public function test_group_id_required()
-    {
-        $this->userFormData['group_id'] = null;
-
-        $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
-
-        $response->assertStatus(404)->assertJson([
-            'errors' => __("Group doesn't exist.")
-        ]);
-    }
-
-    public function test_group_id_must_be_int()
+    public function test_requested_group_doesnt_exist()
     {
         $this->userFormData['group_id'] = 'asd';
 
         $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
 
-        $response->assertStatus(404)->assertJson([
-            'errors' => __("Group doesn't exist.")
+        $response->assertStatus(404)->assertJson([ 
+            "messages" => [[ __('model.groupNotFound') ]],
+            "response_type" => "error"
         ]);
     }
 
@@ -193,8 +183,9 @@ class ValidationSubmitMessageTest extends TestCase
 
         $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
 
-        $response->assertStatus(403)->assertJson([
-            'errors' => __("You have no access rights to this chat group.")
+        $response->assertStatus(403)->assertJson([ 
+            "messages" => [[ __('chat.noAccess') ]],
+            "response_type" => "error"
         ]);
     }
 }

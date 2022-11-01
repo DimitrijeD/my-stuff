@@ -1,5 +1,5 @@
-import defaultState_Users from './defaultState_Users.js'
+import defaultState from './defaultState.js'
 
-const state = defaultState_Users()
+const state = defaultState
 
 export default state

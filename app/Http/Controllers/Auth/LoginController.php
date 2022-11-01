@@ -23,19 +23,28 @@ class LoginController extends Controller
             throw ValidationException::withMessages([ 'email' => [__('The provided credentials are incorrect.')] ]);
         }
 
-        return response()->json([
-            'user' => $user,
-            'token' => $user->createToken('app')->plainTextToken
-        ], 200);
+        return response()->json(
+            ApiResponse::success([
+                'messages' => [ 'success' => [__('auth.loggedin')] ],
+                'data' => [
+                    'user' => $user,
+                    'token' => $user->createToken('app')->plainTextToken
+                ]
+            ])
+        , 200);
     }
 
     public function logout()
     {
         auth()->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            "message" => __("Logged out.")
-        ]);
+        return response()->json(
+            ApiResponse::success([
+                'messages' => [
+                    'success' => [__('auth.logout')]
+                ]
+            ])
+        );
     }
 
     public function forgotPasswordGiveMeEmail(ForgotPasswordRequest $request, PasswordResetEloquentRepo $passwordResetrepo)
@@ -44,19 +53,19 @@ class LoginController extends Controller
             case PasswordReset::SUCCESS_KEY:
                 return response()->json(
                     ApiResponse::success([
-                        'messages' => ['success' => [__('auth.forgot_password_email.success', ['email' => $request->email])]]
+                        'messages' => [[ __('auth.forgot_password_email.success', ['email' => $request->email]) ]]
                     ])
                 );
 
             case PasswordReset::UPDATE_KEY:
                 return response()->json(
                     ApiResponse::success([
-                        'messages' => ['success' =>[__('auth.forgot_password_email.update', ['email' => $request->email])]]
+                        'messages' => [[ __('auth.forgot_password_email.update', ['email' => $request->email]) ]]
                     ])
                 );
 
             case PasswordReset::MAX_REQUESTS_EXCEEDED_KEY:
-                throw ValidationException::withMessages(['error' =>__('auth.forgot_password_email.max_requests_exceeded', ['email' => $request->email])]);
+                throw ValidationException::withMessages([ __('auth.forgot_password_email.max_requests_exceeded', ['email' => $request->email]) ]);
         }
     }
 
@@ -70,11 +79,13 @@ class LoginController extends Controller
             case 'success':
                 return response()->json(
                     ApiResponse::success([
-                        'messages' => auth('sanctum')->user() 
-                            ? __('passwords.success_reset_authenticated') 
-                            : __('passwords.success_reset_unathenticated'), 
-                    ])
-                , 200);
+                        'messages' => [[
+                            auth('sanctum')->user() 
+                                ? __('passwords.success_reset_authenticated') 
+                                : __('passwords.success_reset_unathenticated'), 
+                        ]]
+                    ]), 200
+                );
 
             case 'VE006':
                 throw ValidationException::withMessages([ 'error' => __('passwords.VE006')]);

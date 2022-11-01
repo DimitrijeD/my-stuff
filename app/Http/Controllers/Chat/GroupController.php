@@ -10,6 +10,8 @@ use App\Http\Requests\ChatGroup\ChangeGroupNameRequest;
 use App\Http\Requests\ChatGroup\StoreGroupRequest;
 use Illuminate\Http\Request;
 use App\Events\GroupNameChangeEvent;
+use App\Exceptions\InternalServerErrorException;
+use App\Http\Response\ApiResponse;
 
 class GroupController extends Controller
 {
@@ -65,26 +67,28 @@ class GroupController extends Controller
     public function changeGroupName(ChangeGroupNameRequest $request)
     {
         if( !$this->chatGroupRepo->update($request->group, [ 'name' => $request->new_name ]) )
-            return response()->json(['error' => __("An error occured while changing group name.")], 500);
+        throw new InternalServerErrorException(__("chat.name.failedUpdating")); 
 
         broadcast(new GroupNameChangeEvent([
             'group_id' => $request->group->id,
             'new_name' => $request->new_name
         ]));
         
-        return response()->json(['success' => __("Group name has been changed.")]);
+        return response()->json( ApiResponse::success([
+            'messages' => [[ __('chat.name.updated') ]],
+        ]) );
     }
 
-    public function refreshGroup(Request $request)
-    {
-        $group = $this->chatGroupRepo->get(
-            ['id' => $request->group_id], 
-            ['participants', 'latestMessages.user']
-        );
+    // public function refreshGroup(Request $request)
+    // {
+    //     $group = $this->chatGroupRepo->get(
+    //         ['id' => $request->group_id], 
+    //         ['participants', 'latestMessages.user']
+    //     );
 
-        return $group->participants->where('id', auth()->user()->id)->first() // if user is participant
-            ? response()->json($group)
-            : response()->json(['errors' => __("You have no access rights to this chat group.")], 403);
-    }
+    //     return $group->participants->where('id', auth()->user()->id)->first() // if user is participant
+    //         ? response()->json($group)
+    //         : response()->json(['errors' => __("You have no access rights to this chat group.")], 403);
+    // }
 
 }

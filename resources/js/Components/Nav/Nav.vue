@@ -1,10 +1,13 @@
 <template>
     <nav class="flex justify-between h-[3rem] ">
         <!-- Left side of navigation bar -->
-        <div class="flex justify-start ">
+        <div class="flex justify-start relative">
             <router-link active-class="nav-btn-active" class="nav-btn" to="/">Home</router-link>
             <router-link v-if="user" active-class="nav-btn-active" class="nav-btn" to="app-css-examples">Examples</router-link>
-            <ChatDropdownButton v-if="user" class="px-2" />
+            <ChatDropdown v-if="user?.email_verified_at" class="px-2" />
+            <!-- <button class="nav-btn" @click="test()">Test</button>
+            <button class="nav-btn" @click="testGroup()">testGroup</button> -->
+
         </div>
 
         <!-- Right side of navigation bar -->
@@ -24,13 +27,14 @@ import { mapGetters } from "vuex";
 import { useDark, useToggle } from '@vueuse/core';
 import Logout from '@/Pages/Auth/Logout.vue';
 import ProfileDropdown from "@/Components/Nav/ProfileDropdown.vue";
-import ChatDropdownButton from '@/Components/Chat/ChatDropdown/ChatDropdownButton.vue';
+// import ChatDropdownButton from '@/Components/Chat/ChatDropdown/ChatDropdownButton.vue';
+import ChatDropdown from '@/Components/Chat/ChatDropdown/ChatDropdown.vue';
 
 export default {
     components: {
         Logout,
         ProfileDropdown,
-        ChatDropdownButton,
+        ChatDropdown,
     },
 
     data(){
@@ -44,7 +48,13 @@ export default {
     },
 
     methods: {
-        
+        // test(){
+        //     this.$store.dispatch('actionResponsemain/test', )
+        // },
+
+        // testGroup(){
+        //     this.$store.dispatch('actionResponsegroupId_4/test', )
+        // },
     }
 
 }

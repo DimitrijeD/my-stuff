@@ -8,6 +8,15 @@
             <MessagesBlock :group="group" @click="selfAcknowledged()" />
         </template>
 
+        <template #action-response>
+            <ActionResponseList 
+                :moduleId="`groupId_${group_id}`" 
+                :dieAfter="15" 
+                :cardCls="'w-[90%] h-32 mx-auto'"
+                class="mt-8 mx-auto w-full" 
+            />
+        </template>
+
         <template #config>
             <Config 
                 v-show="group.window.showConfig "
@@ -29,7 +38,6 @@
 </template>
 
 <script>
-
 import { mapGetters } from 'vuex'
 import ChatWindow_v1Layout from '@/Layouts/ChatWindow_v1Layout.vue'
 import Header from "@/Components/Chat/ChatWindow/Header/Header.vue"
@@ -39,6 +47,7 @@ import Config           from "@/Components/Chat/ChatWindow/Body/Config.vue"
 import MessageInput     from "@/Components/Chat/ChatWindow/Footer/MessageInput.vue"
 import * as ns from '@/Store/module_namespaces.js'
 import { Permissions } from '@/Components/Chat/policies/permisions.js'
+import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.vue';
 
 export default {
     props: [ 'group_id', ],
@@ -49,6 +58,7 @@ export default {
         Config,
         ChatWindow_v1Layout,
         Header,
+        ActionResponseList,
     },
 
     data(){
@@ -57,7 +67,7 @@ export default {
             config: {
                 refreshGroupOnLoad: false
             },
-            gm_ns: ns.groupModule(this.group_id), // group module name space
+            gm_ns: ns.groupModule(this.group_id), 
         }
     },
 
@@ -65,9 +75,9 @@ export default {
     {
         ...mapGetters({ 
             user: "user",
-            rules:      ns.chat_rules() + "/StateRules",
-            roles:      ns.chat_rules() + "/StateRoles",
-            actionKeys: ns.chat_rules() + "/StateKeys",
+            rules:      ns.chat_rules('StateRules'),
+            roles:      ns.chat_rules('StateRoles'),
+            actionKeys: ns.chat_rules('StateKeys'),
         }),
 
         group(){ return this.$store.getters[this.gm_ns + '/state']},
@@ -104,12 +114,8 @@ export default {
         selfAcknowledged(){
             if(this.seen) return
 
-            if(this.last_message.user_id == this.user.id){
-                // console.log('CW, seen state is false meaning I didnt see last msg. this is shown because last message owner is me.')
-                // console.log('this will cause FE issue:')
-                // console.log('bg-green but messages are seen, and I did click Chat Window')
-                return
-            }
+            if(this.last_message.user_id == this.user.id) return
+
             this.$store.dispatch(this.gm_ns + '/allMessagesSeen', this.last_message.id)
         },
 

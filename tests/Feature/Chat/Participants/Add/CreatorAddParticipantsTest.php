@@ -23,8 +23,6 @@ class CreatorAddParticipantsTest extends TestCase
 
         // role 'requester' is attempting to give to user/users 
         $this->targetRole = ChatRole::PARTICIPANT;
-
-        $this->expectedError = ["error" => __("You have no rights to add users to group.")];
     }
 
     public function test_creator_can_add_1_participant_to_open_group()
@@ -79,7 +77,7 @@ class CreatorAddParticipantsTest extends TestCase
         
         $response = $this->post($this->addUsersEndpoint, $this->data);
 
-        $response->assertStatus(401)->assertJson($this->expectedError);
+        $response->assertStatus(403);
     }
 
     public function test_creator_cannot_add_many_participants_to_closed_group()
@@ -90,7 +88,7 @@ class CreatorAddParticipantsTest extends TestCase
         
         $response = $this->post($this->addUsersEndpoint, $this->data);
 
-        $response->assertStatus(401)->assertJson($this->expectedError);
+        $response->assertStatus(403);
     }
 
     public function test_creator_cannot_add_1_participant_to_private_group()
@@ -101,7 +99,7 @@ class CreatorAddParticipantsTest extends TestCase
 
         $response = $this->post($this->addUsersEndpoint, $this->data);
 
-        $response->assertStatus(401)->assertJson($this->expectedError);
+        $response->assertStatus(403);
     }
 
     public function test_creator_cannot_add_many_participants_to_private_group()
@@ -112,7 +110,7 @@ class CreatorAddParticipantsTest extends TestCase
         
         $response = $this->post($this->addUsersEndpoint, $this->data);
 
-        $response->assertStatus(401)->assertJson($this->expectedError);
+        $response->assertStatus(403);
     }
 
 }

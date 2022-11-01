@@ -1,24 +1,14 @@
 <template>
     <div class="space-y-4 ">
+        <div v-if="canChangeName" class="flex place-items-center gap-2" >
+            <label class="dark:text-gray-400">Change group name</label>
 
-        <LabelInputButtonLayout v-if="canChangeName" >
-            <template #label>
-                <label class="">Change group name</label>
-            </template>
+            <input type="text" class="small-input flex-1" v-model="newGroupName" :placeholder="group.name ? group.name : 'Group name is empty'">
 
-            <template #input>
-                <input type="text" class="small-input " v-model="newGroupName" 
-                    :placeholder="group.name ? group.name : 'Group name is empty'  ">
-            </template>
-
-            <template #button>
-                <button @click="changeGroupName" :class="[
-                    'p-2 rounded-xl border border-darker-500',
-                     validateChangeName ? 'text-green-600 border-green-600 ' : 'cursor-not-allowed text-gray-600 dark:text-gray-500', 
-                ]">
-                Save</button>
-            </template>
-        </LabelInputButtonLayout>
+            <button @click="changeGroupName" :class="[ 'p-2 rounded-xl border border-darker-500', validateChangeName ? 'text-green-600 border-green-600 ' : 'cursor-not-allowed text-gray-600 dark:text-gray-500', ]">
+                Save
+            </button>
+        </div>
 
         <AreYouSureLayout class="py-10 border border-red-400 rounded">
             <template #button-as-wrapper>
@@ -40,7 +30,6 @@
                 <DeclineIcon class="h-14 fill-gray-500 py-2 hover:fill-gray-400" />
             </template>
         </AreYouSureLayout>
-       
     </div>
 </template>
 
@@ -49,14 +38,13 @@ import * as ns from '@/Store/module_namespaces.js'
 import DeclineIcon from "@/Components/Reuseables/Icons/DeclineIcon.vue"
 import AcceptIcon from "@/Components/Reuseables/Icons/AcceptIcon.vue"
 import AreYouSureLayout from '@/Layouts/AreYouSureLayout.vue'
-import LabelInputButtonLayout from '@/Layouts/LabelInputButtonLayout.vue'
 
 
 export default {
     props: [ 'group', 'permissions' ],
 
     components: {
-        DeclineIcon, AcceptIcon, AreYouSureLayout, LabelInputButtonLayout,
+        DeclineIcon, AcceptIcon, AreYouSureLayout,
     },
     
     data() {
@@ -70,9 +58,9 @@ export default {
 
     computed: {
         validateChangeName(){
-            if(this.newGroupName == this.group.name || this.group.name === null && this.newGroupName === '') return false
-
-            return true
+            return (this.newGroupName == this.group.name) || (this.group.name === null && this.newGroupName === '') 
+                ? false
+                : true
         },
 
         canChangeName(){

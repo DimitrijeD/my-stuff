@@ -48,6 +48,36 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        $this->renderable(function (ModelDoesntExistException $e, $request) {
+            return ApiResponse::error($request, $e);
+        });
+
+        $this->renderable(function (UnAuthrorizedException $e, $request) {
+            return ApiResponse::error($request, $e);
+        });
+
+        $this->renderable(function (InternalServerErrorException $e, $request) {
+            return ApiResponse::error($request, $e);
+        });
+
+        $this->renderable(function (UnAuthenticatedException $e, $request) {
+            return ApiResponse::error($request, $e);
+        });
+
+        $this->renderable(function (ModelGoneException $e, $request) {
+            return ApiResponse::error($request, $e);
+        });
+        
+        $this->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    ApiResponse::MESSAGES => [[ __('auth.mustBeLoggedIn') ]],
+                    ApiResponse::TYPE => ApiResponse::ERROR_TYPE
+                ], 401);
+            }
+        });
+        
     }
 
     /**
@@ -56,7 +86,7 @@ class Handler extends ExceptionHandler
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Validation\ValidationException  $exception
      * @return \Illuminate\Http\JsonResponse
-     */
+     */ 
     protected function invalidJson($request, ValidationException $exception)
     {
         return ApiResponse::error($request, $exception);

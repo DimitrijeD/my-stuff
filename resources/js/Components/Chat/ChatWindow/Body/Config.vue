@@ -10,7 +10,13 @@
         </template>
 
         <template #content>
-            <div class="h-full p-2 text-gray-600 dark:text-gray-300 font-light">
+            <div class="h-full p-2 text-gray-600 dark:text-gray-300 font-light relative">
+                <ActionResponseList 
+                    :moduleId="`config.groupId_${group.id}`" 
+                    :dieAfter="15" 
+                    :cardCls="'w-[70%] h-24 mx-auto'"
+                    class="absolute z-10 mx-auto w-full" 
+                />
                 <AddUsers
                     v-show="settings.hasOwnProperty('add_users') && settings.add_users.opened" 
                     :group="group"  
@@ -48,17 +54,12 @@ import Options      from '@/Components/Chat/ChatWindow/Body/Config/Options.vue'
 import AddUsers     from '@/Components/Chat/ChatWindow/Body/Config/AddUsers.vue'
 
 import FillRemainingSpaceLayout from '@/Layouts/FillRemainingSpaceLayout.vue'
+import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.vue';
 
 export default {
     props: [ 'group', 'permissions', 'chatRole', 'roles', ],
 
-    components: {
-        AddUsers,
-        Participants,
-        Info,
-        Options,
-        FillRemainingSpaceLayout,
-    },
+    components: { AddUsers, Participants, Info, Options, FillRemainingSpaceLayout, ActionResponseList, },
 
     data(){
         return {

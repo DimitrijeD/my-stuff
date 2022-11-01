@@ -33,6 +33,7 @@
 
 <script>
 import TextInput from '@/Components/Reuseables/TextInput.vue'
+import * as ns from '@/Store/module_namespaces.js'
 
 export default {
     components: {
@@ -58,9 +59,11 @@ export default {
         login(){
             axios.get('/sanctum/csrf-cookie').then(response => {
                 axios.post('login', this.form).then((res) => {
-                    localStorage.setItem("token", res.data.token)
-                    this.$store.dispatch('storeUser', res.data.user)
+                    localStorage.setItem("token", res.data.data.token)
+                    this.$store.dispatch('storeUser', res.data.data.user)
                     this.$router.push({ path: '/profile' });
+                    this.$store.dispatch(ns.actionResponse('main', 'inject'), res.data)
+
                 }).catch((error) =>{
                     this.errors = error.response.data.messages
                 })

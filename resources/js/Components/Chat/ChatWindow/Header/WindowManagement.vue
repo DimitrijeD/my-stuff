@@ -33,7 +33,7 @@ export default {
         
         minimize() { this.$store.dispatch(this.gm_ns + '/toggleWindow', this.group.id) },
 
-        close() { this.$store.dispatch(ns.groupsManager() + '/closeGroup', this.group.id) },
+        close() { this.$store.dispatch(ns.groupsManager('closeGroup'), this.group.id) },
 
     },
 

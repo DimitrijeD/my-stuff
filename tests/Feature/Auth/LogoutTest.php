@@ -26,14 +26,21 @@ class LogoutTest extends TestCase
         $response = $this->get($this->logoutEndpoint);
 
         $this->assertTrue($this->user->tokens->isEmpty());
+
+        $response->assertJson([
+            'messages' => [
+                'success' => [__('auth.logout')]
+            ]
+        ]);
     }
 
     public function test_guest()
     {
         $response = $this->get($this->logoutEndpoint);
 
-        $response->assertJson([
-            "message" => "Unauthenticated."
+        $response->assertJson([ 
+            "messages" => [[ "You must be logged in." ]],
+            "response_type" => "error"
         ]);
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <div :class="['rounded-2xl p-1.5', isSelf ? 'bg-gray-200 dark:bg-darker-200' : 'bg-blue-200 dark:bg-darker-100'] " >
+    <div :class="['rounded-2xl p-1.5', isSelf ? 'bg-blue-200 dark:bg-darker-600/20' : 'bg-gray-200 dark:bg-darker-200'] " >
         <SmallUser
             :user="getUser(this.block.blockOwnerId)"
             :userNameCls="'text-gray-600 dark:text-gray-300 '"
@@ -57,23 +57,3 @@ export default {
 
 }
 </script>
-
-<style>
-
-
-.shadow-blue {
-    -webkit-box-shadow: -5px 8px 10px -6px rgb(0 74 149 / 56%);
-    -moz-box-shadow: -5px 8px 10px -6px rgb(0 74 149 / 56%);
-            box-shadow: -5px 8px 10px -6px rgb(0 74 149 / 56%);
-}
-
-.border-blue{
-    border: 1px solid rgb(0 74 149 / 26%);
-}
-
-.border-gray{
-    border: 1px solid rgb(45 35 35 / 26%);
-}
-
-
-</style>

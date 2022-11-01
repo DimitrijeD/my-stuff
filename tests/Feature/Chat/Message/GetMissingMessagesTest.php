@@ -85,7 +85,10 @@ class GetMissingMessagesTest extends TestCase
 
         $response = $this->get($this->getMissingMessagesEndpoint);
 
-        $response->assertJson(["message" => __("Unauthenticated.")]);
+        $response->assertJson([ 
+            "messages" => [[ "You must be logged in." ]],
+            "response_type" => "error"
+        ]);
     }
 
     public function test_random_user_cant_access()

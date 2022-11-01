@@ -20,12 +20,10 @@
         <template #body>
             <AreYouSureLayout class="py-10 border border-gray-400">
                 <template #button-as-wrapper>
-                    <button class=" grow" >Show more - with padding</button>
+                    <button>Show more - with padding .................</button>
                 </template>
                 <template #question>
-                    <p class="text-gray-400 ">
-                        Question - Do you agree? Are you sure? etc..
-                    </p>
+                    Question - Do you agree? Are you sure? etc.. Question - Do you agree? Are you sure? etc..
                 </template>
 
                 <template #yes>
@@ -39,10 +37,10 @@
 
             <AreYouSureLayout class="h-20 border border-gray-400">
                 <template #button-as-wrapper>
-                    <button class=" grow" >Show more - with height</button>
+                    <button  >Show more - with height</button>
                 </template>
                 <template #question>
-                    <p class="text-gray-400 ">
+                    <p>
                         Question - Do you agree? Are you sure? etc..
                     </p>
                 </template>

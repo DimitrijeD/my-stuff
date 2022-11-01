@@ -1,23 +1,18 @@
 <template>
-    <div :class="[
-        'w-screen lg:w-[460px] self-end visible flex-none bg-white dark:bg-darker-300', 
-        !group.window.minimized ? 'h-full lg:h-[620px]' : '',
-    ]">
+    <div :class="[ 'w-screen lg:w-[460px] self-end visible flex-none bg-white dark:bg-darker-300', !group.window.minimized ? 'h-[95%] lg:h-[620px]' : '', ]">
         <div class="flex flex-col overflow-hidden h-full">
-            <div class="cw-header-clr flex flex-nowrap gap-2 h-16"> 
+            <div class="bg-blue-400 dark:bg-gradient-to-b dark:from-darker-500 dark:via-darker-500 dark:bg-transparent flex flex-nowrap gap-2 h-16"> 
                 <slot name="header"></slot>
             </div>
 
-            <div class="h-full flex flex-col cw-border">
+            <div class="h-full flex flex-col border-l border-r border-blue-400 dark:border-none">
                 <!-- messages -->
                 <div v-show="!group.window.showConfig && !group.window.minimized" class="grow pt-1 flex flex-col ">
-                    <div class="h-full px-2 relative">
-                        <div class="absolute top-0 left-0 right-0 bottom-0 overflow-x-hidden scroll1 space-y-2 mb-2 rounded-xl"
-                            ref="scroll" 
-                            @scroll="handleScroll($event)"
-                        >
+                    <div class="h-full relative">
+                        <div class="absolute top-0 left-0 right-0 bottom-0 overflow-x-hidden scroll1 space-y-2 mb-2 rounded-xl" ref="scroll" @scroll="handleScroll($event)">
                             <slot name="messages"></slot>
                         </div>
+                        <slot name="action-response"></slot>
                     </div>
 
                     <slot name="footer"></slot>
@@ -25,7 +20,8 @@
                 <!-- / -->
 
                 <!-- Config -->
-                <div v-show="group.window.showConfig && !group.window.minimized" class="grow ">
+                <div v-show="group.window.showConfig && !group.window.minimized" class="grow">
+                    
                     <slot name="config"></slot>
                 </div>
                 <!-- / -->

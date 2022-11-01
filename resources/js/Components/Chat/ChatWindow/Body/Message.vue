@@ -3,7 +3,7 @@
         class=" px-2 pb-2 rounded-2xl  "
         :class="[ 
             isSelf ? '' : '',
-            msgNotSeen(message_id) && !isSelf ? 'bg-green-200 dark:bg-green-800' : '',
+            msgNotSeen(message_id) && !isSelf ? 'bg-green-200 dark:bg-green-600/20' : '',
         ]"
     >
         <!-- @TODO Need delete message component here with SVG icon -->

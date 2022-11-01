@@ -1,9 +1,7 @@
 import * as h from '@/Store/functions/helpers.js';
 
-const actions = 
-{
-    searchForAddUsersInApi({ commit, dispatch, getters }, data)
-    {
+const actions = {
+    searchForAddUsersInApi({ commit, dispatch, getters }, data){
         let payload = h.prepareUsersSearchRequest(data, getters.getAllUsersIds)
 
         return axios.post('users/search', payload).then((res) => {
@@ -19,8 +17,7 @@ const actions =
         })
     },
 
-    searchForAddUsersInStore({ state, commit }, data)
-    {
+    searchForAddUsersInStore({ state, commit }, data){
         // check if users object has at least one user only then proceed
 
         let usersIds = h.getByStr(state.users, data.search_str)
@@ -29,8 +26,7 @@ const actions =
         commit('setFilterForAddUsers', usersIds)
     },
 
-    resetState({ commit })
-    {
+    resetState({ commit }){
         commit('resetState')
     },
 

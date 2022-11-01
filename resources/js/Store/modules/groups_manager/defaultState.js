@@ -1,12 +1,8 @@
-export default function defaultState_groups(){ 
+export default () => { 
     return {
         groupsIds: [], // all id-s of groups user got from API
         openedGroupsIds: [], // all id-s of groups user opened
         filteredGroupsIds: [], // all calculated id-s of groups that match search params
         numGroupsWithUnseen: 0,
-
-        dropdown: {
-            isOpened: false,
-        },
     }
 }

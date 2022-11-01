@@ -23,8 +23,6 @@ class CreatorAddCreatorsTest extends TestCase
 
         // role 'requester' is attempting to give to user/users
         $this->targetRole = ChatRole::CREATOR;
-
-        $this->expectedError = ["error" => __("You have no rights to add users to group.")];
     }
 
     public function test_creator_cannot_add_1_creator_to_any_group()
@@ -36,7 +34,7 @@ class CreatorAddCreatorsTest extends TestCase
 
             $response = $this->post($this->addUsersEndpoint, $this->data);
 
-            $response->assertStatus(401)->assertJson($this->expectedError);
+            $response->assertStatus(403);
         }
     }
 
@@ -49,7 +47,7 @@ class CreatorAddCreatorsTest extends TestCase
 
             $response = $this->post($this->addUsersEndpoint, $this->data);
 
-            $response->assertStatus(401)->assertJson($this->expectedError);
+            $response->assertStatus(403);
         }
     }
 }

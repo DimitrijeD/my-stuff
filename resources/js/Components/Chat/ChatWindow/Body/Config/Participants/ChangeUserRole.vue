@@ -1,36 +1,37 @@
 <template>
-    <div>
-        <div v-if="pendingRoleChangeAccept">
-            <div class="text-center grid grid-cols-4 font-light bg-gradient-to-b 
-                from-yellow-400 to-yellow-200 
-                dark:from-darker-800 dark:to-darker-600">
-                <span class="col-span-2">Make user <span class="text-white dark:text-blue-400">{{ this.chosenNewRole.toLowerCase() }} ?</span></span>
+    <div v-if="pendingRoleChangeAccept" class="h-20">
+        <div class="h-full flex place-items-center gap-2 p-0.5 text-center grid grid-cols-4 bg-gradient-to-b border box-border 
+            from-yellow-400 to-yellow-200 
+            dark:from-darker-500 dark:to-darker-300 dark:border-darker-500 ">
+            <span class="col-span-2">Make user <span class="text-white dark:text-blue-400">{{ this.chosenNewRole.toLowerCase() }} ?</span></span>
 
-                <button
-                    class="text-green-500 hover:text-green-600 dark:text-green-500 dark:hover:text-green-400"
-                    @click="confirmedChangeRole"
-                >Yes</button>
+            <button
+                class="text-green-500 hover:text-green-600 "
+                @click="confirmedChangeRole"
+            >Yes</button>
 
-                <button
-                    class="text-gray-700 dark:text-gray-300"
-                    @click="declinedChangeRole"
-                >No</button>
-            </div>
+            <button
+                class="text-gray-700 dark:text-gray-300"
+                @click="declinedChangeRole"
+            >No</button>
         </div>
-        <div v-else>
-            <select 
-                @change="roleUpdate($event)" 
-                class="font-light w-full px-2 py-1 focus:outline-none 
-                text-gray-700
-                dark:bg-darker-300 dark:text-gray-400">
-                <option class="block w-full" selected>{{ participant.pivot.participant_role.toLowerCase() }}</option>
-                <option 
-                    v-for="toRole in changeableRoles"
-                    :value="toRole"
-                    class="block w-full"
-                > {{ toRole.toLowerCase() }} </option>
-            </select>
-        </div>
+    </div>
+    <div v-else class="h-full">
+        <select 
+            @change="roleUpdate($event)" 
+            class="font-light w-full h-full px-2 py-1 focus:outline-none border
+            bg-transparent border-gray-200/50 dark:border-darker-400/50"
+        >
+            <option :class="['bg-transparent', roleColors[getPrticipantRole(participant)]]" selected>
+                {{ getParticipantRoleForHumans(participant) }} 
+            </option>
+
+            <option 
+                v-for="toRole in changeableRoles"
+                :value="toRole"
+                class="bg-gray-300 dark:bg-darker-400"
+            > {{ toRole.toLowerCase() }} </option>
+        </select>
     </div>
 </template>
 
@@ -38,7 +39,7 @@
 import * as ns from '@/Store/module_namespaces.js'
 
 export default{
-    props:[ 'participant_id', 'changeableRoles', 'group_id' ],
+    props:[ 'participant', 'roleColors',  'changeableRoles', 'group_id' ],
 
     data(){
         return {
@@ -46,11 +47,6 @@ export default{
             chosenNewRole: null,
             gm_ns: ns.groupModule(this.group_id),
         }
-    },
-
-    computed: {
-        participant(){ return this.$store.getters[this.gm_ns + '/getParticipant'](this.participant_id) },
-        
     },
 
     methods: {
@@ -73,9 +69,21 @@ export default{
         resetVars(){
             this.pendingRoleChangeAccept = false
             this.chosenNewRole = null
-        }
+        },
+
+        getParticipantRoleForHumans(participant){
+            return participant.pivot.participant_role.toLowerCase()
+        },
+
+        getPrticipantRole(participant){
+            return participant.pivot.participant_role
+        },
     },
 
 }
 
 </script>
+
+<style scoped>
+
+</style>

@@ -4,12 +4,20 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\MyStuff\Repos\AccountVerification\EmailVerification;
+use App\Http\Response\ApiResponse;
+use Illuminate\Validation\ValidationException;
 
 class AccountVerificationController extends Controller
 {
-    // @todo get mail status (sent or not) and return correct message
     public function createOrUpdateForEmail()
     {
-        return response()->json((new EmailVerification)->createOrUpdate(auth('sanctum')->user()));
+        if(!$user = auth('sanctum')->user()) 
+            throw ValidationException::withMessages([ __('email.email_verification.requires_login') ]);
+
+        return response()->json( ApiResponse::success([
+            'messages' => [ 
+                (new EmailVerification)->createOrUpdate($user),
+            ],
+        ]) );
     }
 }

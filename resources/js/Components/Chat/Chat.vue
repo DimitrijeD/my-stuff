@@ -18,8 +18,6 @@ export default {
 
     data(){
         return{
-            test: true,
-            test1: true,
 
         }
     },
@@ -27,7 +25,7 @@ export default {
     computed: {
         ...mapGetters({ 
             user: "user",
-            openedGroupsIds: ns.groupsManager() + "/openedGroupsIds",
+            openedGroupsIds: ns.groupsManager('openedGroupsIds'),
         }),
     },
 
@@ -36,9 +34,9 @@ export default {
     },
 
     created(){
-        this.$store.dispatch(ns.groupsManager() + '/init').then(()=>{
-            this.$store.dispatch(ns.groupsManager() + '/sortNewstGroups')
-            this.$store.dispatch(ns.groupsManager()+ '/numGroupsWithUnseen')
+        this.$store.dispatch(ns.groupsManager('init')).then(()=>{
+            this.$store.dispatch(ns.groupsManager('sortNewstGroups'))
+            this.$store.dispatch(ns.groupsManager('numGroupsWithUnseen'))
         })
 
         this.listenUserToUserNotifications()
@@ -47,9 +45,9 @@ export default {
     methods:
     {
         listenUserToUserNotifications(){
-            Echo.private("App.Models.User." + this.user.id)
+            Echo.private(`App.Models.User.${this.user.id}`)
             .listen('.message.notification', e => {
-                this.$store.dispatch(ns.groupsManager() + '/openGroup', e.data.group_id)
+                this.$store.dispatch(ns.groupsManager('openGroup'), e.data.group_id)
             })
         },
 

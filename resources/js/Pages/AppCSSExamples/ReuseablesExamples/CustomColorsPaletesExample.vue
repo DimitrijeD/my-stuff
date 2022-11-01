@@ -27,6 +27,20 @@
             <div class="p-5 bg-d_orange-800"></div>
             <div class="p-5 bg-d_orange-900"></div>
         </div>
+
+        <div class="">
+            <p class="text-center p-2 mb-5">Dark Blue</p>
+            <div class="p-5 bg-d_blue-50"></div>
+            <div class="p-5 bg-d_blue-100"></div>
+            <div class="p-5 bg-d_blue-200"></div>
+            <div class="p-5 bg-d_blue-300"></div>
+            <div class="p-5 bg-d_blue-400"></div>
+            <div class="p-5 bg-d_blue-500"></div>
+            <div class="p-5 bg-d_blue-600"></div>
+            <div class="p-5 bg-d_blue-700"></div>
+            <div class="p-5 bg-d_blue-800"></div>
+            <div class="p-5 bg-d_blue-900"></div>
+        </div>
     </div>
 </template>
 

@@ -36,11 +36,9 @@ class ForgotPasswordTest extends TestCase
     public function test_user_create_new_password_reset_successfully()
     {
         $response = $this->post($this->endpoint, $this->form);
-
+        
         $response->assertJson([
-            'messages' => [
-                'success' => [__('auth.forgot_password_email.success', ['email' => $this->email])],
-            ],
+            'messages' => [[ __('auth.forgot_password_email.success', ['email' => $this->email]) ]],
             'response_type' => 'success'
         ]);
     }
@@ -58,9 +56,7 @@ class ForgotPasswordTest extends TestCase
         $response = $this->post($this->endpoint, $this->form);
 
         $response->assertJson([
-            'messages' => [
-                'success' => [__('auth.forgot_password_email.update', ['email' => $this->email])],
-            ],
+            'messages' => [[ __('auth.forgot_password_email.update', ['email' => $this->email]) ]],
             'response_type' => 'success'
         ]);
     }
@@ -79,9 +75,7 @@ class ForgotPasswordTest extends TestCase
         $response = $this->post($this->endpoint, $this->form);
 
         $response->assertJson([
-            'messages' => [
-                'error' => [__('auth.forgot_password_email.max_requests_exceeded', ['email' => $this->email])],
-            ],
+            'messages' => [[ __('auth.forgot_password_email.max_requests_exceeded', ['email' => $this->email]) ]],
             'response_type' => 'error'
         ]);
     }

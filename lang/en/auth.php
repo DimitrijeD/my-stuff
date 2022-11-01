@@ -22,7 +22,15 @@ return [
         'fake_success' => "We have sent password reset email to :email . Make sure you inserted correct email address. Check your inbox, spam and trash. If you can't see email, request another one.",
         'update' => "We have sent another password reset email to :email . Only latest code is valid. If you can't see email, make sure you inserted correct email address. Also check your inbox, spam and trash or request another one.",
         'forgot_password_email.max_requests_exceeded' => "You have requested too many emails. We will no longer send password reset emails to :email .",
-    
     ],
-    
+
+    'logout' => 'Logged out.',
+    'loggedin' => 'Logged in.',
+    'registered' => 'Your account has been created and verification email has been sent. Check your inbox.',
+
+    'verified' => 'You are verified.',
+    'already_verified' => 'You are already verified.',
+
+    'genericUnAuthorized' => 'You are not authorized to make this action.',
+    'mustBeLoggedIn' => 'You must be logged in.',
 ];

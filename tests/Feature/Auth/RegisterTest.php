@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Database\Factories\UserFactory;
+use App\Http\Response\ApiResponse;
 
 class RegisterTest extends TestCase
 {
@@ -42,18 +43,20 @@ class RegisterTest extends TestCase
         ]);
     }
 
-    public function test_user_can_register()
+    public function test_user_register_gets_json()
     {
         $response = $this->post($this->registerEndpoint, $this->userFormData);
              
-        $response->assertJson(['success' => 'Your account has been created and verification email has been sent. Check your inbox.']);
-    }
+        $response->assertStatus(201);
+        $response->assertJsonFragment(ApiResponse::success([
+            'messages' => [ [__('auth.registered') ]],
+        ]));
 
-    public function test_gets_user_object_and_token()
-    {
-        $response = $this->post($this->registerEndpoint, $this->userFormData);
-
-        $response->assertJson(['success' => 'Your account has been created and verification email has been sent. Check your inbox.']);
+        $response->assertJsonStructure([
+            'messages' => [],
+            'data' => ['user', 'token'],
+            'response_type'
+        ]);
     }
 
     public function test__required__first_name()

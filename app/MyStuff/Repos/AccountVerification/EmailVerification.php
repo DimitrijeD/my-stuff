@@ -23,20 +23,20 @@ class EmailVerification
      */
     public function createOrUpdate(User $user)
     {
-        if(!$user) return ['error' => "You must be logged in in order to verify account."];
-
         $accoutVerification = $user->account_verification;
 
         if(!$accoutVerification && $user->email_verified_at){
-            return ['success' => __('You are verified')];
+            return ['success' => __('auth.already_verified')];
         }
 
         if($accoutVerification && $user->email_verified_at){
             $accoutVerification->delete();
-            return ['success' => __('You are verified')];
+            return ['success' => __('auth.verified')];
         }
 
         $code = Str::random(AccountVerification::EMAIL_HASH_LENGTH);
+
+        $num_of_attempts = $accoutVerification ? ($accoutVerification->num_of_attempts + 1) : 1;
 
         $verification = $this->accountVerificationRepo->updateOrCreate(
             [
@@ -45,7 +45,7 @@ class EmailVerification
             ],
             [
                 'code' => Hash::make($code),
-                'num_of_attempts' => $accoutVerification ? ($accoutVerification->num_of_attempts + 1) : 1
+                'num_of_attempts' => $num_of_attempts
             ]
         );
 
@@ -58,7 +58,9 @@ class EmailVerification
         
         dispatch(new EmailVerificationJob($emailData));
 
-        return ['success' => __('Email has been sent. Check your inbox.')];
+        return $num_of_attempts > 1 
+            ? ['success' => __('email.email_verification.another_email_dispatched', ['email' => $user->email])]
+            : ['success' => __('email.email_verification.email_dispatched')];
     }
 
     /**
@@ -74,35 +76,17 @@ class EmailVerification
      * 
      * Returns string (key) which determines what to disply to user
      */
-    public function attempt(User $user, $code)
+    public function attempt(User $user, $accoutVerification, $code)
     {
-        $accoutVerification = $user->account_verification;
-
-        // If email verification exists for what ever reason while user is already verified, something doesn't work
-        if($accoutVerification && $user->email_verified_at){
-            $accoutVerification->delete();
-            return 'already_verified';
-        }
-        
-        // If account verification doesnt exist and user is not verified, something doesn't work
-        if(!$accoutVerification && !$user->email_verified_at)
-            return 'not_verified_no_verification';
-
-        // If account verification doesnt exist and user is verified
-        if(!$accoutVerification && $user->email_verified_at)
-            return 'already_verified';
-
         // $code matches hash, verify user
         if( Hash::check($code, $accoutVerification->code) ){
             $accoutVerification->delete();
-            $this->userRepo->update($user, ['email_verified_at' => now()]);
-
-            return 'success';
+            return $this->userRepo->update($user, ['email_verified_at' => now()]);
         }
 
         // All cases exhausted, inc verification's num_of_attempts and return 404
-        $verification = $this->accountVerificationRepo->update($accoutVerification,['num_of_attempts' => $accoutVerification->num_of_attempts + 1]);
+        $this->accountVerificationRepo->update($accoutVerification, ['num_of_attempts' => $accoutVerification->num_of_attempts + 1]);
 
-        return '404';
+        return false;
     }
 }

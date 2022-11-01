@@ -99,12 +99,9 @@
                 <MailIcon class="test" />
                 <span class="span">MailIcon Icon</span>
             </div>
-        </div>
-
-        <div>
-            <h2>Icon fits container</h2>
-            <div class="h-96 w-96 bg-darker-300">
-                <MailIcon class="bg-red-500" />
+            <div class="item">
+                <DoneIcon class="test" />
+                <span class="span">DoneIcon Icon</span>
             </div>
         </div>
 
@@ -136,7 +133,9 @@ import CyrcleIcon from "@/Components/Reuseables/Icons/CyrcleIcon.vue"
 import DiagonalArrowIcon from "@/Components/Reuseables/Icons/DiagonalArrowIcon.vue"
 import KeyIcon from "@/Components/Reuseables/Icons/KeyIcon.vue"
 import MailIcon from "@/Components/Reuseables/Icons/MailIcon.vue"
+import DoneIcon from "@/Components/Reuseables/Icons/DoneIcon.vue"
 
+DoneIcon
 
 export default {
     components:{
@@ -163,6 +162,7 @@ export default {
         CyrcleIcon,
         DiagonalArrowIcon,
         MailIcon,
+        DoneIcon,
     },
 
     data(){

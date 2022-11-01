@@ -1,18 +1,25 @@
 <template>
-    <div class="relative overflow-hidden">
-        <div class="absolute top-0 left-0 h-full w-full flex">
-            <div v-if="!show" @click="showMore()" class="w-full flex">
+    <div class="relative overflow-hidden rounded">
+        <div class="absolute top-0 left-0 h-full w-full flex flex-col">
+            <div v-if="!show" @click="showMore()" class="grow cursor-pointer grid grid-rows-1 place-content-center">
                 <slot name="button-as-wrapper"></slot><!--  'grow' on button is required to be provided from parent ;( -->
             </div>
-            <div v-else class="flex gap-2 items-center p-2">
-                <div class="h-full overflow-y-auto flex items-center">
-                    <slot name="question"></slot>
-                </div>
-                <div>
-                    <slot name="yes"></slot>
-                </div>
-                <div @click="showMore()">
-                    <slot name="no"></slot>
+            <div v-else class="grow flex flex-col h-full overflow-hidden ">
+                <div class="flex flex-row place-items-center h-full">
+
+                    <div class="w-full h-full scroll1 grid grid-rows-1 place-content-center">
+                        <p class="break-words p-1 m-auto">
+                            <slot name="question"></slot>
+                        </p>
+                    </div>
+
+                    <div class="flex">
+                        <slot name="yes"></slot>
+                        <div @click="showMore()">
+                            <slot name="no"></slot>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

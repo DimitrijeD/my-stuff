@@ -38,6 +38,9 @@ class ChangeGroupNameTest extends TestCase
             'group_id' => $this->allChatData['group']->id,
         ]);
 
-        $response->assertJson(['success' => __("Group name has been changed.")]);
+        $response->assertJson([
+            'messages' => [[ __('chat.name.updated') ]],
+            "response_type" => "success"
+        ]);
     }
 }

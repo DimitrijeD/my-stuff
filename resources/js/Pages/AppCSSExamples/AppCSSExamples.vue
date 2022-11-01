@@ -31,7 +31,6 @@ import BackIcon from "@/Components/Reuseables/Icons/BackIcon.vue"
 
 import AreYouSureLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/AreYouSureLayoutExample.vue'
 import DoubleScrollContentCardLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/DoubleScrollContentCardLayoutExample.vue'
-import LabelInputButtonLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/LabelInputButtonLayoutExample.vue'
 import FillRemainingSpaceLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/FillRemainingSpaceLayoutExample.vue'
 import DefaultCardLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/DefaultCardLayoutExample.vue'
 import GroupCardLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/GroupCardLayoutExample.vue'
@@ -49,7 +48,6 @@ export default {
     components:{
         AreYouSureLayoutExample,
         DoubleScrollContentCardLayoutExample,
-        LabelInputButtonLayoutExample,
         HeadingTag,
         FillRemainingSpaceLayoutExample,
         BackIcon,
@@ -69,7 +67,6 @@ export default {
             components: [
                 'AreYouSureLayoutExample',
                 'DoubleScrollContentCardLayoutExample',
-                'LabelInputButtonLayoutExample',
                 'HeadingTag',
                 'FillRemainingSpaceLayoutExample',
                 'IconsExample',
