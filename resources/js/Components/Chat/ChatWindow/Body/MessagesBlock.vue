@@ -31,7 +31,7 @@ export default {
         return {
             gm_ns: ns.groupModule(this.group.id), 
 
-            blocks: []
+            blocks: [],
         }
     },
 
@@ -83,32 +83,36 @@ export default {
                 return a - b;
             })
 
-            let blockCollector = this.getFreshBlockCollector()
+            let block = this.getFreshBlockCollector()
 
             let blockOwnerId = this.group.messages[msgIds[0]].user_id
+            let msgId = null
+            let message = null
 
-            for(let i in msgIds){
-                if(this.group.messages[msgIds[i]].user_id == blockOwnerId){
-                    blockCollector.messages.push(this.group.messages[msgIds[i]])
-                    blockCollector.blockOwnerId = this.group.messages[msgIds[i]].user_id
+            for(let i = 0; i < msgIds.length; i++){
+                msgId = msgIds[i]
+                message = this.group.messages[msgId]
+
+                if(message.user_id == blockOwnerId){
+                    block.messages.push(message)
+                    block.blockOwnerId = message.user_id
                 } else {
-                    this.blocks.push(blockCollector)
-                    blockCollector = this.getFreshBlockCollector()
-                    blockCollector.messages.push(this.group.messages[msgIds[i]])
-                    blockOwnerId = this.group.messages[msgIds[i]].user_id
-                    blockCollector.blockOwnerId = this.group.messages[msgIds[i]].user_id
+                    this.blocks.push(block)
+                    block = this.getFreshBlockCollector()
+                    block.messages.push(message)
+                    blockOwnerId = message.user_id
+                    block.blockOwnerId = message.user_id
                 }
             }
 
             // add last collected block if not empty
-            if(blockCollector.messages.length != 0) this.blocks.push(blockCollector)
-
+            if(block.messages.length != 0) this.blocks.push(block)
         },
 
         getFreshBlockCollector(){
             return {
                 messages: [],
-                blockOwnerId: null
+                blockOwnerId: null,
             }
         },
 

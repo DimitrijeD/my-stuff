@@ -47,23 +47,21 @@ export default {
 
     computed: {
         ...mapGetters({ 
-            filteredGroupsIds: ns.groupsManager() + "/filteredGroupsIds",
+            filteredGroupsIds: ns.groupsManager('filteredGroupsIds'),
         }),
     },
 
-    methods:
-    {
-        openChatWindow(group_id)
-        {
-            this.$store.dispatch(ns.groupsManager() + '/openGroup', group_id).then(() =>{
-                this.$store.dispatch(ns.groupsManager() + "/toggleMainDropdown")
+    methods: {
+        openChatWindow(group_id){
+            this.$store.dispatch(ns.groupsManager('openGroup'), group_id).then(() =>{
+                this.$emit('closeDropdown')
             })
         },
 
-        searchInput()
-        {
+        searchInput(){
             this.nothingFound = '';
-            this.$store.dispatch(ns.groupsManager() + '/filterGroupsBySearchString', this.searchStr)
+            this.$store.dispatch(ns.groupsManager('filterGroupsBySearchString'), this.searchStr)
+
             if(!this.filteredGroupsIds.length) this.nothingFound = 'Nothing found :/';
         },
     }

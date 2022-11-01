@@ -5,6 +5,7 @@ namespace App\Http\Requests\Participant;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\ChatRole\RoleExistsRule;
 use App\Models\ChatRole;
+use App\Exceptions\ModelGoneException;
 
 class ChangeRoleRequest extends FormRequest
 {
@@ -16,12 +17,19 @@ class ChangeRoleRequest extends FormRequest
     public function authorize()
     {
         $requestInitiatorsRole = $this->group->participants->where('id', $this->user->id)      ->first()?->pivot->participant_role;
-        $targetUserCurrentRole = $this->group->participants->where('id', $this->target_user_id)->first()?->pivot->participant_role;
         $targetUserNewRole     = $this->to_role;
         $groupType             = $this->group->model_type;
 
+        if(!$targetUserCurrentRole = $this->group
+            ->participants
+            ->where('id', $this->target_user_id)
+            ->first()
+            ?->pivot
+            ->participant_role
+        ) throw new ModelGoneException(__("chat.participants.role.gone")); 
+
         // if at least one of them is not set
-        if( !$requestInitiatorsRole || !$targetUserCurrentRole || !$targetUserNewRole || !$groupType) return false;
+        if( !$requestInitiatorsRole || !$targetUserNewRole || !$groupType) return false;
 
         return ChatRole::can([ $requestInitiatorsRole, $targetUserCurrentRole, $targetUserNewRole, $groupType ], ChatRole::ACTION_KEY_CHANGE_ROLE);
     }

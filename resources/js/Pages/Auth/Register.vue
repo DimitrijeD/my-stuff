@@ -94,33 +94,26 @@ export default {
             this.$refs['fileUpload'].click()
         },
 
-        bindFormInput(data)
-        {
+        bindFormInput(data){
             this.form[data.key] = data.value
         },
 
-        register()
-        {
+        register(){
             axios.get('/sanctum/csrf-cookie').then(response => {
-                axios.post('register', this.collectInput()).then((res) =>{
-                    this.$store.dispatch("storeUser", res.data.user).then(()=> {
-                        localStorage.setItem("token", res.data.token)
-                        this.$router.push({ path: '/email-verification/init' });
-                    })
-                }).catch((error) =>{
+                this.$store.dispatch('register', this.collectInput()).then(() => {
+                    this.$router.push({ path: '/email-verification/init' });
+                }).catch(error => {
                     this.errors = error.response.data.messages
-                });
-            });
+                })
+            })
         },
 
-        onProfilePictureSelected(e)
-        {
+        onProfilePictureSelected(e){
             this.form.profilePicture = e.target.files[0];
             this.previewImgUrl = URL.createObjectURL(this.form.profilePicture);
         },
 
-        collectInput()
-        {
+        collectInput(){
             let data = new FormData;
 
             data.append('first_name',            this.form.first_name);

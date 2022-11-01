@@ -9,32 +9,28 @@
         </template>
 
         <template #content>
-            <div class="grid grid-cols-12 items-center" v-for="participant in participants" :key="participant.id">
-                <div class="col-span-6">
-                    <SmallUser :user="participant" :userNameCls="'text-gray-700 dark:text-gray-400'" /> 
+            <div class="overflow-hidden grid grid-cols-2 gap-2 items-center" v-for="participant in participants" :key="participant.id">
+                <div class="p-2 sm:p-1">
+                    <SmallUser :user="participant"  /> 
                 </div>
 
-                <div class="col-span-5">
-                    <div v-if="canPromoteDemote(participant)">
-                        <ChangeUserRole
-                            :participant_id="participant.id"
-                            :changeableRoles="permissions[change_role][getPrticipantRole(participant)]"
-                            :group_id="group.id"
+                <div class="flex items-center gap-2 h-full">
+                    <RoleBlock 
+                        :canPromoteDemote="canPromoteDemote(participant)" 
+                        :participant="participant" 
+                        :permissions="permissions" 
+                        :group_id="group.id"
+                    />
+
+                    <div class="ml-auto ">
+                        <DeleteIcon v-if="canRemove(participant)" @click="removeParticipant(participant.id)"
+                            class="mr-2 stroke-gray-500 hover:stroke-red-400 fill-transparent h-8 cursor-pointer"
                         />
                     </div>
-                    <div v-else class="text-gray-700 dark:text-gray-400 font-light px-4 py-1.5">
-                        {{ getParticipantRoleForHumans(participant) }}
-                    </div>
                 </div>
-
-                <DeleteIcon v-if="canRemove(participant)" @click="removeParticipant(participant.id)"
-                    class="stroke-red-300 hover:stroke-red-400 fill-transparent h-8 cursor-pointer"
-                />
-
             </div>
         </template>
     </DefaultCardLayout>
-
 </template>
 
 <script>
@@ -44,30 +40,22 @@ import ChangeUserRole from '@/Components/Chat/ChatWindow/Body/Config/Participant
 import * as ns from '@/Store/module_namespaces.js'
 import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue';
 import AreYouSureLayout from '@/Layouts/AreYouSureLayout.vue'
+import RoleBlock from '@/Components/Chat/ChatWindow/Body/Config/Participants/RoleBlock.vue'
 
 export default {
     props: [ 'group', 'chatRole', 'permissions', 'roles' ],
 
-    components: {
-        SmallUser,
-        ChangeUserRole,
-        DefaultCardLayout,
-        DeleteIcon,
-        AreYouSureLayout,
-    },
+    components: { SmallUser, ChangeUserRole, DefaultCardLayout, DeleteIcon, AreYouSureLayout, RoleBlock, },
 
     data() {
         return {
             user: this.$store.state.auth.user,
-            change_role: 'change_role',
-            remove: 'remove',
             gm_ns:  ns.groupModule(this.group.id),
         }
     },
 
     computed: {
         participants(){ return this.sortParticipantsByRoleHierarchy(this.$store.getters[this.gm_ns + '/participants']) },
-
     },
 
     methods: 

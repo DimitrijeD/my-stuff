@@ -1,4 +1,4 @@
-import defaultState_chat_rules from "./defaultState_chat_rules"
+import defaultState from "./defaultState"
 
 const mutations = 
 {
@@ -10,7 +10,7 @@ const mutations =
     init_num_messages:     (state, val) => state.init_num_messages     = val,
     earliest_num_messages: (state, val) => state.earliest_num_messages = val,
 
-    resetState: (state) => Object.assign(state, defaultState_chat_rules()),
+    resetState: (state) => Object.assign(state, defaultState()),
 }
 
 export default mutations

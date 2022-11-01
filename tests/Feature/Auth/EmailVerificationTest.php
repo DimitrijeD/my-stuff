@@ -3,9 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\AccountVerification;
@@ -27,7 +25,6 @@ class EmailVerificationTest extends TestCase
             'email' => $this->email,
             'password' => Hash::make($this->password),
             'email_verified_at' => null,
-            'remember_token' => Str::random(10),
         ]);
         
         $this->data = ['email' => $this->email];
@@ -40,9 +37,7 @@ class EmailVerificationTest extends TestCase
             'user_id' => $this->user->id,
         ]);
 
-        $this->withHeaders([ 
-            'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}" 
-        ]);
+        $this->withHeader('Authorization', "Bearer {$this->user->createToken('app')->plainTextToken}");
         
         $this->requestEmailToVerifyAccount = '/api/email-verification/create-or-update';
         $this->attemptEndpoint = "/api/email-verification/uid/{$this->user->id}/c/{$this->code}";
@@ -58,7 +53,7 @@ class EmailVerificationTest extends TestCase
     public function test_success()
     {
         $response = $this->get($this->attemptEndpoint);
-        
+
         $response->assertOk();
     }
 
@@ -99,10 +94,9 @@ class EmailVerificationTest extends TestCase
         $Endpoint = "/api/email-verification/uid/{$this->user->id}/c/{$code}";
 
         $response = $this->get($Endpoint);
-
+       
         $response->assertJson([
-            'status' => 'error',
-            'code' => 404
+            'messages' => [ [ __("email.email_verification.incorrect_hash") ] ],
         ]);
     }
 
@@ -113,27 +107,27 @@ class EmailVerificationTest extends TestCase
      * this route provides "status" value which defines what user should do next to verify email.
      * 
      */
-    public function test_if_not_verified_return_status()
+    public function test_not_verified_is_pending_verification()
     {
-        $this->user = User::factory()->create( ['email_verified_at' => null] );
-        $this->withHeader('Authorization', "Bearer {$this->user->createToken('app')->plainTextToken}");
-
         $response = $this->get('/api/email-verification/is-validated');
 
         $response->assertJson([
-            "status" => "not_verified",
-            "message" => __("Please verify your account."),
-            "user" => [
-                'id' => $this->user->id,
-                'first_name' => $this->user->first_name ,
-                'last_name' => $this->user->last_name,
-                'email' => $this->user->email ,
-                'image' => $this->user->image ,
-                'thumbnail' => $this->user->thumbnail ,
-                'email_verified_at' => $this->user->email_verified_at,
-                'created_at' => $this->user->created_at->jsonSerialize(),
-                'updated_at' => $this->user->updated_at->jsonSerialize(),
-            ],
+            'response_type' => 'success',
+            'messages' => [[__("email.email_verification.pending_verification")]],
+            'data' => [
+                'status' => 'not_verified',
+                'user' => [
+                    'id' => $this->user->id,
+                    'first_name' => $this->user->first_name ,
+                    'last_name' => $this->user->last_name,
+                    'email' => $this->user->email ,
+                    'image' => $this->user->image ,
+                    'thumbnail' => $this->user->thumbnail ,
+                    'email_verified_at' => $this->user->email_verified_at,
+                    'created_at' => $this->user->created_at->jsonSerialize(),
+                    'updated_at' => $this->user->updated_at->jsonSerialize(),
+                ],
+            ]
         ]);
     }
 }

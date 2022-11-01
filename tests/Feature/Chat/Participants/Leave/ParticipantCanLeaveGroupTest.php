@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 use Database\Seeders\ChatGroupClusterSeeder;
 use App\Models\User;
+use App\Http\Response\ApiResponse;
 
 class ParticipantCanLeaveGroupTest extends TestCase
 {
@@ -38,7 +39,9 @@ class ParticipantCanLeaveGroupTest extends TestCase
     {
         $response = $this->get($this->endpoint);
 
-        $response->assertJson(['success' => __('You have left this group.')]);
+        $response->assertJson(ApiResponse::info([
+            'messages' => [[ __('chat.participants.leave.success') ]],
+        ]));
     }
 
     public function test_pivot_is_removed()
@@ -77,18 +80,18 @@ class ParticipantCanLeaveGroupTest extends TestCase
         $response = $this->get($this->endpoint);
 
         $response->assertJson([
-            'errors' => __("You have no access rights to this chat group.")
+            'messages' => [[ __('chat.noAccess') ]],
         ]);
     }
 
     public function test_guest_cannot_leave_group()
     {
-        $this->withHeader('Authorization', "Bearer ");
+        $this->withHeader('Authorization', "Bearer asd");
 
         $response = $this->get($this->endpoint);
 
-        $response->assertJson([
-            'message' => __("Unauthenticated.")
+        $response->assertStatus(401)->assertJson([
+            'messages' => [[ __("auth.mustBeLoggedIn") ]]
         ]);
     }
 

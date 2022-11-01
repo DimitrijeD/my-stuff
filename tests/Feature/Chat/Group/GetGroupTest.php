@@ -110,8 +110,11 @@ class GetGroupTest extends TestCase
     {
         $this->withHeader('Authorization', "Bearer ");
         $response = $this->get($this->getOneGroupEndpoint);
-
-        $response->assertJson(["message" => __("Unauthenticated.")]);
+        
+        $response->assertJson([ 
+            "messages" => [[ "You must be logged in." ]],
+            "response_type" => "error"
+        ]);
     }
 
     public function test_not_accessible_by_non_participant()
@@ -137,13 +140,16 @@ class GetGroupTest extends TestCase
     {
         $response = $this->get("/api/chat/group/34789");
 
-        $response->assertJson(['errors' => __("Group doesn't exist.")]);
+        $response->assertJson([ 
+            "messages" => [[ __('model.groupNotFound') ]],
+            "response_type" => "error"
+        ]);
     }
 
-    public function test_get_refreshed_group()
-    {
-        $response = $this->get("/api/chat/group/refresh/{$this->group->id}");
+    // public function test_get_refreshed_group()
+    // {
+    //     $response = $this->get("/api/chat/group/refresh/{$this->group->id}");
 
-        $response->assertOk(); // TODO
-    }
+    //     $response->assertOk(); // TODO
+    // }
 }

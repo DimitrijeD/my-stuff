@@ -51,8 +51,7 @@ class ResetPasswordTest extends TestCase
         $response = $this->post($this->endpoint, $this->form);
 
         $response->assertJson([
-            'messages' => __('passwords.success_reset_unathenticated'),
-            'response_type' => 'success',
+            'messages' => [[ __('passwords.success_reset_unathenticated') ]]
         ]);
     }
         
@@ -61,10 +60,9 @@ class ResetPasswordTest extends TestCase
         $this->withHeader('Authorization', "Bearer {$this->user->createToken('app')->plainTextToken}");
 
         $response = $this->post($this->endpoint, $this->form);
-
+        
         $response->assertJson([
-            'messages' =>  __('passwords.success_reset_authenticated'),
-            'response_type' => 'success',
+            'messages' => [[ __('passwords.success_reset_authenticated') ]]
         ]);
     }
 

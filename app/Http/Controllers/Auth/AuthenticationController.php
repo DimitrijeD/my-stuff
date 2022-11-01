@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use App\MyStuff\Repos\User\UserEloquentRepo;
 use App\MyStuff\Repos\AccountVerification\AccountVerificationEloquentRepo;
 use App\MyStuff\Repos\AccountVerification\EmailVerification;
-
+use App\Http\Response\ApiResponse;
+use Illuminate\Validation\ValidationException;
 use App\Models\AccountVerification;
 
 class AuthenticationController extends Controller
@@ -22,62 +23,59 @@ class AuthenticationController extends Controller
         ]);
 
         if(!$user = $userRepo->find($request->user_id))
-            abort(403);
+            throw ValidationException::withMessages([ __('email.email_verification.no_user_danger') ]);
 
-        $status = (new EmailVerification)->attempt($user, $request->code);
-
-        switch($status){
-            case 'success':
-                return response()->json([
+        $accoutVerification = $user->account_verification;
+        
+        // If email verification exists for what ever reason while user is verified, something doesn't work
+        if($accoutVerification && $user->email_verified_at){
+            $accoutVerification->delete();
+            return [
+                'messages' => [ [ __("auth.already_verified") ] ],
+                'data' => [
                     'status' => 'success',
-                    'message' => __("Account validated."),
                     'user' => $user,
-                ]);
-
-            case 'already_verified':
-                return response()->json([
-                    'status' => 'success',
-                    'message' => __("You are already verified."),
-                    'user' => $user,
-                ]);
-
-            case 'not_verified_no_verification':
-                return response()->json([
-                    'status' => 'error',
-                    'message' => __("There was a problem with your verification. You can resend verification."),
-                    'user' => $user,
-                ]);
-
-            case '404':
-                return response()->json([
-                    'status' => 'error',
-                    'code' => 404
-                ]);
-
-            default:
-                return response()->json([
-                    'status' => 'error',
-                    'code' => 404
-                ]);
+                ]
+            ];
         }
+
+        // If account verification doesnt exist and user is not verified, something doesn't work
+        if(!$accoutVerification && !$user->email_verified_at)
+            throw ValidationException::withMessages([ __('email.email_verification.no_user_danger') ]);
+
+        $user = (new EmailVerification)->attempt($user, $accoutVerification, $request->code);
+
+        if($user)
+            return ApiResponse::success([
+                'messages' => [ [ __("email.email_verification.successfully_validated") ] ],
+                'data' => [
+                    'status' => 'success',
+                    'user' => $user,
+                ]
+            ]);
+
+        throw ValidationException::withMessages([ __("email.email_verification.incorrect_hash") ] );
     }
 
     public function isUserValidated(Request $request)
     {
-        $user = auth()->user();
+        $user = auth('sanctum')->user();
 
-        if($user->email_verified_at ){
-            return response()->json([
-                'status' => 'already_verified',
-                'message' => __("You are already verified."),
-                'user' => $user,
+        if($user->email_verified_at )
+            return ApiResponse::success([
+                'messages' => [[__('auth.already_verified')]],
+                'data' => [
+                    'status' => 'already_verified',
+                    'user' => $user,
+                ]
             ]);
-        }
 
-        return response()->json([
-            'status' => 'not_verified',
-            'message' => __("Please verify your account."),
-            'user' => $user,
+        return ApiResponse::success([
+            'messages' => [[__("email.email_verification.pending_verification")]],
+            'data' => [
+                'status' => 'not_verified',
+                'user' => $user,
+            ]
         ]);
     }
 

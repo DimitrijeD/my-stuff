@@ -5,6 +5,11 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\MyStuff\Repos\ChatGroup\ChatGroupEloquentRepo;
+use App\Exceptions\UnAuthrorizedException;
+use App\Exceptions\ModelDoesntExistException;
+use App\Exceptions\InternalServerErrorException;
+use App\Exceptions\UnAuthenticatedException;
+
 
 class ChatGroupAccess
 {
@@ -25,18 +30,15 @@ class ChatGroupAccess
     public function handle(Request $request, Closure $next)
     {
         if(!$request->group_id)
-            return response()->json(['errors' => __("Group doesn't exist.")], 404);
+            throw new InternalServerErrorException(__('chat.participants.add.failOnCreate'));
 
         if(!$user = auth()->user())
-            return response()->json(['errors' => __("Unauthenticated")], 403);
+            throw new UnAuthenticatedException();
 
-        $group = $this->chatGroupRepo->first(
+        if(!$group = $this->chatGroupRepo->first(
             ['id' => $request->group_id], 
             ['participants']
-        );
-
-        if(!$group)
-            return response()->json(['errors' => __("Group doesn't exist.")], 404);
+        )) throw new ModelDoesntExistException(__('model.groupNotFound'));
 
         if($group->participants->contains($user)){
             $request->merge([
@@ -47,6 +49,6 @@ class ChatGroupAccess
             return $next($request);
         }
 
-        return response()->json(['errors' => __("You have no access rights to this chat group.")], 403);
+        throw new UnAuthrorizedException(__('chat.noAccess'));
     }
 }

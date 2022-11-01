@@ -25,13 +25,16 @@ class RoleRemoveRoleTest extends TestCase
 
     public function test_creator_remove_participant_from_open_group()
     {
-        // check if participant exists 
-        $this->assertDatabaseHas('group_participants', [
-            'user_id' => $this->userToRemove->id,
-            'group_id' => $this->group->id,
-        ]);
+        // // check if participant exists 
+        // $this->assertDatabaseHas('group_participants', [
+        //     'user_id' => $this->userToRemove->id,
+        //     'group_id' => $this->group->id,
+        // ]);
 
-        $response = $this->get("/api/chat/group/{$this->group->id}/remove/{$this->userToRemove->id}");
+        $response = $this->post("/api/chat/group/remove-user", [
+            'group_id' => $this->group->id,
+            'remove_user_id' => $this->userToRemove->id
+        ]);
 
         // after request finishes, check if that participant was deleted
         $this->assertDatabaseMissing('group_participants', [

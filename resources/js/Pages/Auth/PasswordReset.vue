@@ -26,6 +26,7 @@
 
 <script>
 import TextInput from '@/Components/Reuseables/TextInput.vue'
+import * as ns from '@/Store/module_namespaces.js'
 
 export default {
     components:{
@@ -62,24 +63,20 @@ export default {
     },
 
     methods:{
-        bindFormInput(data)
-        {
+        bindFormInput(data){
             this.form[data.key] = data.value
         },
 
-        resetPassword()
-        {
-            axios.post('reset-password', this.collectInput()).then((res) =>{
-                this.handleResponse(res.data)
+        resetPassword(){
+            this.$store.dispatch('resetRassword', this.collectInput()).then(() => {
                 this.resetForm()
-            }).catch((error) =>{
-                this.errors = error.response.data.errors;
-            });
+            }).catch(error => {
+                this.errors = error.response.data.messages
+            })
         },
 
 
-        collectInput()
-        {
+        collectInput(){
             let data = new FormData;
 
             for(let i in this.form){
@@ -87,10 +84,6 @@ export default {
             }
 
             return data
-        },
-
-        handleResponse(msg){
-
         },
 
         resetForm(){

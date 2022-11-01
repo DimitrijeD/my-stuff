@@ -40,7 +40,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 
     Route::get('chat/init', [ChatController::class, 'init']);
     Route::get('chat/user/groups', [GroupController::class, 'getGroupsByUser']);
-    Route::get('chat/group/refresh/{group_id}', [GroupController::class, 'refreshGroup']);
+    // Route::get('chat/group/refresh/{group_id}', [GroupController::class, 'refreshGroup']);
     Route::post('chat/group/store', [GroupController::class, 'store']);
     Route::get('chat/group/{group_id}/users', [ParticipantsController::class, 'getUsersByGroup']);
     Route::post('users/search', [UsersController::class, 'getMissingUsers']);
@@ -53,7 +53,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
 
 Route::group(['prefix' => 'chat', 'middleware' => ['auth:sanctum', 'chat_group_access']], function () {
     Route::get('group/{group_id}/leave', [ParticipantsController::class, 'leaveGroup']);
-    Route::get('group/{group_id}/remove/{user_id_to_remove}', [ParticipantsController::class, 'removeUserFromGroup']);
+    Route::post('group/remove-user', [ParticipantsController::class, 'removeUserFromGroup']);
     Route::post('group/{group_id}/add-users', [ParticipantsController::class, 'addUsersToGroup']);
     Route::post('group/change-user-role', [ParticipantsController::class, 'chageParticipantsRole']);
 

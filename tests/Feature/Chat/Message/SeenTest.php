@@ -154,10 +154,11 @@ class SeenTest extends TestCase
         
         $response = $this->post($this->seenEndpoint, $data);
 
-        $response->assertJson([
-            'errors' => __("You have no access rights to this chat group.")
+        $response->assertJson([ 
+            "messages" => [[ __('chat.noAccess') ]],
+            "response_type" => "error"
         ]);
-        
+       
         Event::fake();
         // Assert an event was not dispatched... Middleware prevented bad request so this assert is pointless, but why not..
         Event::assertNotDispatched(MeSawMessage::class);

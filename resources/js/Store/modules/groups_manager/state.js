@@ -1,5 +1,5 @@
-import defaultState_groups from "./defaultState_groups"
+import defaultState from "./defaultState"
 
-const state = defaultState_groups()
+const state = defaultState
 
 export default state 

@@ -50,6 +50,8 @@ class ChangeRoleTest extends TestCase
             'to_role' => ChatRole::MODERATOR,
         ]);
 
-        $response->assertJson(['success' => __("Role has been successfully changed.")]);
+        $response->assertJson([
+            'messages' => [[ __('chat.participants.role.change') ]],
+        ]);
     }
 }

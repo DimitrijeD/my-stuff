@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\MyStuff\Repos\AccountVerification\EmailVerification;
 use App\Http\Traits\ProfilePictureTrait;
+use App\Http\Response\ApiResponse;
 
 class RegisterController extends Controller
 {
@@ -28,10 +29,14 @@ class RegisterController extends Controller
 
         (new EmailVerification)->createOrUpdate($user);
         
-        return response()->json([
-            'success' => __('Your account has been created and verification email has been sent. Check your inbox.'),
-            'user' => $user,
-            'token' => $user->createToken('app')->plainTextToken
-        ], 201);
+        return response()->json(
+            ApiResponse::success([
+                'messages' => [ [__('auth.registered') ]],
+                'data' => [
+                    'user' => $user,
+                    'token' => $user->createToken('app')->plainTextToken
+                ]
+            ]), 201
+        );
     }
 }

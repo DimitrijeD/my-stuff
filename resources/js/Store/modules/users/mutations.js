@@ -1,12 +1,11 @@
-import defaultState_Users from './defaultState_Users.js'
+import defaultState from './defaultState.js'
 
-const mutations = 
-{
+const mutations = {
     mergeUsers: (state, users) => state.users = { ...state.users, ...users},
 
     setFilterForAddUsers: (state, usersIds) => state.filterForAddUsers = usersIds,
 
-    resetState: (state) => Object.assign(state, defaultState_Users()),
+    resetState: (state) => Object.assign(state, defaultState()),
     
 }
 

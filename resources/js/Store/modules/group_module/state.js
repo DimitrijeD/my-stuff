@@ -1,5 +1,5 @@
-import defaultState_GroupModule from "./defaultState_GroupModule"
+import defaultState from "./defaultState"
 
-const state = defaultState_GroupModule
+const state = defaultState
 
 export default state

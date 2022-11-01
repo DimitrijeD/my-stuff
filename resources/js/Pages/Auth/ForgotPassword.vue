@@ -4,7 +4,7 @@
             <h1>Forgot password?</h1>
             <p class="def-paragraph mb-2">Enter your password in form and hit button to receive email</p>
 
-            <form v-on:submit.prevent="requestPasswordReset" class="w-full space-y-2">
+            <form v-on:submit.prevent="forgotPasswordRequestEmail" class="w-full space-y-2">
                 <TextInput 
                     :name="'email'"
                     :type="'email'"
@@ -25,6 +25,7 @@
 
 <script>
 import TextInput from '@/Components/Reuseables/TextInput.vue'
+import * as ns from '@/Store/module_namespaces.js'
 
 export default {
     components: {
@@ -46,13 +47,8 @@ export default {
 
     methods:
     {
-        requestPasswordReset(){
-            axios.post('forgot-password', this.form).then((res) => {
-                console.log(res.data, 'response')
-                
-            }).catch((error) =>{
-                
-            })
+        forgotPasswordRequestEmail(){
+            this.$store.dispatch('forgotPassword', this.form)
         },
 
         bindFormInput(data){

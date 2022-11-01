@@ -5,20 +5,18 @@ import group_module from '@/Store/modules/group_module/group_module.js';
 
 const root = {root:true}
 
-const actions = 
-{
+const actions = {
     /**
      * Entry point for chat data.
      * Includes: all bussiness logic and all users chat groups
      */
-    init({ dispatch })
-    {
+    init({ dispatch }){
         axios.get('chat/init').then((res)=>{
             for(let i in res.data.groups){
                 dispatch('initGroup', res.data.groups[i])
             }
 
-            dispatch(ns.chat_rules() + '/setupRules', res.data.chat_rules, root).then(() => {
+            dispatch(ns.chat_rules('setupRules'), res.data.chat_rules, root).then(() => {
                 dispatch('numGroupsWithUnseen')
             })
         }).catch(error => {
@@ -26,18 +24,15 @@ const actions =
         })
     },
 
-    filterGroupsBySearchString({ commit, getters }, str) 
-    {
+    filterGroupsBySearchString({ commit, getters }, str){
         commit('setFilteredGroupsIds', h.getAllIds(h.sortNewest( getters['getGroupsById'](h.getBySearchString(getters['getAllGroups'], str)) )))
     },
 
-    sortNewstGroups({ commit, getters })
-    {
+    sortNewstGroups({ commit, getters }){
         commit('setFilteredGroupsIds', h.getAllIds(h.sortNewest(getters['getGroupsById'](getters['filteredGroupsIds']))))
     },
 
-    initGroup({ commit, dispatch }, group)
-    {
+    initGroup({ commit, dispatch }, group){
         let namespace = ns.groupModule(group.id)
         store.registerModule(namespace, group_module)
 
@@ -48,8 +43,7 @@ const actions =
         })
     },
 
-    storeGroup({ commit, dispatch }, data)
-    {
+    storeGroup({ commit, dispatch }, data){
         axios.post('chat/group/store', data)
         .then( res => {
             dispatch('initGroup', res.data).then(() => {
@@ -60,8 +54,7 @@ const actions =
         })
     },
 
-    openGroup({ commit, dispatch, getters }, id)
-    {
+    openGroup({ commit, dispatch, getters }, id){
         if(getters['isGroupModuleRegistered'](id)){
             if(!getters['isGroupOpened'](id)) commit('openWindow', id)  
         } else {
@@ -71,26 +64,25 @@ const actions =
         }
     },
 
-    getMissingGroup({ dispatch }, id)
-    {
+    getMissingGroup({ dispatch }, id){
         return axios.get('chat/group/' + id).then((res)=>{
             dispatch('initGroup', res.data).then(()=>{
                 dispatch('numGroupsWithUnseen').then(()=>{
                     dispatch('sortNewstGroups')
                 })
             })
-        }).catch((error) => { console.log(ns.groupsManager() + '/getMissingGroup - Trying to get group by id which doesnt exist in store nor in database.', error) })
+        }).catch((error) => { 
+
+        })
     },
 
-    closeGroup({ commit, getters, dispatch }, group_id)
-    {
+    closeGroup({ commit, getters, dispatch }, group_id){
         if(getters['isGroupOpened'](group_id)) commit('closeWindow', group_id)
         dispatch(ns.groupModule(group_id) + '/scrolledDownInitialy', true, {root:true})
         // * Disconnect irelevant listeners here
     },
 
-    numGroupsWithUnseen({ state, commit, rootGetters })
-    {
+    numGroupsWithUnseen({ state, commit, rootGetters }){
         let num = 0
         // let namespace = ''
         const seenGetter = '/seen'
@@ -111,8 +103,7 @@ const actions =
     },
 
     // When user logs out, all chat related stored data must be purged
-    purgeAllChatData({ state, commit }) 
-    {
+    purgeAllChatData({ state, commit }){
         // First remove group modules
         for(let i in state.groupsIds){
             let group_id = state.groupsIds[i]
@@ -125,19 +116,12 @@ const actions =
         commit('resetState')
     },
 
-    removeGroupId({ commit }, group_id)
-    {
+    removeGroupId({ commit }, group_id){
         commit('removeGroupId', group_id)
     },
 
-    removeFilteredGroupsId({ commit }, id)
-    {
+    removeFilteredGroupsId({ commit }, id){
         commit('removeFilteredGroupsId', id)
-    },
-
-    toggleMainDropdown({ commit })
-    {
-        commit('toggleMainDropdown')
     },
 
 }

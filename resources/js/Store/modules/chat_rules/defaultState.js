@@ -1,4 +1,4 @@
-export default function defaultState_chat_rules(){ 
+export default () => { 
     return {
         rules: null,
         keys: null,

@@ -69,8 +69,8 @@ export default {
             addedUsersIds: [],
             input: {
                 actions: {
-                    api: ns.users() + '/searchForAddUsersInApi',
-                    store: ns.users() + '/searchForAddUsersInStore'
+                    api: ns.users('searchForAddUsersInApi'),
+                    store: ns.users('searchForAddUsersInStore')
                 },
                 placeholder: "Find users to add",
             },
@@ -84,7 +84,7 @@ export default {
             user: "user",
         }),
 
-        listUsers(){ return this.$store.getters[ns.users() + '/getFilterForAddUsers'] },
+        listUsers(){ return this.$store.getters[ns.users('getFilterForAddUsers')] },
 
         anySelected() {return this.addedUsersIds.length ? true : false}, 
 
@@ -102,7 +102,7 @@ export default {
     methods: 
     {
         getUser(id){
-            return this.$store.getters[ns.users() + '/getById'](id)
+            return this.$store.getters[ns.users('getById')](id)
         },
         
         add(id){

@@ -1,28 +1,52 @@
-export function groupModule(group_id = '')
+export function groupModule(id = '')
 {
-    return `group_module_${group_id}`
+    let ns = 'group_module_'
+
+    return `${ns}${id}`
 }
 
-export function groupsManager()
+export function groupsManager(action = null)
 {
-    return 'groups_manager'
+    let ns = 'groups_manager'
+
+    return action 
+        ? `${ns}/${action}`
+        : ns
 }
 
-export function users()
+export function users(action = '')
 {
-    return 'users'
+    let ns = 'users'
+
+    return action 
+        ? `${ns}/${action}`
+        : ns
 }
 
-export function chat_rules()
+export function chat_rules(action = null)
 {
-    return 'chat_rules'
+    let ns = 'chat_rules'
+
+    return action 
+        ? `${ns}/${action}`
+        : ns
 }
 
-export function cssManager(){
-    return 'css_manager'
+export function actionResponse(id = '', action = '')
+{
+    let ns = `actionResponse`
+    if(!id) return ns
+
+    if(!action) return `${ns}${id}`
+
+    return `${ns}${id}/${action}`
 }
 
+export function actionResponseManager(action = '')
+{
+    let ns = 'action_response_manager'
 
-export function colorsModule(name = ''){
-    return `colors_module_${name}`
+    return action 
+        ? `${ns}/${action}`
+        : `${ns}`
 }

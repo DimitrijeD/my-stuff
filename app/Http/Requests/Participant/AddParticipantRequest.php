@@ -4,6 +4,8 @@ namespace App\Http\Requests\Participant;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\ChatGroup\Store\ParticipantsExistRule;
+use App\Exceptions\UnAuthrorizedException;
+use App\Models\ChatRole;
 
 class AddParticipantRequest extends FormRequest
 {
@@ -14,6 +16,19 @@ class AddParticipantRequest extends FormRequest
      */
     public function authorize()
     {
+        if(!$requestInitiator = $this->group->participants->find($this->user->id))
+            throw new UnAuthrorizedException(__('chat.participants.add.notAuthorizedToAddUsers'));
+       
+        foreach($this->usersToAdd as $userToAdd){
+            if(!ChatRole::can([
+                    $requestInitiator->pivot->participant_role,
+                    $userToAdd['target_role'], 
+                    $this->group->model_type,
+                ],
+                ChatRole::ACTION_KEY_ADD
+            )) throw new UnAuthrorizedException(__('chat.participants.add.notAuthorizedToAddUsers'));
+        }
+
         return true;
     }
 
@@ -30,7 +45,8 @@ class AddParticipantRequest extends FormRequest
         ];
     }
 
-    private function formatUserIds($usersToAdd){
+    private function formatUserIds($usersToAdd)
+    {
         $arrayOfUserIds = [];
         foreach($usersToAdd as $user){
             $arrayOfUserIds[] = $user['user_id'];

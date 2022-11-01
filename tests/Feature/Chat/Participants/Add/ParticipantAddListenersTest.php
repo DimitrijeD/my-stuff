@@ -23,8 +23,6 @@ class ParticipantAddListenersTest extends TestCase
 
         // role 'requester' is attempting to give to user/users
         $this->targetRole = ChatRole::LISTENER;
-
-        $this->expectedError = ["error" => __("You have no rights to add users to group.")];
     }
 
     public function test_participant_cannot_add_1_listener_to_any_group()
@@ -39,7 +37,7 @@ class ParticipantAddListenersTest extends TestCase
 
             $response = $this->post($this->addUsersEndpoint, $this->data);
             
-            $response->assertStatus(401)->assertJson($this->expectedError);
+            $response->assertStatus(403);
         }
     }
 
@@ -55,7 +53,7 @@ class ParticipantAddListenersTest extends TestCase
 
             $response = $this->post($this->addUsersEndpoint, $this->data);
             
-            $response->assertStatus(401)->assertJson($this->expectedError);
+            $response->assertStatus(403);
         }
     }
 }

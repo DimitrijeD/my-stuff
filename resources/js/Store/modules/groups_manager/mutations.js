@@ -1,4 +1,4 @@
-import defaultState_groups from './defaultState_groups.js'
+import defaultState from './defaultState.js'
 
 const mutations = {
     setFilteredGroupsIds: (state, ids) => state.filteredGroupsIds = ids,
@@ -15,16 +15,12 @@ const mutations = {
         const index = state.openedGroupsIds.indexOf(group_id)
         if(index > -1){
             state.openedGroupsIds.splice(index, 1)
-        } else {
-            console.log(`Group with id of ${group_id} is not in store.groups.openedGroupsIds`)
-        }
+        } 
     },
 
     numGroupsWithUnseen: (state, int) => state.numGroupsWithUnseen = int,
 
-    resetState: (state) => Object.assign(state, defaultState_groups()),
-
-    toggleMainDropdown: (state) => state.dropdown.isOpened = !state.dropdown.isOpened,
+    resetState: (state) => Object.assign(state, defaultState()),
 }
 
 export default mutations 

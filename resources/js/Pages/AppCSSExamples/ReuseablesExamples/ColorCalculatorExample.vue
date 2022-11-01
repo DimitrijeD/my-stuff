@@ -212,10 +212,6 @@ export default {
     },
 
     computed: {
-        // ...mapGetters({ 
-        //     ccs: ns.colorsModule('color_calculator') + "/state", // ccs color calculator state
-        // }),
-
         slider(){
             const cc = new HSLColorCalculator(this.slider1)
             cc.make() 
@@ -241,9 +237,7 @@ export default {
     },
 
     created(){
-        // this.$store.dispatch(ns.cssManager() + '/registerColorCalculator').then(()=>{
 
-        // })
     },
 
     methods: {

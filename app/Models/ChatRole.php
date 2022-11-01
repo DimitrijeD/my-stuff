@@ -48,7 +48,7 @@ class ChatRole
     //                                                                      //
     // php artisan db:seed --class=ChatRoleRulesSeeder                      //
     //                                                                      //
-    // in order to re-cached rules as complete table                        //
+    // in order to update rules in Redis                                    //
     // ---------------------------------------------------------------------//
 
     /**
@@ -63,8 +63,9 @@ class ChatRole
      *      and group type ('TYPE_PUBLIC_OPEN').
      *  
      * If  ROLE_CAN_ADD_ROLE_IN['CREATOR']['PARTICIPANT']  contains  'TYPE_PUBLIC_OPEN' , 
-     *    will return true else 
-     *    returns false if nested array doesn't contain value 'TYPE_PUBLIC_OPEN'.
+     *    will return true //  and allow request to execute 
+     * else 
+     *    returns false // will prevent users to be added in group
      * **** 
      */
 
@@ -216,7 +217,7 @@ class ChatRole
         self::LISTENER => []
     ];
 
-    public static function can($levels, $action = null)
+    public static function can(array $levels, string $action = null)
     {
         if(!$action || !is_string($action) || !is_array($levels)) return false;
 
