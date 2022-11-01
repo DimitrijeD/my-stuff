@@ -1,18 +1,21 @@
-import * as ns from '@/Store/module_namespaces.js'
-const root = {root:true}
 import store from '@/Store/index.js';
 import action_responses from '@/Store/modules/action_responses/action_responses.js';
+import * as ns from '@/Store/module_namespaces.js';
 
 const actions = {
     /**
      * This action registers main ActionResponse module
      */
     initModule({context}, id){
-        store.registerModule(ns.actionResponse(id), action_responses)
+        if( !store.hasModule(ns.actionResponse(id)) ){
+            store.registerModule(ns.actionResponse(id), action_responses)
+        }
     },
 
     unregisterModule({context}, id){
-        store.unregisterModule(ns.actionResponse(id))
+        if( store.hasModule(ns.actionResponse(id)) ){
+            store.unregisterModule(ns.actionResponse(id))
+        }
     },
 
 }
