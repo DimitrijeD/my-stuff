@@ -3,9 +3,8 @@
 namespace Database\Seeders\clusters\ModelBuilders;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use App\Models\UserSettings;
 use Database\Factories\UserFactory;
-use App\Models\ParticipantPivot;
 use App\Models\ChatRole;
 
 class BuildUsers
@@ -35,7 +34,7 @@ class BuildUsers
             // if user with that email exists add him, otherwise create
             if( !$user = User::where('email', $participant['email'])->first() ) {
 
-                $user = User::factory()->create([
+                $user = User::factory()->has(UserSettings::factory())->create([
                     'first_name' => $participant['first_name'], 
                     'last_name' => $participant['last_name'], 
                     'email' => $participant['email'], 
@@ -53,7 +52,7 @@ class BuildUsers
     {
         if(!$num) return []; 
         
-        $users = User::factory($num)->create();
+        $users = User::factory($num)->has(UserSettings::factory())->create();
 
         return $this->attachParticipantRolesToRandomUsers($users, ChatRole::PARTICIPANT);        
     }

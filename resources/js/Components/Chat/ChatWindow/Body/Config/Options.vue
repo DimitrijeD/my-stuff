@@ -12,7 +12,7 @@
 
         <AreYouSureLayout class="py-10 border border-red-400 rounded">
             <template #button-as-wrapper>
-                <button class="grow text-red-600 hover-text-700 dark:text-red-500 dark:hover:text-red-600">
+                <button class="danger-btn ">
                     Leave group
                 </button>
             </template>

@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Database\Factories\UserFactory;
 use App\Http\Response\ApiResponse;
+use App\Models\UserSettings;
 
 class RegisterTest extends TestCase
 {
@@ -28,7 +29,7 @@ class RegisterTest extends TestCase
             'email'      => UserFactory::getDefUser()['email'],
             'password'              => UserFactory::getDefUser()['password'],
             'password_confirmation' => UserFactory::getDefUser()['password'],
-            'profilePicture' => $image
+            'profilePicture' => $image,
         ];
         
         $this->registerEndpoint = '/api/register';

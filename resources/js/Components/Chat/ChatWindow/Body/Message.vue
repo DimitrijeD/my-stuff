@@ -1,6 +1,6 @@
 <template>
     <div 
-        class=" px-2 pb-2 rounded-2xl  "
+        class=" px-2 pb-2 rounded-2xl def-trans"
         :class="[ 
             isSelf ? '' : '',
             msgNotSeen(message_id) && !isSelf ? 'bg-green-200 dark:bg-green-600/20' : '',

@@ -44,8 +44,7 @@ const actions = {
     },
 
     storeGroup({ commit, dispatch }, data){
-        axios.post('chat/group/store', data)
-        .then( res => {
+        axios.post('chat/group/store', data).then( res => {
             dispatch('initGroup', res.data).then(() => {
                 dispatch('sortNewstGroups')
                 commit('openWindow', res.data.id)
@@ -54,12 +53,25 @@ const actions = {
         })
     },
 
-    openGroup({ commit, dispatch, getters }, id){
-        if(getters['isGroupModuleRegistered'](id)){
-            if(!getters['isGroupOpened'](id)) commit('openWindow', id)  
+    openGroup({ commit, dispatch, getters, rootState }, { group_id, initiatedBy }){
+        if(getters['isGroupModuleRegistered'](group_id)){
+            if(getters['isGroupOpened'](group_id)){
+                return
+            }
+
+            if(initiatedBy == 'user'){
+                commit('openWindow', group_id)
+                return
+            }
+
+            if(rootState.auth.user.user_setting.open_all_chats_on_new_message) {
+                commit('openWindow', group_id)  
+            }
         } else {
-            dispatch('getMissingGroup', id).then(() =>{
-                commit('openWindow', id)
+            dispatch('getMissingGroup', group_id).then(() =>{
+                if(rootState.auth.user.user_setting.open_all_chats_on_new_message){
+                    commit('openWindow', group_id)
+                }
             })
         }
     },
@@ -72,7 +84,7 @@ const actions = {
                 })
             })
         }).catch((error) => { 
-
+            // @todo Something triggered missing group, but request failed
         })
     },
 
@@ -84,7 +96,6 @@ const actions = {
 
     numGroupsWithUnseen({ state, commit, rootGetters }){
         let num = 0
-        // let namespace = ''
         const seenGetter = '/seen'
         
         for(let i in state.groupsIds){
@@ -93,8 +104,9 @@ const actions = {
             if(store.hasModule(namespace)){
                 if(!rootGetters[namespace + seenGetter]) num += 1 // if group is not seen, inc value   
             } else {
-                console.log(`group_id = ${state.groupsIds[i]} is inside 'store.groups.groupsIds' but module doesn't exist. FATAL`)
-                console.log('solution flow, do get groupById from api, then if ok, init that group, else, remove it from store')
+                // @todo `group_id = ${state.groupsIds[i]} is inside 'store.groups.groupsIds' but module doesn't exist. FATAL`
+                // 'solution flow, do get groupById from api, then if ok, init that group, else, remove it from store'
+                return
             }
         }
 

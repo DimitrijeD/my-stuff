@@ -13,6 +13,7 @@ import Profile from '@/Pages/Profile.vue';
 import AppCSSExamples from '@/Pages/AppCSSExamples/AppCSSExamples.vue';
 import Home from '@/Pages/Home.vue';
 import NotFound from '@/Pages/NotFound.vue';
+import Settings from '@/Pages/Settings/Settings.vue';
 
 /* ----------------------------------------------------------- */
 
@@ -70,6 +71,12 @@ export default [
         component: EmailVerificationAttempt,
         props: true,
         meta: { middleware: [auth_not_verified] },
+    },
+    {
+        path: '/settings',
+        name: "Settings",
+        component: Settings,
+        meta: { middleware: [auth] },
     },
     {
         path: '/profile',

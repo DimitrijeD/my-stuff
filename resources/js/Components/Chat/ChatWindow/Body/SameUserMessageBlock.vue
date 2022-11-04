@@ -8,12 +8,12 @@
         /> 
 
         <!-- List of messages in this block -->
-        <div class="space-y-2 ">
+        <TransitionGroup tag="div" name="fade" class=" space-y-2 relative">
             <div v-for="(message, index) in block.messages" :key="message.id">
                 <Message :group="group" :message_id="message.id" :isSelf="isSelf" :user_id="user.id" />
-                <hr v-if="block.messages?.[index+1]" class="w-full h-0.5 opacity-25 bg-gray-400 dark:bg-darker-400 border-0">
+                <!-- <hr v-if="block.messages?.[index+1]" class="w-full h-0.5 opacity-25 bg-gray-400 dark:bg-darker-400 border-0"> -->
             </div>
-        </div>
+        </TransitionGroup>
     </div>
 </template>
 
@@ -57,3 +57,24 @@ export default {
 
 }
 </script>
+
+<style scoped>
+
+.fade-move,
+.fade-enter-active,
+.fade-leave-active{
+    transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.fade-enter-from,
+.fade-leave-to{
+    opacity: 0;
+    transform: scaleY(0.01) translate(40px, 0);
+}
+
+.fade-leave-active {
+    position: absolute;
+    width: 100%;
+    
+}
+</style>

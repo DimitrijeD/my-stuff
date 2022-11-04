@@ -1,7 +1,7 @@
 <template>
     <DoubleScrollContentCardLayout class="select-none ">
         <template #header >
-            <search-input 
+            <SearchInput 
                 :actions="input.actions"
                 :exclude="excludeUsersFromSearch"
                 :placeholder="input.placeholder"
@@ -29,7 +29,7 @@
             </p>
             <ul class=""> 
                 <li v-for="(id, index) in addedUsersIds" :key="index">
-                    <small-user 
+                    <SmallUser 
                         :user="getUser(id)"
                         @click.native="remove(id)"
                         class="select-user dark:hover:text-green-500"
@@ -59,8 +59,8 @@ export default {
     ],
 
     components: {
-        'search-input': SearchInput,
-        'small-user': SmallUser,
+        SearchInput,
+        SmallUser,
         DoubleScrollContentCardLayout,
     },
 

@@ -7,20 +7,20 @@ use Illuminate\Validation\ValidationException;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\MyStuff\Repos\Auth\PasswordReset\PasswordResetEloquentRepo;
 use App\Models\Auth\PasswordReset;
 use App\Http\Response\ApiResponse;
+use App\MyStuff\Repos\User\UserEloquentRepo;
 
 class LoginController extends Controller
 {
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request, UserEloquentRepo $userRepo)
     {
-        $user = User::where('email', $request->email)->first();
+        $user = $userRepo->first(['email' => $request->email], ['userSetting']);
         
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([ 'email' => [__('The provided credentials are incorrect.')] ]);
+            throw ValidationException::withMessages([ 'email' => [__('auth.failed') ]]);
         }
 
         return response()->json(

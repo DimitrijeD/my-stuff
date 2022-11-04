@@ -1,5 +1,5 @@
 <template>
-    <MainLayout >
+    <MainLayout>
         <template #nav >
             <Nav />
         </template>
@@ -24,6 +24,7 @@ import MainLayout from '@/Layouts/MainLayout.vue';
 import Chat from '@/Components/Chat/Chat.vue';
 import Nav from  '@/Components/Nav/Nav.vue';
 import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.vue';
+import { useDark, useToggle } from '@vueuse/core';
 
 export default {
     components: { MainLayout, Chat, Nav, ActionResponseList, },
@@ -34,8 +35,22 @@ export default {
         }),
     },
 
+    data(){
+        return {
+            isDark: useDark(),
+        }
+    },
+
     created(){
-        this.$store.dispatch('getUser')
+        this.$store.dispatch('getUser').then(()=>{
+            if(this.user.user_setting.theme == 'light'){
+                localStorage.setItem('vueuse-color-scheme', 'auto')
+                this.isDark = false
+            } else {
+                localStorage.setItem('vueuse-color-scheme', 'dark')
+                this.isDark = true
+            }
+        })
     },
 }
 </script>

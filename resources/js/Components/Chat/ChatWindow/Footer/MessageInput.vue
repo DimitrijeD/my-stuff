@@ -49,7 +49,7 @@ export default {
             this.$store.dispatch(this.gm_ns + '/storeMessage', this.getMessageFormat()).then(()=> {
                 this.message = ''
             }).catch(error => {
-
+                //
             })
         },
 
@@ -79,3 +79,7 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+
+</style>

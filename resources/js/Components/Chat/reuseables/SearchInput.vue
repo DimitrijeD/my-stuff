@@ -28,7 +28,7 @@ export default {
     methods: 
     {
         searchUser(){
-            if(!this.searchStr.trim().length) return
+            if(this.searchStr.trim().length < 3) return
 
             let payload = {
                 search_str: this.searchStr,
