@@ -26,6 +26,7 @@ class User extends Authenticatable
         'image',
         'thumbnail',
         'email_verified_at',
+        'userSetting'
     ];
 
     /**
@@ -59,6 +60,11 @@ class User extends Authenticatable
     public function account_verification()
     {
         return $this->hasOne(AccountVerification::class);
+    }
+
+    public function userSetting()
+    {
+        return $this->hasOne(UserSettings::class);
     }
 
     /**

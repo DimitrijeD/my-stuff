@@ -45,9 +45,8 @@ export default {
     methods:
     {
         listenUserToUserNotifications(){
-            Echo.private(`App.Models.User.${this.user.id}`)
-            .listen('.message.notification', e => {
-                this.$store.dispatch(ns.groupsManager('openGroup'), e.data.group_id)
+            Echo.private(`App.Models.User.${this.user.id}`).listen('.message.notification', e => {
+                this.$store.dispatch(ns.groupsManager('openGroup'), {group_id: e.data.group_id, initiatedBy: 'system'})
             })
         },
 

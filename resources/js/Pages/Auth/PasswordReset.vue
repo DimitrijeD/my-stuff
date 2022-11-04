@@ -1,6 +1,6 @@
 <template>
     <div class="container-focus-center ">
-        <form v-on:submit.prevent="resetPassword" enctype="multipart/form-data" class="w-full space-y-2">
+        <form v-on:submit.prevent="resetPassword" enctype="multipart/form-data" class="w-full space-y-3">
             <TextInput 
                 :name="'password'"
                 :type="'password'"
@@ -26,7 +26,6 @@
 
 <script>
 import TextInput from '@/Components/Reuseables/TextInput.vue'
-import * as ns from '@/Store/module_namespaces.js'
 
 export default {
     components:{
@@ -70,6 +69,10 @@ export default {
         resetPassword(){
             this.$store.dispatch('resetRassword', this.collectInput()).then(() => {
                 this.resetForm()
+
+                if(!this.user){
+                    this.$router.push({ path: '/profile' })
+                }
             }).catch(error => {
                 this.errors = error.response.data.messages
             })

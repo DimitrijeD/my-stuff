@@ -4,7 +4,7 @@
             <h1>Forgot password?</h1>
             <p class="def-paragraph mb-2">Enter your password in form and hit button to receive email</p>
 
-            <form v-on:submit.prevent="forgotPasswordRequestEmail" class="w-full space-y-2">
+            <form v-on:submit.prevent="forgotPasswordRequestEmail" class="w-full space-y-3">
                 <TextInput 
                     :name="'email'"
                     :type="'email'"

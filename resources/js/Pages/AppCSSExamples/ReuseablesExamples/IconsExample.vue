@@ -1,112 +1,13 @@
 <template>
     <div class="space-y-10">
         <h1>Icons Examples</h1>
-        <div class="mt-10 grid grid-cols-12 gap-2">
-            <div class="item">
-                <SettingsIcon class="test"  />
-                <span class="span">Settings Icon</span>
-            </div>
-            <div class="item">
-                <ArrowDropIcon class="test" />
-                <span class="span">Arrow Drop Icon</span>
-            </div>
-            
-            <div class="item">
-                <DeleteIcon class="test" />
-                <span class="span">Delete Icon</span>
-            </div>
-            <div class="item">
-                <CheckCyrcleIcon class="test" />
-                <span class="span">Check Cyrcle Icon</span>
-            </div>
-            <div class="item">
-                <ThreeHorisontalParalelLinesIcon class="test" />
-                <span class="span">Three Horisontal Paralel LinesIcon</span>
-            </div>
-            <div class="item">
-                <SearchIcon class="test" />
-                <span class="span">Search Icon</span>
-            </div>
-            <div class="item">
-                <ThreeDotsIcon class="test" />
-                <span class="span">Three Dots Icon</span>
-            </div>
-            <div class="item">
-                <RefreshIcon class="test" />
-                <span class="span">Refresh Icon</span>
-            </div>
-            <div class="item">
-                <OpenInFullIcon class="test" />
-                <span class="span">Open In Full Icon</span>
-            </div>
-            <div class="item">
-                <FullScreenExitIcon class="test" />
-                <span class="span">Full Screen Exit Icon</span>
-            </div>
-            <div class="item">
-                <FullScreenEnterIcon class="test" />
-                <span class="span">Full Screen Enter Icon</span>
-            </div>
-            <div class="item">
-                <DoubleArrowIcon class="test" />
-                <span class="span">Double Arrow Icon</span>
-            </div>
-            <div class="item">
-                <CloseFullScreenIcon class="test" />
-                <span class="span">Close Full Screen Icon</span>
-            </div>
-            <div class="item">
-                <ArrowHeadIcon class="test" />
-                <span class="span">Arrow Head Icon</span>
-            </div>
-            <div class="item">
-                <AddIcon class="test" />
-                <span class="span">Add Icon</span>
-            </div>
-            <div class="item">
-                <DeclineIcon class="test" />
-                <span class="span">Decline Icon</span>
-            </div>
-            <div class="item">
-                <AcceptIcon class="test" />
-                <span class="span">Accept Icon</span>
-            </div>
-            <div class="item">
-                <BackIcon class="test" />
-                <span class="span">Back Icon</span>
-            </div>
-
-            <div class="item">
-                <SendMessageIcon class="test" />
-                <span class="span">Send Message Icon</span>
-            </div>
-
-            <div class="item">
-                <KeyIcon class="test" />
-                <span class="span">Key Icon</span>
-            </div>
-
-            <div class="item">
-                <CyrcleIcon class="test" />
-                <span class="span">Key Icon</span>
-            </div>
-
-            <div class="item">
-                <DiagonalArrowIcon class="test" />
-                <span class="span">DiagonalArrow Icon</span>
-            </div>
-            <div class="item">
-                <MailIcon class="test" />
-                <span class="span">MailIcon Icon</span>
-            </div>
-            <div class="item">
-                <DoneIcon class="test" />
-                <span class="span">DoneIcon Icon</span>
+        <div class="mt-10 grid grid-cols-6 md:grid-cols-12 gap-2">
+            <div v-for="icon in icons">
+                <component :is="icon" class="icon" />
+                <p class="span">{{ icon }}</p>
             </div>
         </div>
-
     </div>
-
 </template>
 
 <script>
@@ -134,8 +35,10 @@ import DiagonalArrowIcon from "@/Components/Reuseables/Icons/DiagonalArrowIcon.v
 import KeyIcon from "@/Components/Reuseables/Icons/KeyIcon.vue"
 import MailIcon from "@/Components/Reuseables/Icons/MailIcon.vue"
 import DoneIcon from "@/Components/Reuseables/Icons/DoneIcon.vue"
-
-DoneIcon
+import CheckBoxBlancIcon from "@/Components/Reuseables/Icons/CheckBoxBlancIcon.vue"
+import CheckBoxCheckIcon from "@/Components/Reuseables/Icons/CheckBoxCheckIcon.vue"
+import NumbersIcon from "@/Components/Reuseables/Icons/NumbersIcon.vue"
+import InfoIcon from "@/Components/Reuseables/Icons/InfoIcon.vue"
 
 export default {
     components:{
@@ -163,11 +66,44 @@ export default {
         DiagonalArrowIcon,
         MailIcon,
         DoneIcon,
+        CheckBoxBlancIcon,
+        CheckBoxCheckIcon,
+        NumbersIcon,
+        InfoIcon,
     },
 
     data(){
         return {
-            
+            icons: [
+                'ArrowDropIcon',
+                'DeleteIcon',
+                'SettingsIcon',
+                'CheckCyrcleIcon',
+                'ThreeHorisontalParalelLinesIcon',
+                'ThreeDotsIcon',
+                'SearchIcon',
+                'RefreshIcon',
+                'OpenInFullIcon',
+                'FullScreenExitIcon',
+                'FullScreenEnterIcon',
+                'DoubleArrowIcon',
+                'CloseFullScreenIcon',
+                'ArrowHeadIcon',
+                'AddIcon',
+                'DeclineIcon',
+                'AcceptIcon',
+                'BackIcon',
+                'SendMessageIcon',
+                'KeyIcon',
+                'CyrcleIcon',
+                'DiagonalArrowIcon',
+                'MailIcon',
+                'DoneIcon',
+                'CheckBoxBlancIcon',
+                'CheckBoxCheckIcon',
+                'NumbersIcon',
+                'InfoIcon',
+            ]
         }
     }
 }
@@ -175,14 +111,14 @@ export default {
 
 
 <style scoped>
-.test {
+.icon {
     @apply mx-auto w-[80%] h-[80%]
     bg-gray-300 fill-red-400 stroke-blue-600
     dark:bg-darker-100 dark:fill-gray-200 dark:stroke-blue-500;
 }
 
 .span {
-    @apply mx-auto px-2 py-0.5 font-extralight text-sm text-gray-400 dark:text-gray-400 ;
+    @apply mx-auto break-words p-2 font-extralight text-sm text-gray-400 dark:text-gray-400 ;
 }
 
 .item {@apply flex flex-col border border-gray-300 dark:border-darker-200  ;}

@@ -10,9 +10,18 @@ const actions = {
         commit("logout")
         
         axios.get('logout').then((res)=>{
-            dispatch(ns.actionResponse('main', 'inject'), res.data, {root:true})
+            dispatch( ns.actionResponseManager('provide'), { 
+                ...res.data, 
+                ...{ 
+                    responseContext:{
+                        moduleName: 'main',
+                        important: false
+                    }
+                }
+            } , {root:true} )
 
             const theme = localStorage.getItem('vueuse-color-scheme')
+            
             localStorage.clear()
             localStorage.removeItem('token');
             localStorage.setItem('vueuse-color-scheme', theme)
@@ -27,18 +36,26 @@ const actions = {
         })
     },
 
-    getUser({state, dispatch}) 
+    getUser({state, commit}) 
     {
         if(state.user) return
 
         return axios.get('user').then((res)=>{
-            dispatch('storeUser', res.data)
+            commit('setUser', res.data) 
         })
     },
 
     forgotPassword({dispatch}, form){
         axios.post('forgot-password', form).then((res) => {
-            dispatch(ns.actionResponse('main', 'inject'), res.data)
+            dispatch( ns.actionResponseManager('provide'), { 
+                ...res.data, 
+                ...{ 
+                    responseContext:{
+                        moduleName: 'main',
+                        important: true
+                    }
+                }
+            } , {root:true} )
         }).catch((error) =>{
             dispatch(ns.actionResponse('main', 'inject'), {
                 messages: [error.message],
@@ -50,9 +67,17 @@ const actions = {
     resetRassword({ dispatch }, form){
         return new Promise((resolve, reject) => {
             axios.post('reset-password', form).then(res => {
-                dispatch(ns.actionResponse('main', 'inject'), res.data)
+                dispatch( ns.actionResponseManager('provide'), { 
+                    ...res.data, 
+                    ...{ 
+                        responseContext:{
+                            moduleName: 'main',
+                            important: true
+                        }
+                    }
+                } , {root:true} )
                 resolve(res)  
-            }, error => {
+            }).catch((error) =>{
                 reject(error)
             })
         })
@@ -60,16 +85,26 @@ const actions = {
 
     register({ dispatch,commit }, form){
         return new Promise((resolve, reject) => {
-            axios.post('register', form).then((res) => {
-                dispatch("storeUser", res.data.data.user).then(()=> {
-                    localStorage.setItem("token", res.data.data.token)
-                    dispatch(ns.actionResponse('main', 'inject'), res.data)
+            axios.get('/sanctum/csrf-cookie').then(response => {
+                axios.post('register', form).then((res) => {
+                    dispatch("storeUser", res.data.data.user).then(()=> {
+                        localStorage.setItem("token", res.data.data.token)
+                        dispatch( ns.actionResponseManager('provide'), { 
+                            ...res.data, 
+                            ...{ 
+                                responseContext:{
+                                    moduleName: 'main',
+                                    important: true
+                                }
+                            }
+                        } , {root:true} )
 
-                    resolve(res)
+                        resolve(res)
+                    })
+                
+                }).catch((error) =>{
+                    reject(error)
                 })
-               
-            }).catch((error) =>{
-                reject(error)
             })
         })
     },
@@ -77,7 +112,15 @@ const actions = {
     resendEmailVerification({ dispatch,commit }){
         return new Promise((resolve, reject) => {
             axios.post('email-verification/create-or-update', {}).then((res)=>{
-                dispatch(ns.actionResponse('main', 'inject'), res.data)
+                dispatch( ns.actionResponseManager('provide'), { 
+                    ...res.data, 
+                    ...{ 
+                        responseContext:{
+                            moduleName: 'main',
+                            important: true
+                        }
+                    }
+                } , {root:true} )
 
                 resolve(res)
             }).catch((error) =>{
@@ -89,7 +132,15 @@ const actions = {
     checkIfValidated({ dispatch,commit }){
         return new Promise((resolve, reject) => {
             axios.get('email-verification/is-validated').then((res) => {
-                dispatch(ns.actionResponse('main', 'inject'), res.data)
+                dispatch( ns.actionResponseManager('provide'), { 
+                    ...res.data, 
+                    ...{ 
+                        responseContext:{
+                            moduleName: 'main',
+                            important: true
+                        }
+                    }
+                } , {root:true} )
 
                 resolve(res)
             }).catch((error) => {
@@ -101,13 +152,102 @@ const actions = {
     verifyEmail({ dispatch,commit }, data){
         return new Promise((resolve, reject) => {
             axios.get(`email-verification/uid/${data.user_id}/c/${data.code}`).then( res => {
-                
-                dispatch('storeUser', res.data.user)
-                dispatch(ns.actionResponse('main', 'inject'), res.data)
+                commit('setUser', res.data.user) 
+                dispatch( ns.actionResponseManager('provide'), { 
+                    ...res.data, 
+                    ...{ 
+                        responseContext:{
+                            moduleName: 'main',
+                            important: true
+                        }
+                    }
+                } , {root:true} )
 
                 resolve(res)
             }).catch( error => {
                 reject(error)
+            })
+        })
+    },
+
+
+    updateProfile({ dispatch,commit }, data){
+        return new Promise((resolve, reject) => {
+            axios.patch(`user/update`, data).then( res => {
+                commit('setUser', res.data.data.user) 
+
+                dispatch( ns.actionResponseManager('provide'), { 
+                    ...res.data, 
+                    ...{ 
+                        responseContext:{
+                            moduleName: 'main',
+                            important: false
+                        }
+                    }
+                } , {root:true} )
+
+                resolve(res)
+            }).catch( error => {
+                dispatch(ns.actionResponse('main', 'inject'), {
+                    messages: [error.message],
+                    response_type: 'error'
+                })
+
+                reject(error)
+            })
+        })
+    },
+
+    deleteAccount({ dispatch,commit }){
+        return new Promise((resolve, reject) => {
+            axios.delete(`user/delete`).then( res => {
+                commit("logout")
+                localStorage.clear()
+                localStorage.setItem('alreadyAttemptedGetUser', true)
+                
+                dispatch( ns.actionResponseManager('provide'), { 
+                    ...res.data, 
+                    ...{ 
+                        responseContext:{
+                            moduleName: 'main',
+                            important: true
+                        }
+                    }
+                } , {root:true} )
+
+                resolve(res)
+            }).catch( error => {
+                dispatch(ns.actionResponse('main', 'inject'), {
+                    messages: [error.message],
+                    response_type: 'error'
+                })
+
+                reject(error)
+            })
+        })
+    },
+
+    login({ dispatch,commit }, form){
+        return new Promise((resolve, reject) => {
+            axios.get('/sanctum/csrf-cookie').then(response => {
+                axios.post('login', form).then((res) => {
+                    localStorage.setItem("token", res.data.data.token)
+
+                    dispatch("storeUser", res.data.data.user).then(()=> {
+                        dispatch( ns.actionResponseManager('provide'), { 
+                            ...res.data, 
+                            ...{ 
+                                responseContext:{
+                                    moduleName: 'main',
+                                    important: false
+                                }
+                            }
+                        } , {root:true} )
+                    })
+                    resolve(res)
+                }).catch((error) =>{
+                    reject(error)
+                })
             })
         })
     },

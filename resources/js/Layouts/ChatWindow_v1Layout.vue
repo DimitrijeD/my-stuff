@@ -9,7 +9,7 @@
                 <!-- messages -->
                 <div v-show="!group.window.showConfig && !group.window.minimized" class="grow pt-1 flex flex-col ">
                     <div class="h-full relative">
-                        <div class="absolute top-0 left-0 right-0 bottom-0 overflow-x-hidden scroll1 space-y-2 mb-2 rounded-xl" ref="scroll" @scroll="handleScroll($event)">
+                        <div class="gray absolute top-0 left-0 right-0 bottom-0 overflow-x-hidden scroll1 space-y-2 mb-2 rounded-xl" ref="scroll" @scroll="handleScroll($event)">
                             <slot name="messages"></slot>
                         </div>
                         <slot name="action-response"></slot>
@@ -21,15 +21,12 @@
 
                 <!-- Config -->
                 <div v-show="group.window.showConfig && !group.window.minimized" class="grow">
-                    
                     <slot name="config"></slot>
                 </div>
                 <!-- / -->
             </div>
-
         </div>
     </div>
-
 </template>
 
 <script>

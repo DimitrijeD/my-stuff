@@ -25,6 +25,9 @@ class LoginTest extends TestCase
             'password' => Hash::make($this->password),
         ]);
 
+        $this->user->userSetting()->create();
+        $this->user->userSetting;
+        
         $this->userFormData = [
             'email' => $this->email,
             'password' => $this->password,
@@ -56,9 +59,7 @@ class LoginTest extends TestCase
         $response = $this->post($this->loginEndpoint, $this->userFormData);
         
         $response->assertStatus(422)->assertJson([
-            'messages' => [
-                "email" => [__("The provided credentials are incorrect.")]
-            ],
+            'messages' => [ 'email' => [__('auth.failed') ]],
             'response_type' => 'error'
         ]);
     }
@@ -70,9 +71,7 @@ class LoginTest extends TestCase
         $response = $this->post($this->loginEndpoint, $this->userFormData);
 
         $response->assertStatus(422)->assertJson([
-            'messages' => [
-                "email" => [__("The provided credentials are incorrect.")]
-            ],
+            'messages' => [ 'email' => [__('auth.failed') ]],
             'response_type' => 'error'
         ]);
     }
@@ -84,9 +83,7 @@ class LoginTest extends TestCase
         $response = $this->post($this->loginEndpoint, $this->userFormData);
 
         $response->assertStatus(422)->assertJson([
-            'messages' => [
-                "email" => [__("The provided credentials are incorrect.")]
-            ],
+            'messages' => [ 'email' => [__('auth.failed') ]],
             'response_type' => 'error'
         ]);
     }

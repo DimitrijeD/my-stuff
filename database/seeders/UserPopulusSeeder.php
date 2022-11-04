@@ -3,16 +3,16 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\UserSettings;
+use App\Models\User;
 
 class UserPopulusSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
     public function run()
     {
-        \App\Models\User::factory(100)->create(['first_name' => 'Test']);
+        User::
+            factory(100)
+            ->has(UserSettings::factory())
+            ->create(['first_name' => 'Test']);
     }
 }

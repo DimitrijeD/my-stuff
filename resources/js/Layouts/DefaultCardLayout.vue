@@ -8,7 +8,7 @@
 
         <!-- Content -->
         <div class="grow overflow-hidden relative">
-            <div class="absolute top-0 left-0 right-0 bottom-0 scroll1 space-y-2">
+            <div class="absolute top-0 left-0 right-0 bottom-0 scroll1" :class="[contentGapCls ? contentGapCls : 'space-y-2']">
                 <slot name="content"></slot>
             </div>
         </div>
@@ -59,13 +59,9 @@
  */
 
  export default {
-    props: [
+    props: [ 'contentGapCls' ],
 
-    ],
-
-    components: {
-
-    },
+    components: {  },
 
     data(){
         return {

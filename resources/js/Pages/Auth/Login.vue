@@ -1,6 +1,6 @@
 <template>
     <div class="container-focus-center">
-        <form v-on:submit.prevent="login" class="w-full space-y-2">
+        <form v-on:submit.prevent="login" class="w-full space-y-3">
             <TextInput 
                 :name="'email'"
                 :type="'email'"
@@ -19,21 +19,16 @@
                 @inputC="bindFormInput"
             />
             
-            <div>
-                <router-link class="text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-400  float-right" to="/forgot-password">Forgot password?</router-link>
-            </div>
+            <router-link class="text-gray-500 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-400 float-right" to="/forgot-password">Forgot password?</router-link>
 
-            <button 
-                type="submit"
-                class="btn-auth"
-            >Login</button>
+            <button type="submit" class="btn-auth">Login</button>
         </form>
     </div>
 </template>
 
 <script>
 import TextInput from '@/Components/Reuseables/TextInput.vue'
-import * as ns from '@/Store/module_namespaces.js'
+import { useDark, useToggle } from '@vueuse/core';
 
 export default {
     components: {
@@ -46,7 +41,8 @@ export default {
                 email: '',
                 password: ''
             },
-            errors: {}
+            errors: {},
+            isDark: useDark(),
         }
     },
 
@@ -54,19 +50,21 @@ export default {
         
     },
 
-    methods:
-    {
+    methods:{
         login(){
-            axios.get('/sanctum/csrf-cookie').then(response => {
-                axios.post('login', this.form).then((res) => {
-                    localStorage.setItem("token", res.data.data.token)
-                    this.$store.dispatch('storeUser', res.data.data.user)
-                    this.$router.push({ path: '/profile' });
-                    this.$store.dispatch(ns.actionResponse('main', 'inject'), res.data)
+            this.$store.dispatch('login',this.form).then((res) => {
+                if(res.data.data.user.user_setting.theme == 'light'){
+                    localStorage.setItem('vueuse-color-scheme', 'auto')
+                    this.isDark = false
+                } else {
+                    localStorage.setItem('vueuse-color-scheme', 'dark')
+                    this.isDark = true
+                }
 
-                }).catch((error) =>{
+                this.$router.push({ path: '/profile' })
+            }).catch((error) =>{
+                if(error.response.status == 422)
                     this.errors = error.response.data.messages
-                })
             })
         },
 

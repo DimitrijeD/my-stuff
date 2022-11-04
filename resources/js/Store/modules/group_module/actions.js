@@ -30,22 +30,35 @@ const actions = {
             'group_id': state.id,
             'lastMessageId': lastMessageId,
         }).then(res => {
-            // res. data onlyt success message
             commit('seen', true)
         })
     },
 
-    storeMessage({ commit, dispatch }, message){
-        return axios.post('chat/message/store', message).then(res => {
-            commit('updatePivot', {
-                last_message_seen_id: res.data.id,
-                participant_id: res.data.user_id, 
-                now: h.nowISO(),
-            }) 
-            commit('seen', true)
-            dispatch(ns.groupsManager('numGroupsWithUnseen'), null, {root:true})
-        }).catch( error => { 
-            console.log('gv1/storeMessage', error)
+    storeMessage({ commit, dispatch, state }, message){
+        return new Promise((resolve, reject) => {
+            axios.post('chat/message/store', message).then(res => {
+                commit('updatePivot', {
+                    last_message_seen_id: res.data.id,
+                    participant_id: res.data.user_id, 
+                    now: h.nowISO(),
+                }) 
+                commit('seen', true)
+                dispatch(ns.groupsManager('numGroupsWithUnseen'), null, {root:true})
+
+                resolve(res)  
+            }).catch( error => { 
+                dispatch('makeActionResponseMessage', {
+                    ...error.response.data,
+                    ...{
+                        responseContext:{
+                            moduleName: `groupId_${state.id}`,
+                            important: true
+                        }
+                    } 
+                })
+                
+                reject(error)
+            })
         })
     },
 
@@ -65,7 +78,15 @@ const actions = {
             commit('scrolledDownInitialy', true)
             commit('hasInitMessages', true)
         }).catch( error => { 
-            console.log(`${ns.groupModule(state.id)}/getInitMessages`, error)
+            dispatch('makeActionResponseMessage', {
+                ...error.response.data,
+                ...{
+                    responseContext:{
+                        moduleName: `groupId_${state.id}`,
+                        important: true
+                    }
+                } 
+            })
         })
     },
 
@@ -85,7 +106,15 @@ const actions = {
             })
 
         }).catch( error => { 
-            console.log(`${ns.groupModule(state.id)}/getEarliestMessages`, error) 
+            dispatch('makeActionResponseMessage', {
+                ...error.response.data,
+                ...{
+                    responseContext:{
+                        moduleName: `groupId_${state.id}`,
+                        important: true
+                    }
+                } 
+            })
         })
     },
 
@@ -100,14 +129,20 @@ const actions = {
             dispatch('makeActionResponseMessage', {
                 ...res.data,
                 ...{
-                    dispatchMessageTo: `config.groupId_${state.id}`
+                    responseContext:{
+                        moduleName: `config.groupId_${state.id}`,
+                        important: true
+                    }
                 } 
             })
         }).catch( error => { 
             dispatch('makeActionResponseMessage', {
                 ...error.response.data,
                 ...{
-                    dispatchMessageTo: `config.groupId_${state.id}`
+                    responseContext:{
+                        moduleName: `config.groupId_${state.id}`,
+                        important: true
+                    }
                 } 
             }) 
         })
@@ -121,28 +156,45 @@ const actions = {
             dispatch('makeActionResponseMessage', {
                 ...res.data,
                 ...{
-                    dispatchMessageTo: `config.groupId_${state.id}`
+                    responseContext:{
+                        moduleName: `config.groupId_${state.id}`,
+                        important: false
+                    }
                 } 
             }) 
-        }).catch((error)=> { 
-            console.log(error)
+        }).catch( error => { 
+            dispatch('makeActionResponseMessage', {
+                ...error.response.data,
+                ...{
+                    responseContext:{
+                        moduleName: `config.groupId_${state.id}`,
+                        important: true
+                    }
+                } 
+            })
         })
     },
 
     leaveGroup({ state, dispatch }){
         axios.get(`chat/group/${state.id}/leave`).then((res) => {
             dispatch('purgeGroup') 
-            dispatch('makeActionResponseMessage', {
+            dispatch(ns.actionResponseManager('provide'), {
                 ...res.data,
                 ...{
-                    dispatchMessageTo: `main`
+                    responseContext:{
+                        moduleName: `main`,
+                        important: true
+                    }
                 } 
-            }) 
+            }, {root: true}) 
         }).catch(error => { 
             dispatch('makeActionResponseMessage', {
                 ...error.response.data,
                 ...{
-                    dispatchMessageTo: `config.groupId_${state.id}`
+                    responseContext:{
+                        moduleName: `config.groupId_${state.id}`,
+                        important: true
+                    }
                 } 
             }) 
         })
@@ -155,14 +207,20 @@ const actions = {
             dispatch('makeActionResponseMessage', {
                 ...res.data,
                 ...{
-                    dispatchMessageTo: `config.groupId_${state.id}`
+                    responseContext:{
+                        moduleName: `config.groupId_${state.id}`,
+                        important: false
+                    }
                 } 
             }) 
         }).catch(error => { 
             dispatch('makeActionResponseMessage', {
                 ...error.response.data,
                 ...{
-                    dispatchMessageTo: `config.groupId_${state.id}`
+                    responseContext:{
+                        moduleName: `config.groupId_${state.id}`,
+                        important: true
+                    }
                 } 
             }) 
         })
@@ -193,7 +251,10 @@ const actions = {
             dispatch('makeActionResponseMessage', {
                 ...data,
                 ...{
-                    dispatchMessageTo: `groupId_${state.id}`
+                    responseContext:{
+                        moduleName: `groupId_${state.id}`,
+                        important: true
+                    }
                 } 
             })
         }
@@ -202,12 +263,16 @@ const actions = {
     removedParticipantEvent({ rootState, commit, dispatch }, data){
         if(rootState.auth.user.id == data.removed_user_id){
             dispatch('purgeGroup').then(() => {
-                dispatch('makeActionResponseMessage', {
+
+                dispatch(ns.actionResponseManager('provide'), {
                     ...data,
                     ...{
-                        dispatchMessageTo: `main`
+                        responseContext:{
+                            moduleName: `main`,
+                            important: true
+                        }
                     } 
-                }) 
+                }, {root:true}) 
             })
         } else {
             commit('deleteParticipant', data.removed_user_id)
@@ -223,7 +288,10 @@ const actions = {
                 participants: data.participants
             }),
             ...{
-                dispatchMessageTo: `groupId_${state.id}`
+                responseContext:{
+                    moduleName: `groupId_${state.id}`,
+                    important: true
+                }
             } 
         })
     },
@@ -233,9 +301,7 @@ const actions = {
     },
 
     changeGroupName({ state }, data){
-        axios.post("chat/group/change-group-name", data).then(res => {
-            // TODO  console.log(res.data) success message here
-        })
+        axios.post("chat/group/change-group-name", data)
     },
 
     changeGroupNameEvent({ commit }, data){
@@ -264,26 +330,11 @@ const actions = {
     },
 
     listenForNewMessages({ dispatch }, group_id){
-        Echo.private("group." + group_id)
-        .listen('.message.new', e => {
+        Echo.private(`group.${group_id}`).listen('.message.new', e => {
             dispatch('newMessageEvent', e.data).then(()=>{
                 dispatch('whoSawWhat')
             })
         })
-
-        // Echo.join(`group.${this.group_id}`)
-        // .here((users) => {
-        //     console.log(users)
-        // })
-        // .joining((user) => {
-        //     console.log(user.name);
-        // })
-        // .leaving((user) => {
-        //     console.log(user.name);
-        // })
-        // .error((error) => {
-        //     console.error(error);
-        // });
     },
 
     // refreshGroup({ state, commit, dispatch }, data)
@@ -301,7 +352,7 @@ const actions = {
         
         dispatch(ns.groupsManager('closeGroup'), group_id, {root:true}).then(()=>{
             dispatch(ns.groupsManager('removeGroupId'), group_id, {root:true}).then(()=> {
-                Echo.leave('group.' + group_id)
+                Echo.leave(`group.${group_id}`)
                 store.unregisterModule(ns.groupModule(group_id))
             })
         })
@@ -330,7 +381,7 @@ const actions = {
     },
 
     registerEventListeners({ state, rootState, commit, dispatch, getters, rootGetters }){
-        Echo.private("group." + state.id )
+        Echo.private(`group.${state.id}`)
             .listen('.message.seen', e => {
                 dispatch('seenEvent', e.data).then(() => {
                     dispatch('whoSawWhat')
@@ -381,13 +432,13 @@ const actions = {
         commit('toggleConfig')
     },
 
+    /**
+     * Action responsible for providing ActionResponse card with message content only if chat is opened (not minimized)
+     */
     makeActionResponseMessage({ state, dispatch }, data){
-        // if window is minimized, do this only when user maxmizes window in order to see msg
-        if(state.window.minimized){
-            //
-        } else {
-            dispatch(ns.actionResponse(data.dispatchMessageTo, 'inject'), data, {root:true})
-        }
+        if(!state.window.minimized){
+            dispatch( ns.actionResponseManager('provide'), data, {root:true} )
+        } 
     }
     
 }

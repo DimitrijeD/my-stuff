@@ -158,6 +158,15 @@ return [
         ],
     ],
 
+    // user.setting.theme.notAvailable
+    'user' => [
+        'setting' => [
+            'theme' => [
+                'notAvailable' => "Theme :theme is not available."
+            ]
+        ]
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes

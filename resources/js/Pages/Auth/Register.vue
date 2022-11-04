@@ -1,6 +1,6 @@
 <template>
     <div class="container-focus-center ">
-        <form v-on:submit.prevent="register" enctype="multipart/form-data" class="w-full space-y-2">
+        <form v-on:submit.prevent="register" enctype="multipart/form-data" class="w-full space-y-3">
 
             <text-input 
                 :name="'first_name'"
@@ -99,12 +99,10 @@ export default {
         },
 
         register(){
-            axios.get('/sanctum/csrf-cookie').then(response => {
-                this.$store.dispatch('register', this.collectInput()).then(() => {
-                    this.$router.push({ path: '/email-verification/init' });
-                }).catch(error => {
-                    this.errors = error.response.data.messages
-                })
+            this.$store.dispatch('register', this.collectInput()).then(() => {
+                this.$router.push({ path: '/email-verification/init' });
+            }).catch(error => {
+                this.errors = error.response.data.messages
             })
         },
 

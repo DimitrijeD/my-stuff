@@ -3,8 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-    * { @apply def-trans; }
-
     h1 { @apply mb-4 text-gray-900 dark:text-blue-500 text-4xl  ;}
     h2 { @apply mb-3 text-gray-800 dark:text-blue-400 text-3xl  ;}
     h3 { @apply mb-2 text-gray-700 dark:text-blue-400 text-2xl  ;}
@@ -17,13 +15,13 @@
         transition: background-color 600000s 0s, color 600000s 0s;
     } 
 /* 
-    /* Works on Firefox */
+    /* Firefox */
     .scrollbar-dark {
         scrollbar-width: 8px;
         scrollbar-color: blue orange;
     }
 
-    /* Works on Chrome, Edge, and Safari */
+    /* Chrome, Edge, and Safari */
     .scrollbar-dark::-webkit-scrollbar { 
         width: 8px;
      }
@@ -40,13 +38,13 @@
     }
 
 
-    /* Works on Firefox */
+    /* Firefox */
     .scrollbar {
         scrollbar-width: 8px;
         scrollbar-color: blue orange;
     }
 
-    /* Works on Chrome, Edge, and Safari */
+    /*Chrome, Edge, and Safari */
     .scrollbar::-webkit-scrollbar { 
         width: 8px;
     }
@@ -71,23 +69,23 @@
     /*------------Defaults------------*/
     .def-trans { @apply transition ease-linear ; }
 
-    .def-input { @apply placeholder:italic w-full outline-none rounded-xl; }
+    .def-input { @apply def-trans placeholder:italic w-full outline-none rounded-xl; }
 
-    .def-btn { @apply w-full text-center select-none rounded cursor-pointer; }
+    .def-btn { @apply def-trans w-full text-center select-none rounded cursor-pointer; }
 
-    .def-nav-btn { @apply text-lg font-light select-none cursor-pointer; }
+    .def-nav-btn { @apply def-trans text-lg font-light select-none cursor-pointer; }
 
-    .def-error-text { @apply text-red-500; }
+    .def-error-text { @apply def-trans text-red-500; }
 
-    .def-dropdown { @apply flex flex-col px-2 z-10 absolute border
-        border-blue-400 bg-white 
-        dark:border-blue-400 dark:bg-darker-100 ; }
+    .def-dropdown { @apply def-trans flex flex-col px-2 z-10 absolute border-4 rounded
+        border-gray-300 bg-gray-50 
+        dark:border-darker-500 dark:bg-darker-100 ; }
 
-    .def-paragraph { @apply font-light p-2
+    .def-paragraph { @apply def-trans font-light p-2
         text-gray-700 
         dark:text-gray-300; }
     
-    .def-moments-ago { @apply text-sm font-extralight
+    .def-moments-ago { @apply def-trans text-sm font-extralight
         text-gray-900 
         dark:text-gray-400; }
     /*--------------------------------------*/
@@ -97,6 +95,7 @@
     .container-wide { @apply sm:w-[90%] mx-auto;}
     .container-focus-center { @apply h-full flex justify-center items-center my-auto
         w-[80%] sm:w-[80%] md:w-[80%] lg:w-[60%] xl:w-[50%] mx-auto;}
+    .page-space-top { @apply mt-2 sm:mt-6; }
     /*--------------------------------------*/
 
     /*------------Example Context------------*/
@@ -127,10 +126,12 @@
     .not-disabled-btn { @apply def-btn text-lg font-light
         text-white bg-blue-500 hover:bg-blue-600  
         dark:text-green-300 dark:bg-darker-400 dark:hover:text-green-500; }
+
+    .danger-btn { @apply grow text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600; }
     /*-----------------------------------------*/
 
     /*------------Naviation buttons------------*/
-    .nav-btn-active{ @apply bg-gradient-to-b 
+    .nav-btn-active{ @apply def-nav-btn bg-gradient-to-b 
         from-white to-gray-300 
         dark:from-darker-50 dark:to-darker-200;}
     
@@ -144,23 +145,23 @@
 
     .small-nav-btn { @apply border-b def-nav-btn text-center py-1 px-3 flex-1; }
 
-    .small-nav-btn-active { @apply  
-        border-blue-500 text-blue-500
+    .small-nav-btn-active { @apply def-trans 
+        border-blue-400 text-blue-500
         dark:border-blue-400 dark:text-blue-400; }
 
-    .small-nav-btn-inactive { @apply opacity-80 
+    .small-nav-btn-inactive { @apply def-trans opacity-80 
         border-gray-300 text-gray-600
         dark:border-darker-500 dark:text-gray-400; }
     /*--------------------------------------*/
 
     /*------------Input------------*/
-    .small-input { @apply def-input py-2 px-3 border-2 
+    .small-input { @apply def-input py-1 px-2 sm:py-2 sm:px-3 border-2 
         text-gray-700 placeholder:text-gray-500 border-blue-200
         dark:text-gray-400 dark:bg-darker-300 dark:border-darker-400; }
     /*--------------------------------------*/
 
     /*------------Lists------------*/
-    .profile-dropdown-list-item { @apply py-2 w-full font-light select-none
+    .profile-dropdown-list-item { @apply def-trans py-2 w-full font-light select-none text-center
         text-gray-400 hover:text-gray-500
         dark:text-gray-300 dark:hover:text-gray-100; }
     /*--------------------------------------*/
@@ -192,13 +193,13 @@
 
 
     /*------------Chat Window classes------------*/
-    .cw-head-btn{ @apply w-full h-full cursor-pointer; }
+    .cw-head-btn{ @apply def-trans w-full h-full cursor-pointer; }
 
     .cw-head-btn-fill{ @apply cw-head-btn stroke-transparent
-        fill-white hover:fill-gray-300
+        fill-white hover:fill-gray-200
         dark:fill-gray-400 dark:hover:fill-gray-200; }
 
-    .cw-head-btn-fill-active{ @apply fill-blue-600 hover:fill-blue-300
+    .cw-head-btn-fill-active{ @apply fill-green-400 hover:fill-green-300
         dark:fill-blue-400 dark:hover:fill-blue-300;}
 
     .cw-head-btn-stroke{ @apply cw-head-btn fill-transparent
@@ -207,6 +208,15 @@
 
     .cw-head-text { @apply font-semibold ml-2 text-white dark:text-gray-300; }
     /*-------------------------------------------*/
+
+    /*------------Settings------------*/
+    .setting-block { @apply grid grid-cols-4 gap-2 sm:gap-4 my-auto; }
+    .setting-label { @apply p-1 sm:p-2 flex-none my-auto; }
+    .setting-input { @apply small-input col-span-3 bg-transparent dark:bg-transparent; }
+    .setting-btn-do { @apply p-4 def-btn w-full border rounded bg-white border-gray-300 dark:bg-darker-200 dark:border-darker-400 hover:bg-gray-100 dark:hover:bg-darker-300 ; }
+    .setting-btn-save   { @apply p-4 def-btn border text-green-600 bg-gray-100 border-green-300 dark:bg-darker-200 dark:border-green-600 hover:bg-gray-200 dark:hover:bg-darker-300 ; }
+    .setting-btn-cancel { @apply p-4 def-btn border bg-gray-50 border-gray-300 dark:bg-darker-200 dark:border-darker-400 hover:bg-gray-200 dark:hover:bg-darker-300 ; }
+    /*--------------------------------*/
 
 }
   

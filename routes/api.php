@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
@@ -13,6 +12,8 @@ use App\Http\Controllers\Chat\MessageController;
 use App\Http\Controllers\Chat\ParticipantsController;
 use App\Http\Controllers\RoleRuleCachingController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\ProfileController;
+
 
 Route::group(['middleware' => ['guest', 'throttle:10,1']], function () {  
     Route::post('register', [RegisterController::class, 'register']);
@@ -32,9 +33,10 @@ Route::group(['prefix' => 'email-verification', 'middleware' => ['throttle:10,1'
 
 
 Route::group(['middleware' => ['auth:sanctum']], function (){
-    Route::get('user', function (Request $request) {
-        return auth()->user();
-    });
+    Route::get('user', [ProfileController::class, 'user']);
+
+    Route::patch('user/update', [ProfileController::class, 'updateProfile']);
+    Route::delete('user/delete', [ProfileController::class, 'delete']);
 
     Route::get('logout', [LoginController::class, 'logout']);
 
