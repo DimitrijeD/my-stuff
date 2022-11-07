@@ -48,8 +48,8 @@
 </template>
 
 <script>
+import Participants from '@/Components/Chat/ChatWindow/Body/Config/Participants/Participants.vue'
 import Info         from '@/Components/Chat/ChatWindow/Body/Config/Info.vue'
-import Participants from '@/Components/Chat/ChatWindow/Body/Config/Participants.vue'
 import Options      from '@/Components/Chat/ChatWindow/Body/Config/Options.vue'
 import AddUsers     from '@/Components/Chat/ChatWindow/Body/Config/AddUsers.vue'
 
@@ -98,10 +98,6 @@ export default {
     created(){
         this.createPermissibleSettings()
         this.setFirstOpenedConfig()
-    },
-
-    mounted(){
-  
     },
 
     methods: 

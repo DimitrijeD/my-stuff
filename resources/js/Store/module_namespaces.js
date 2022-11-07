@@ -1,8 +1,12 @@
-export function groupModule(id = '')
+export function groupModule(id = '', action = '')
 {
-    let ns = 'group_module_'
+    let ns = 'groupModule_'
 
-    return `${ns}${id}`
+    if(!id) return ns
+
+    if(!action) return `${ns}${id}`
+
+    return `${ns}${id}/${action}`
 }
 
 export function groupsManager(action = null)

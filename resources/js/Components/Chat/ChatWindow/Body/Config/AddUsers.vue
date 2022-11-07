@@ -9,13 +9,12 @@
         </template>
 
         <template #content-left >
-            <ul > 
+            <ul> 
                 <li v-for="(id, index) in listUsers" :key="index" >
                     <small-user 
                         v-if="!addedUsersIds.includes(id)"
                         :user="getUser(id)"
                         @click.native="add(id)"
-                        class="select-user"
                     /> 
                 </li>
             </ul>
@@ -27,12 +26,12 @@
                 <br><br>
                 After adding user, you can remove him by clicking on him
             </p>
-            <ul class=""> 
+            <ul> 
                 <li v-for="(id, index) in addedUsersIds" :key="index">
                     <SmallUser 
                         :user="getUser(id)"
                         @click.native="remove(id)"
-                        class="select-user dark:hover:text-green-500"
+                        class="dark:hover:text-green-500"
                     />
                 </li>
             </ul>
@@ -54,15 +53,9 @@ import * as ns from '@/Store/module_namespaces.js'
 import DoubleScrollContentCardLayout from '@/Layouts/DoubleScrollContentCardLayout.vue'
 
 export default {
-    props: [
-        'group', 'permissions'
-    ],
+    props: [ 'group', 'permissions' ],
 
-    components: {
-        SearchInput,
-        SmallUser,
-        DoubleScrollContentCardLayout,
-    },
+    components: { SearchInput, SmallUser, DoubleScrollContentCardLayout, },
 
     data() {
         return {
@@ -74,8 +67,7 @@ export default {
                 },
                 placeholder: "Find users to add",
             },
-
-            gm_ns: ns.groupModule(this.group.id),
+            
         }
     },
 
@@ -86,7 +78,7 @@ export default {
 
         listUsers(){ return this.$store.getters[ns.users('getFilterForAddUsers')] },
 
-        anySelected() {return this.addedUsersIds.length ? true : false}, 
+        anySelected(){ return this.addedUsersIds.length ? true : false }, 
 
         btnTxt(){
             let numSelected = this.addedUsersIds.length
@@ -96,11 +88,12 @@ export default {
             if(numSelected > 4)                     return `Add all ${numSelected} selected users`
         },
 
-        excludeUsersFromSearch(){ return Object.keys(this.$store.getters[this.gm_ns + '/participants']) },
+        excludeUsersFromSearch(){ 
+            return Object.keys( this.group.participants )
+         },
     },
 
-    methods: 
-    {
+    methods: {
         getUser(id){
             return this.$store.getters[ns.users('getById')](id)
         },
@@ -116,19 +109,14 @@ export default {
         addParticipants(){
             if(!this.addedUsersIds.length) return
 
-            this.$store.dispatch(this.gm_ns + '/addParticipants', {
+            this.$store.dispatch(ns.groupModule(this.group.id, 'addParticipants'), {
                 addedUsersIds: this.addedUsersIds,
                 massAssignRolesTo: this.group.model_type == "PUBLIC_CLOSED" ? "LISTENER" : "PARTICIPANT"
             }).then(() =>{
                 this.addedUsersIds = []
+                this.$store.dispatch(ns.users('clearAddedUsersFromList'), this.excludeUsersFromSearch)
             })
         },
     },
 }
 </script>
-
-<style scoped>
-.select-user {
-    @apply py-1 hover:bg-green-300 dark:hover:bg-darker-50;
-}
-</style>

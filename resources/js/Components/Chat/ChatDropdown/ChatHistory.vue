@@ -13,12 +13,14 @@
         </template>
 
         <template #content>
-            <GroupCard
-                v-for="group_id in filteredGroupsIds" 
-                :key="group_id"
-                @click.native="openChatWindow(group_id)"
-                :group_id="group_id"
-            />
+            <TransitionGroup tag="div" name="list" class="space-y-2 relative">
+                <GroupCard
+                    v-for="group_id in filteredGroupsIds" 
+                    :key="group_id"
+                    @click.native="openChatWindow(group_id)"
+                    :group_id="group_id"
+                />
+            </TransitionGroup>
 
             <div v-if="nothingFound" class="h-full grid place-items-center">
                 <p class="text-center font-light text-xl">

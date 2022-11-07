@@ -52,7 +52,6 @@ export default {
             user: this.$store.state.auth.user,
             awaitConfirmation: true,
             newGroupName: this.group.name,
-            gm_ns: ns.groupModule(this.group.id),
         }
     },
 
@@ -70,7 +69,7 @@ export default {
 
     methods: 
     {
-        leaveGroup() { this.$store.dispatch(this.gm_ns + '/leaveGroup') },
+        leaveGroup() { this.$store.dispatch(ns.groupModule(this.group.id, 'leaveGroup')) },
 
         askConfirmation() { this.awaitConfirmation = false },
 
@@ -79,7 +78,7 @@ export default {
         changeGroupName(){
             if(!this.validateChangeName) return
 
-            this.$store.dispatch(this.gm_ns + '/changeGroupName', {
+            this.$store.dispatch(ns.groupModule(this.group.id, 'changeGroupName'), {
                 group_id: this.group.id,
                 new_name: this.newGroupName
             })

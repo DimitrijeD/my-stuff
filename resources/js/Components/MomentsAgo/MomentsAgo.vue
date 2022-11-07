@@ -137,17 +137,21 @@ export default{
                 case 'days':
                     return this.activateTimeout(this.day())
 
-                /**
-                 * Here you can format date time display and no more changes to it will be applyed
-                 */
-                default: 
+                default:
                     return this.date
             }
 
         },
 
         staticDateTimeDisplay(){
-            return new Date(this.date)
+
+            var dateObj = new Date(this.date);
+            
+            var month = dateObj.getUTCMonth() + 1; //months from 1-12
+            var day   = dateObj.getUTCDate();
+            var year  = dateObj.getUTCFullYear();
+
+            return year + "/" + month + "/" + day
         },
 
         activateTimeout(interval){

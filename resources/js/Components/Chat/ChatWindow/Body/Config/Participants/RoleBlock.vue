@@ -1,5 +1,5 @@
 <template>
-    <div v-if="canPromoteDemote" class="grow h-full">
+    <div v-if="canPromoteDemote" class="grow h-full my-auto ">
         <ChangeUserRole
             :participant="participant"
             :changeableRoles="permissions.change_role[getPrticipantRole(participant)]"
@@ -7,7 +7,7 @@
             :roleColors="roleColors"
         />
     </div>
-    <div v-else :class="['px-4 py-1.5', roleColors[getPrticipantRole(participant)]]">
+    <div v-else :class="['px-4 py-1.5 my-auto', roleColors[getPrticipantRole(participant)]]">
         {{ getParticipantRoleForHumans(participant) }} 
     </div>
 </template>

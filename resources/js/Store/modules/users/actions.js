@@ -2,32 +2,35 @@ import * as h from '@/Store/functions/helpers.js';
 
 const actions = {
     searchForAddUsersInApi({ commit, dispatch, getters }, data){
-        let payload = h.prepareUsersSearchRequest(data, getters.getAllUsersIds)
+        h.prepareUsersSearchRequest(data, getters.getAllUsersIds)
 
-        return axios.post('users/search', payload).then((res) => {
+        return axios.post('users/search', h.prepareUsersSearchRequest(data, getters.getAllUsersIds)).then((res) => {
             if(!res.data.length) return
 
             commit('mergeUsers', h.createDict(res.data, 'id'))
 
-            let payload = {
+            dispatch('searchForAddUsersInStore', {
                 search_str: data.search_str,
                 exclude: data.exclude
-            }
-            dispatch('searchForAddUsersInStore', payload)
+            })
         })
     },
 
     searchForAddUsersInStore({ state, commit }, data){
-        // check if users object has at least one user only then proceed
-
-        let usersIds = h.getByStr(state.users, data.search_str)
-        usersIds = h.excludeByIds(usersIds, data.exclude)
-
-        commit('setFilterForAddUsers', usersIds)
+        commit('setFilterForAddUsers', h.excludeByIds( 
+            h.findUsersByStr(state.users, data.search_str), data.exclude)
+        )
     },
 
     resetState({ commit }){
         commit('resetState')
+    },
+
+    clearAddedUsersFromList({commit, state}, exclude){
+        commit('setFilterForAddUsers', h.excludeByIds( 
+            state.filterForAddUsers, 
+            h.arrStringsToInt(exclude)) 
+        )
     },
 
 }

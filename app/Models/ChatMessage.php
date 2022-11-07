@@ -9,7 +9,7 @@ class ChatMessage extends Model
 {
     use HasFactory;
 
-    const INIT_NUM_MESSAGES = 10;
+    const INIT_NUM_MESSAGES = 20;
     const EARLIEST_NUM_MESSAGES = 20;
 
     protected $fillable = [

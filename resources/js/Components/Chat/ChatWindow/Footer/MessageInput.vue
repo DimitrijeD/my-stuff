@@ -28,7 +28,6 @@ export default {
     data(){
         return{
             message: '',
-            gm_ns: ns.groupModule(this.group_id),
         }
     },
 
@@ -46,7 +45,7 @@ export default {
         sendMessage(){
             if(this.message === '' || this.message.trim() == '') return
 
-            this.$store.dispatch(this.gm_ns + '/storeMessage', this.getMessageFormat()).then(()=> {
+            this.$store.dispatch(ns.groupModule(this.group_id, 'storeMessage'), this.getMessageFormat()).then(()=> {
                 this.message = ''
             }).catch(error => {
                 //

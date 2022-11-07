@@ -36,10 +36,12 @@ import GroupCardLayout from '@/Layouts/GroupCardLayout.vue'
 export default {
     props: [ 'group_id', ],
 
-    components: {
-        SmallUser,
-        MessageCard,
-        GroupCardLayout,
+    components: { SmallUser, MessageCard, GroupCardLayout, },
+
+    data(){
+        return {
+            txtOneParticipant: "Only you.",
+        }
     },
 
     computed:{
@@ -47,23 +49,17 @@ export default {
             user: "user",
         }),
 
-        group(){ return this.$store.getters[this.gm_ns + '/state'] },
+        group(){ return this.$store.getters[ns.groupModule(this.group_id, 'state')] },
 
-        lastMessage(){ return this.$store.getters[this.gm_ns + '/last_message'] },
+        lastMessage(){ return this.$store.getters[ns.groupModule(this.group_id, 'last_message')] },
 
         atLeastTwoParticpants(){ return Object.keys(this.group.participants).length >= 2 },
 
-        seen(){ return this.$store.getters[`${this.gm_ns}/seen`] },
+        seen(){ return this.$store.getters[ns.groupModule(this.group_id, 'seen')] },
 
-        numUnseenMsges(){ return this.$store.getters[this.gm_ns + '/numUnseenMsges'] },
+        numUnseenMsges(){ return this.$store.getters[this.group_id, 'numUnseenMsges'] },
     },
 
-    data(){
-        return {
-            txtOneParticipant: "Only you.",
-            gm_ns: ns.groupModule(this.group_id),
-        }
-    },
 
     created(){
 

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!currentShow" class="w-full grid grid-cols-2 gap-2">
+    <div v-if="!currentShow" class="container-wide grid grid-cols-2 gap-6">
         <button 
             v-for="component in components"
             class="btn" 
@@ -14,7 +14,7 @@
                 {{ component }}
         </button>
     </div>
-    <div v-else class="w-full">
+    <div v-else class="container-wide">
         <button @click="currentShow = ''" class=" w-16 fill-gray-400 dark:fill-gray-400 hover:fill-gray-500 dark:hover:fill-gray-300 float-right ">
             <BackIcon class="" />
         </button>
@@ -35,6 +35,7 @@ import FillRemainingSpaceLayoutExample from '@/Pages/AppCSSExamples/LayoutExampl
 import DefaultCardLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/DefaultCardLayoutExample.vue'
 import GroupCardLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/GroupCardLayoutExample.vue'
 import ScrollLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/ScrollLayoutExample.vue'
+import TilesAsBackgroundLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/TilesAsBackgroundLayoutExample.vue'
 
 import HeadingTag from '@/Pages/AppCSSExamples/ReuseablesExamples/HeadingTag.vue'
 import IconsExample from '@/Pages/AppCSSExamples/ReuseablesExamples/IconsExample.vue'
@@ -59,12 +60,14 @@ export default {
         ScrollLayoutExample,
         ScrollEventsExample,
         MomentsAgoExample,
+        TilesAsBackgroundLayoutExample
     },
 
     data(){
         return {
             currentShow: '',
             components: [
+                'ColorCalculatorExample',
                 'AreYouSureLayoutExample',
                 'DoubleScrollContentCardLayoutExample',
                 'HeadingTag',
@@ -72,11 +75,11 @@ export default {
                 'IconsExample',
                 'DefaultCardLayoutExample',
                 'CustomColorsPaletesExample',
-                'ColorCalculatorExample',
                 'GroupCardLayoutExample',
                 'ScrollLayoutExample',
                 'ScrollEventsExample',
                 'MomentsAgoExample',
+                'TilesAsBackgroundLayoutExample'
             ],
         }
     },

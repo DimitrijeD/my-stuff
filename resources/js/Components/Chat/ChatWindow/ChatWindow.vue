@@ -1,5 +1,5 @@
 <template>
-    <ChatWindow_v1Layout :group="group">
+    <ChatWindow_v1Layout :group="group" :size="size" >
         <template #header>
             <Header :group="group" />
         </template>
@@ -39,18 +39,19 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import * as ns from '@/Store/module_namespaces.js'
+
 import ChatWindow_v1Layout from '@/Layouts/ChatWindow_v1Layout.vue'
 import Header from "@/Components/Chat/ChatWindow/Header/Header.vue"
 
-import MessagesBlock    from "@/Components/Chat/ChatWindow/Body/MessagesBlock.vue"
-import Config           from "@/Components/Chat/ChatWindow/Body/Config.vue"
+import MessagesBlock    from "@/Components/Chat/ChatWindow/Body/MessagesBlock/MessagesBlock.vue"
+import Config           from "@/Components/Chat/ChatWindow/Body/Config/Config.vue"
 import MessageInput     from "@/Components/Chat/ChatWindow/Footer/MessageInput.vue"
-import * as ns from '@/Store/module_namespaces.js'
 import { Permissions } from '@/Components/Chat/policies/permisions.js'
 import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.vue';
 
 export default {
-    props: [ 'group_id', ],
+    props: [ 'group_id', 'size' ],
 
     components: {
         MessagesBlock,
@@ -67,12 +68,10 @@ export default {
             config: {
                 refreshGroupOnLoad: false
             },
-            gm_ns: ns.groupModule(this.group_id), 
         }
     },
 
-    computed: 
-    {
+    computed: {
         ...mapGetters({ 
             user: "user",
             rules:      ns.chat_rules('StateRules'),
@@ -80,28 +79,26 @@ export default {
             actionKeys: ns.chat_rules('StateKeys'),
         }),
 
-        group(){ return this.$store.getters[this.gm_ns + '/state']},
+        group(){ return this.$store.getters[ ns.groupModule(this.group_id, 'state') ]},
 
-        chatRole(){ return this.$store.getters[this.gm_ns + '/getUserRole'](this.user.id) },
+        chatRole(){ return this.$store.getters[ ns.groupModule(this.group_id, 'getUserRole') ](this.user.id) },
 
-        last_message(){  return this.$store.getters[`${this.gm_ns}/last_message`] },
+        last_message(){  return this.$store.getters[ ns.groupModule(this.group_id, 'last_message') ] },
 
-        seen(){ return this.$store.getters[`${this.gm_ns}/seen`]},
+        seen(){ return this.$store.getters[ ns.groupModule(this.group_id, 'seen') ]},
     },
 
     watch: {
         chatRole: function () {
             this.createPermissions()
-            // @todo call event here: User, ur role has been changed
         },
     },
 
-    created() 
-    {
+    created(){
         this.createPermissions()
-        // this.initGroup()
+        // this.refreshGroup()
 
-        this.$store.dispatch(this.gm_ns + '/registerEventListeners')
+        this.$store.dispatch( ns.groupModule(this.group_id, 'registerEventListeners') )
         this.getInitMessages()
 
     },
@@ -116,17 +113,16 @@ export default {
 
             if(this.last_message.user_id == this.user.id) return
 
-            this.$store.dispatch(this.gm_ns + '/allMessagesSeen', this.last_message.id)
+            this.$store.dispatch(  ns.groupModule(this.group_id, 'allMessagesSeen') , this.last_message.id)
         },
 
-        initGroup(){
-            if(this.config.refreshGroupOnLoad) this.$store.dispatch(this.gm_ns + '/refreshGroup', {group_id: this.group_id})
+        refreshGroup(){
+            if(this.config.refreshGroupOnLoad) this.$store.dispatch( ns.groupModule(this.group_id, 'refreshGroup') , {group_id: this.group_id})
         },
 
-        // if this group has less then N num of messages, store will trigger API for more messages
         getInitMessages(){ 
-            this.$store.dispatch(this.gm_ns + '/getInitMessages').then(() => {
-                this.$store.dispatch(`${this.gm_ns}/whoSawWhat`)
+            this.$store.dispatch( ns.groupModule(this.group_id, 'getInitMessages') ).then(() => {
+                this.$store.dispatch( ns.groupModule(this.group_id, 'whoSawWhat') )
             })
         },
 

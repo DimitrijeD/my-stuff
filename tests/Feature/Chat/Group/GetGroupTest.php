@@ -150,6 +150,6 @@ class GetGroupTest extends TestCase
     // {
     //     $response = $this->get("/api/chat/group/refresh/{$this->group->id}");
 
-    //     $response->assertOk(); // TODO
+    //     $response->assertOk(); 
     // }
 }

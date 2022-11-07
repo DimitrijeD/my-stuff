@@ -1,6 +1,8 @@
 // import _ from 'lodash';
 // window._ = _;
 
+window.colorz = new CSSStyleSheet();
+document.adoptedStyleSheets = [colorz];
 
 import axios from 'axios'
 

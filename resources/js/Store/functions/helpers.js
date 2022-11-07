@@ -1,5 +1,4 @@
-export function getById(collection, id) 
-{
+export function getById(collection, id){
     if(!collection) return null
 
     for(let index in collection){
@@ -9,8 +8,7 @@ export function getById(collection, id)
     return null
 }
 
-export function getBySearchString(groups, str)
-{   
+export function getBySearchString(groups, str){   
     let groupsIdsMatchSearch = []
     if(!groups) return []
     
@@ -31,7 +29,7 @@ export function getBySearchString(groups, str)
             const text = [
                 participant.first_name, 
                 participant.last_name, 
-                participant.email, 
+                // participant.email, 
                 group.name
             ].join(' ') 
 
@@ -45,26 +43,12 @@ export function getBySearchString(groups, str)
     return groupsIdsMatchSearch
 }
 
-export function regExpressionMatch(find, text)
-{
+export function regExpressionMatch(find, text){
     let regex = new RegExp(find, 'i');
     return text.match(regex)
 }
 
-export function getLastOwnedMsgId(messages)
-{
-    if(Object.prototype.toString.call(messages).indexOf("Object")>-1){
-        let last_id = 0
-        for(let id in messages){
-            if(parseInt(id) > last_id) last_id = parseInt(id)
-        }
-
-        return last_id
-    }
-}
-
-export function getModelsFromIds(collection, arrIds)
-{
+export function getModelsFromIds(collection, arrIds){
     if(!collection) return []
     var filteredModels = []
 
@@ -77,19 +61,16 @@ export function getModelsFromIds(collection, arrIds)
     return filteredModels
 }
 
-export function nowISO()
-{
+export function nowISO(){
     return (new Date(Date.now())).toISOString();  
 }
 
-export function getMinObjKey(x)
-{
+export function getMinObjKey(x){
     x = Object.keys(x)
     return Math.min(...x.filter(x => typeof x === 'string'))
 }
 
-export function getAllIds(collection)
-{
+export function getAllIds(collection){
     var ids = []
 
     for(let i in collection){
@@ -99,12 +80,11 @@ export function getAllIds(collection)
     return ids
 }
 
-export function createDict(collection, propertyName)
-{
+export function createDict(collection, propertyName){
     let dict = {};
 
     for (let i in collection){
-        if (collection.hasOwnProperty(i) && collection[i]?.[propertyName]) {
+        if (collection[i]?.[propertyName]) {
             const model = collection[i];
             dict[model[propertyName]] = model;
         }
@@ -113,8 +93,7 @@ export function createDict(collection, propertyName)
     return dict;
 }
   
-export function prepareParticipantsForStoreRequest(data)
-{
+export function prepareParticipantsForStoreRequest(data){
     let request = {
         group_id: data.group_id,
         usersToAdd: []
@@ -130,8 +109,7 @@ export function prepareParticipantsForStoreRequest(data)
     return request
 }
 
-export function evalSeenState(self, last_msg)
-{
+export function evalSeenState(self, last_msg){
     // if group doesnt have a single message
     if(!last_msg) return true
 
@@ -142,8 +120,7 @@ export function evalSeenState(self, last_msg)
     return self.pivot.last_message_seen_id == last_msg.id 
 }
 
-export function sortNewest(collection)
-{
+export function sortNewest(collection){
     return collection.sort(function(a,b){
         // Turn your strings into dates, and then subtract them
         // to get a value that is either negative, positive, or zero.
@@ -152,8 +129,7 @@ export function sortNewest(collection)
     // .reverse();
 }
 
-export function getByStr(users, str)
-{
+export function findUsersByStr(users, str){
     let usersIdsMatchSearch = []
 
     for(let i in users){
@@ -162,7 +138,7 @@ export function getByStr(users, str)
         const text = [
             user.first_name, 
             user.last_name, 
-            user.email, 
+            // user.email, 
         ].join(' ') 
 
         if( text.match(new RegExp(str, 'i')) ) usersIdsMatchSearch.push( user.id )
@@ -178,13 +154,11 @@ export function getByStr(users, str)
  * @param array excludeIds 
  * @returns 
  */
-export function excludeByIds(ids, excludeIds)
-{
+export function excludeByIds(ids, excludeIds){
     return ids.filter((el) => !excludeIds.includes(el))
 }
 
-export function prepareUsersSearchRequest(data, possesedIds)
-{
+export function prepareUsersSearchRequest(data, possesedIds){
     data.i_have_ids = possesedIds
 
     if('exclude' in data && data.exclude.length){
@@ -192,4 +166,12 @@ export function prepareUsersSearchRequest(data, possesedIds)
     }
 
     return data
+}
+
+export function arrStringsToInt(arr){
+    return arr.map( (val) => {
+        return typeof val == 'string' 
+            ? parseInt(val)
+            : val
+    })
 }

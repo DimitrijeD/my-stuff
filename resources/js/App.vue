@@ -27,6 +27,10 @@ import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.v
 import { useDark, useToggle } from '@vueuse/core';
 
 export default {
+    provide: {
+        headerHeight: 3*16 // 3rem
+    },
+
     components: { MainLayout, Chat, Nav, ActionResponseList, },
 
     computed: {

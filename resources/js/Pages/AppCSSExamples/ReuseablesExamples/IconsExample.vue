@@ -39,6 +39,7 @@ import CheckBoxBlancIcon from "@/Components/Reuseables/Icons/CheckBoxBlancIcon.v
 import CheckBoxCheckIcon from "@/Components/Reuseables/Icons/CheckBoxCheckIcon.vue"
 import NumbersIcon from "@/Components/Reuseables/Icons/NumbersIcon.vue"
 import InfoIcon from "@/Components/Reuseables/Icons/InfoIcon.vue"
+import LoadingIcon from "@/Components/Reuseables/Icons/LoadingIcon.vue"
 
 export default {
     components:{
@@ -70,6 +71,7 @@ export default {
         CheckBoxCheckIcon,
         NumbersIcon,
         InfoIcon,
+        LoadingIcon,
     },
 
     data(){
@@ -103,6 +105,7 @@ export default {
                 'CheckBoxCheckIcon',
                 'NumbersIcon',
                 'InfoIcon',
+                'LoadingIcon',
             ]
         }
     }

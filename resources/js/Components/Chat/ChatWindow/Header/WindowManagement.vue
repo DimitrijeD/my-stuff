@@ -18,7 +18,7 @@ export default {
 
     data(){
         return {
-            gm_ns: ns.groupModule(this.group.id)
+            
         }
     },
 
@@ -29,9 +29,9 @@ export default {
     },
 
     methods:{
-        openConfig() { this.$store.dispatch(this.gm_ns + '/toggleConfig', this.group.id) },
+        openConfig() { this.$store.dispatch(ns.groupModule(this.group.id, 'toggleConfig'), this.group.id) },
         
-        minimize() { this.$store.dispatch(this.gm_ns + '/toggleWindow', this.group.id) },
+        minimize() { this.$store.dispatch(ns.groupModule(this.group.id, 'toggleWindow'), this.group.id) },
 
         close() { this.$store.dispatch(ns.groupsManager('closeGroup'), this.group.id) },
 

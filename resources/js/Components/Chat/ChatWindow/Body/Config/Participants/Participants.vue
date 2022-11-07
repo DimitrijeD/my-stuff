@@ -9,12 +9,12 @@
         </template>
 
         <template #content>
-            <div class="overflow-hidden grid grid-cols-2 gap-2 items-center" v-for="participant in participants" :key="participant.id">
+            <div class="grid grid-cols-2 gap-2 items-center" v-for="participant in participants" :key="participant.id">
                 <div class="p-2 sm:p-1">
                     <SmallUser :user="participant"  /> 
                 </div>
 
-                <div class="flex items-center gap-2 h-full">
+                <div class="flex gap-2 h-full">
                     <RoleBlock 
                         :canPromoteDemote="canPromoteDemote(participant)" 
                         :participant="participant" 
@@ -22,7 +22,7 @@
                         :group_id="group.id"
                     />
 
-                    <div class="ml-auto ">
+                    <div class="ml-auto my-auto">
                         <DeleteIcon v-if="canRemove(participant)" @click="removeParticipant(participant.id)"
                             class="mr-2 stroke-gray-500 hover:stroke-red-400 fill-transparent h-8 cursor-pointer"
                         />
@@ -50,22 +50,18 @@ export default {
     data() {
         return {
             user: this.$store.state.auth.user,
-            gm_ns:  ns.groupModule(this.group.id),
         }
     },
 
     computed: {
-        participants(){ return this.sortParticipantsByRoleHierarchy(this.$store.getters[this.gm_ns + '/participants']) },
+        participants(){ 
+            return this.sortParticipantsByRoleHierarchy(this.$store.getters[ns.groupModule(this.group.id, 'participants')]) 
+        },
     },
 
-    methods: 
-    {
+    methods: {
         removeParticipant(id){
-            this.$store.dispatch(this.gm_ns + '/removeParticipant', id).then(()=>{
-                // show success message that user was successfully added to group
-            }).catch(e => {
-                //
-            })
+            this.$store.dispatch(ns.groupModule(this.group.id, 'removeParticipant'), id)
         },
 
         canRemove(participant){

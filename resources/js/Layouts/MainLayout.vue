@@ -1,10 +1,12 @@
 <template>
-    <div class="def-trans min-h-screen max-h-screen flex flex-col scroll1 lg:px-2
+    <div class="def-trans min-h-screen max-h-screen flex flex-col overflow-hidden
         bg-gray-200 text-gray-600 
         dark:bg-black dark:text-gray-300"
     >
-        <slot name="nav"></slot>
-        <main class="flex grow">
+        <div>
+            <slot name="nav"></slot>
+        </div>
+        <main class="flex grow scroll1">
             <slot name="view"></slot>
         </main>
     </div>

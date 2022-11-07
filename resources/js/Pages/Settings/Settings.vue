@@ -16,10 +16,10 @@
             @selected="openSetting"
             :current="getCurrent"
             :items="formatList()"
-            class="z-10 mb-2 w-full sm:hidden bg-gray-200 dark:bg-darker-300"
+            class="mb-2 w-full sm:hidden bg-gray-200 dark:bg-darker-300"
             :headCls="'p-4 border border-gray-400 dark:border-darker-300 rounded-lg'" 
             :arrowCls="'w-6 h-6 fill-gray-300 stroke-gray-500'" 
-            :itemsWrapCls="'py-2 bg-gray-200 dark:bg-darker-200 '" 
+            :itemsWrapCls="'z-10 py-2 bg-gray-200 dark:bg-darker-200 '" 
             :itemCls="'py-2 px-4 mx-2 hover:bg-gray-100 dark:hover:bg-darker-100 rounded-lg'"
         />
         <!-- So aside is only visible on sm, dropdown only visible on mobile -->

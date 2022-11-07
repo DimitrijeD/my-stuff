@@ -1,6 +1,5 @@
 <template>
-    <div 
-        class=" px-2 pb-2 rounded-2xl def-trans"
+    <div  class=" px-2 pb-2 rounded-2xl def-trans"
         :class="[ 
             isSelf ? '' : '',
             msgNotSeen(message_id) && !isSelf ? 'bg-green-200 dark:bg-green-600/20' : '',
@@ -30,7 +29,7 @@
 
 <script>
 import MomentsAgo from '@/Components/Reuseables/MomentsAgo.vue';
-import MessagesSeen from '@/Components/Chat/ChatWindow/Body/MessagesSeen.vue';
+import MessagesSeen from '@/Components/Chat/ChatWindow/Body/MessagesBlock/MessagesSeen.vue';
 
 export default {
     props: [ 'group', 'message_id', 'isSelf', 'user_id' ],

@@ -22,8 +22,6 @@ export default {
 
     data(){
         return{
-            gm_ns: ns.groupModule(this.group_id),
-
             classes: {
                 self: 'shadow-small-img-self',
                 notSelf: 'shadow-small-img-other'
@@ -51,7 +49,7 @@ export default {
     {
         hasAnybodySeenThis(){ return this.user_ids.length > 0 ? true : false },
 
-        getParticipantThumbnail(id) { return this.$store.getters[this.gm_ns + '/getParticipantThumbnail'](id) },
+        getParticipantThumbnail(id) { return this.$store.getters[ns.groupModule(this.group_id, 'getParticipantThumbnail')](id) },
 
         toShow(participant_id){
             if(this.config.neverShowUserBewlowHisOwnMsg){

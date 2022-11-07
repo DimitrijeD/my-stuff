@@ -1,4 +1,8 @@
 <template>
+    <div class="target">asasassas</div>
+    <div class="anotherClass">asasassas</div>
+
+
 
 </template>
 
@@ -8,7 +12,7 @@
 export default{
     data(){
         return {
-            show: true
+           
         }
     },
 
@@ -21,10 +25,12 @@ export default{
     },
 
     mounted(){
-        window.onresize = () => {
-            // console.log(window.innerWidth)
-            // console.log(window.innerHeight)
-        }
+        // window.onresize = () => {
+        //     // console.log(window.innerWidth)
+        //     // console.log(window.innerHeight)
+        // }
+        
+        // colorz.replace('.target {color: red} .anotherClass{ color: gray; }')
     },
 
     methods: {
@@ -32,7 +38,3 @@ export default{
     }
 }
 </script>
-
-<style scoped>
-
-</style>

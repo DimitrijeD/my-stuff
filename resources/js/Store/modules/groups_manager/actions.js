@@ -48,7 +48,7 @@ const actions = {
             dispatch('initGroup', res.data).then(() => {
                 dispatch('sortNewstGroups')
                 commit('openWindow', res.data.id)
-                commit(ns.groupModule(res.data.id) + '/gotEarliestMsg', true, root)
+                commit(ns.groupModule(res.data.id, 'gotEarliestMsg'), true, root)
             })
         })
     },
@@ -90,7 +90,7 @@ const actions = {
 
     closeGroup({ commit, getters, dispatch }, group_id){
         if(getters['isGroupOpened'](group_id)) commit('closeWindow', group_id)
-        dispatch(ns.groupModule(group_id) + '/scrolledDownInitialy', true, {root:true})
+        dispatch(ns.groupModule(group_id, 'scrolledDownInitialy'), true, {root:true})
         // * Disconnect irelevant listeners here
     },
 
@@ -104,7 +104,7 @@ const actions = {
             if(store.hasModule(namespace)){
                 if(!rootGetters[namespace + seenGetter]) num += 1 // if group is not seen, inc value   
             } else {
-                // @todo `group_id = ${state.groupsIds[i]} is inside 'store.groups.groupsIds' but module doesn't exist. FATAL`
+                // @todo group with `id` is inside 'store.groups.groupsIds' but module doesn't exist. FATAL`
                 // 'solution flow, do get groupById from api, then if ok, init that group, else, remove it from store'
                 return
             }

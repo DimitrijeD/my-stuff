@@ -40,8 +40,13 @@ export default {
         ...mapGetters({ user: "user" }),
     },
 
-    mounted() {
-        
+    watch: {
+        showDrop(){
+            this.$emit('dropdownToggled', {
+                name: 'profile',
+                opened: this.showDrop
+            })
+        }
     },
 
     methods: {

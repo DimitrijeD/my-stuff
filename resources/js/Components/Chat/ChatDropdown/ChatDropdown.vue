@@ -1,8 +1,12 @@
 <template>
-    <div :class="['relative']" ref="wrap">
-        <MailIcon @click="toggleClickListener" :class="[ 'h-[3rem] w-[3rem] stroke-transparent', iconCls ]" />
-        
-        <div v-show="showDrop" class="def-dropdown fixed left-0 px-2 ml-1 w-[99%] h-[95%] md:w-[35rem] md:h-[40rem] md:left-auto lg:w-[40rem] lg:h-[40rem]">
+    <div class="relative" ref="wrap" >
+        <MailIcon @click="toggleClickListener" :class="[ 'h-full stroke-transparent', iconCls ]" />
+
+        <div 
+            ref="dropdown"
+            v-show="showDrop" 
+            class="def-dropdown def-resize-trans fixed px-2 pb-2 "
+        >
             <div class="flex">
                 <button :class="[ 'small-nav-btn ', showNav.ChatHistory ? 'small-nav-btn-active' : 'small-nav-btn-inactive', ]" @click="chatNav('ChatHistory')" >
                     Chat history
@@ -13,8 +17,8 @@
                 </button>
             </div>
             <div class="grow flex flex-col pt-2 ">
-                <ChatHistory class="grow" v-show="showNav.ChatHistory" @closeDropdown="removeClickListener" />
-                <CreateChatGroup class="grow" v-show="showNav.CreateChatGroup" @closeDropdown="removeClickListener" />
+                <ChatHistory     class="grow" v-show="showNav.ChatHistory"     @closeDropdown="removeClickListener" /> 
+                <CreateChatGroup class="grow" v-show="showNav.CreateChatGroup" @closeDropdown="removeClickListener" /> 
             </div>
         </div>
     </div>
@@ -32,6 +36,22 @@ export default {
 
     data(){
         return {
+            height: null,
+            width: null,
+            positionLeft: null,
+            debounceResize: null,
+            minWidth: 400,
+            minHeight: 530,
+            widthGrowthBy: {
+                height: 6/100,
+                width: 6/100,
+            },
+            heightGrowthBy: {
+                height: 8/100,
+                width: 6/100,
+            },
+            headerHeight: 3*16,
+
             showDrop: false,
 
             showNav: {
@@ -52,27 +72,109 @@ export default {
             if(!this.numGroupsWithUnseen) return 'fill-blue-500/90 dark:fill-gray-300/80'
 
             return 'fill-gray-400' 
+        },
+
+        showComp(){
+            for(let i in this.showNav){
+                if(this.showNav[i]) return i
+            }
+
+            return ''
         }
     },
 
-    methods:
-    {
-        chatNav(componentName)
-        {
-            // First close (dont show) every component
-            for(let i in this.showNav){
-                this.showNav[i] = false
+    mounted(){
+        this.calcSize()
+    },
+
+    watch: {
+        showDrop(){
+            if(this.showDrop){
+                this.calcSize()
+                window.addEventListener("resize", this.calcSize)
+            } else {
+                window.removeEventListener("resize", this.calcSize)
             }
             
-            // then show one user clicked
-            this.showNav[componentName] = true
+            this.$emit('dropdownToggled', {
+                name: 'chat',
+                opened: this.showDrop
+            })
+        }
+    },
+
+    methods: {
+        calcSize(){
+            if(this.debounceResize) return
+
+            this.debounceResize = setTimeout(() => {
+                if( this.isWidthOverflowing(this.minWidth) || this.isHeightOverflowing(this.minHeight) || this.isHeightOverflowing(this.minHeight + this.headerHeight)){
+                    this.makeFullScreen()
+                    this.debounceResize = null
+                    return 
+                }
+
+                const widthGrowth  = window.innerWidth * this.widthGrowthBy.width   +  window.innerHeight * this.widthGrowthBy.height
+                const heightGrowth = window.innerWidth * this.heightGrowthBy.width  +  window.innerHeight * this.heightGrowthBy.height
+
+                const wVal = Math.round( this.minWidth  + widthGrowth )
+                const hVal = Math.round( this.minHeight + heightGrowth )
+
+                if( this.isWidthOverflowing(wVal) || this.isHeightOverflowing(hVal) || this.isHeightOverflowing(hVal + this.headerHeight)){
+                    this.makeFullScreen()
+                    this.debounceResize = null
+                    return 
+                }
+
+                this.updateDimensionStyle(
+                    `${hVal}px`, 
+                    `${wVal}px`, 
+                    'auto'
+                )
+
+                if(window.innerWidth < 700){
+                    this.makeFullScreen()
+                    this.debounceResize = null
+                    return 
+                }
+
+                this.debounceResize = null
+            }, 100)
+        },
+        
+        isWidthOverflowing(width){
+            return window.innerWidth < width
+        },
+
+        isHeightOverflowing(height){
+            return window.innerHeight < height
+        },
+
+        updateDimensionStyle(height, width, left){
+            this.$refs.dropdown.style.height = height
+            this.$refs.dropdown.style.width = width
+            this.$refs.dropdown.style.left = left
+        },
+
+        makeFullScreen(){
+            this.$refs.dropdown.style.height = `${window.innerHeight - 3*16}px`
+            this.$refs.dropdown.style.width = '100%'
+            this.$refs.dropdown.style.left = 0
+        },
+
+        chatNav(componentName){
+            for(let i in this.showNav){
+                this.showNav[i] = componentName == i
+            }
         },
 
         clickOutside(e){
-            if (this.$refs.wrap !==undefined && this.$refs.wrap.contains(e.target)===false) {
+            if(!this.isDeepChild(this.$refs.wrap, e.target)){
                 this.removeClickListener()
             }
         },
+
+        isDeepChild(p, c){while((c=c.parentNode)&&c!==p);return !!c},
 
         addClickListener(){
             document.addEventListener('click', this.clickOutside)

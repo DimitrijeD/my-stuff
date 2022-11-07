@@ -16,8 +16,8 @@
 import { mapGetters } from "vuex";
 import * as ns from '@/Store/module_namespaces.js'
 
-import ParticipantsTyping from "@/Components/Chat/ChatWindow/Body/ParticipantsTyping.vue";
-import SameUserMessageBlock from '@/Components/Chat/ChatWindow/Body/SameUserMessageBlock.vue';
+import ParticipantsTyping from "@/Components/Chat/ChatWindow/Body/MessagesBlock/ParticipantsTyping.vue";
+import SameUserMessageBlock from '@/Components/Chat/ChatWindow/Body/MessagesBlock/SameUserMessageBlock.vue';
 
 export default {
     props: [ 'group', ],
@@ -29,8 +29,6 @@ export default {
 
     data() {
         return {
-            gm_ns: ns.groupModule(this.group.id), 
-
             blocks: [],
         }
     },
@@ -41,7 +39,7 @@ export default {
          }),
 
         seen(){ 
-            return this.$store.getters[`${this.gm_ns}/seen`]
+            return this.$store.getters[ ns.groupModule(this.group.id, 'seen')]
         },
     },
 
@@ -50,12 +48,6 @@ export default {
     },
 
     watch: {
-        // 'group.messages_tracker.last_message.id': function (newVal, oldVal) {
-        //     this.$nextTick(() => {
-                
-        //     })
-        // },
-
         'group.messages': {
             handler: function () {
                 this.createBlocks()
@@ -71,6 +63,17 @@ export default {
          * 
          * New block is created once iterator finds another user
          * Called uppon creation and every time messages obj changes
+         * 
+         * @todo no need to recreate blocks on messages change, instead, only recreate affected blocks
+         *      every new message which has been added in stack,
+         *      every message which has been deleted, updated
+         * 
+         *      Do this by finding neighbouring messages by id, as their blocks for userId
+         *      and determine if message should:
+         *          be in separate block 
+         *          or merged into upper or lower block 
+         *              then determine if newly updated block should be merged into neighbouring block
+         *      Stuff like that, 
          */
         createBlocks(){
             this.blocks = []

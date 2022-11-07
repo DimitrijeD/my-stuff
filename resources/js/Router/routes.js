@@ -88,6 +88,6 @@ export default [
         path: '/app-css-examples',
         name: "AppCSSExamples",
         component: AppCSSExamples,
-        meta: { middleware: [auth_verified] }, // @todo is_admin
+        meta: { middleware: [auth_verified] },
     },
 ]

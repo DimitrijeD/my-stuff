@@ -37,7 +37,6 @@ export default {
         return{
             showComponent: null,
             defaultText: "A Quiet Place",
-            gm_ns: ns.groupModule(this.group.id),
         }
     },
 

@@ -42,6 +42,10 @@ export class HSLColorCalculator {
         this.configElement(params.hue)
         this.configElement(params.saturation)
         this.configElement(params.lightness)
+
+        this.colorz = params.colorz
+        this.globalClasses = {}
+        this.prepareGlobalClassesContainer()
     }
 
     configElement(elementParams){
@@ -99,7 +103,7 @@ export class HSLColorCalculator {
         if(element?.inc) return element.inc
         if(element?.dec) return element.dec
 
-        // throw exception
+        // @todo throw exception
         return 0
     }
 
@@ -124,7 +128,16 @@ export class HSLColorCalculator {
         }
 
         this.createClasses()
-        return this.classes
+
+        // add param which calcs this
+        if(true){
+            this.replaceColorsInDOM(this.makeColorz())
+        }
+
+        return {
+            classes: this.classes,
+            globalClasses: this.globalClasses
+        }
     }
 
     /**
@@ -188,6 +201,71 @@ export class HSLColorCalculator {
 
             this.classes.push(cls)
         }
+    }
+
+    makeColorz(){
+        let classes = ' '
+
+        for(let i = 0; i < this.colors.length; i++){
+            for(let j in this.colorz){
+                this.globalClasses[j].push( this.rawClassName(this.colorz[j].prefix, i) )
+                classes += this.makeOneClass(this.colorz[j].prefix, this.colorz[j].property ,i)
+            }
+        }
+
+        return classes
+    }
+
+    prepareGlobalClassesContainer(){
+        for(let j in this.colorz){
+            this.globalClasses[j] = []
+        }
+    }
+
+    rawClassName(className, index){
+        return `${className}${index}`
+    }
+
+    addSelector(selector = '.'){
+        return `${selector}`
+    }
+
+    clsName(prefix, index){
+        return `${prefix}${index}`
+    }
+
+    addOpenBraces(){
+        return ` { `
+    }
+
+    addHSL(i){
+        return `hsl(${this.colors[i][0]}, ${this.colors[i][1]}%, ${this.colors[i][2]}%)`
+    }
+
+    addClosedBraces(){
+        return ` } `
+    }
+
+    addclassProp(name){
+        return ` ${name} `
+    }
+
+    makeOneClass(prefix, cssProperty, index){
+        let cls = ' '
+
+        cls += this.addSelector()
+        cls += this.clsName(prefix, index)
+        cls += this.addOpenBraces()
+        cls += this.addclassProp(cssProperty)
+        cls += this.addHSL(index)
+        cls += this.addClosedBraces()
+
+        return cls
+    }
+
+    //'.target {color: red} .anotherClass{ color: gray; }'
+    replaceColorsInDOM(str){
+        colorz.replace(str)
     }
 
       

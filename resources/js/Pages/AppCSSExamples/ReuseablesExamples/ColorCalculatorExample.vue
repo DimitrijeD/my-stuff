@@ -56,21 +56,98 @@
         </div>
 
         <div class="pb-96 space-y-10">
-            <!-- <div v-for="(color, index) in slider" :key="index" :style="color" class="text-center p-2 text-blue-400">{{ color }}</div> -->
+            <!-- <div v-for="(color, index) in slider.classes" :key="index" :style="color" class="text-center p-2 text-blue-400">{{ color }}</div> -->
             <div class="h-96 overflow-hidden flex flex-col">
-                <div v-for="(color, index) in slider" :key="index" :style="[color, ]" class="grow"></div>
+                <div v-for="(color, index) in slider.classes" :key="index" :style="[color, ]" class="grow"></div>
             </div>
 
             <!-- <div class="">
-                <div v-for="(color, index) in slider" :key="index" :style="color" class="p-2">{{color}}</div>
+                <div v-for="(color, index) in slider.classes" :key="index" :style="color" class="p-2">{{color}}</div>
             </div> -->
 
             <div class="">
                 <p @click="showCyrcle = !showCyrcle">{{ showCyrcle ? 'Hide' : 'Show'}} Cyrcle</p>
                 <div v-if="showCyrcle" class="mx-auto w-96 h-96 relative ">
-                    <div v-for="(color, index) in slider" :key="index" :style="[color, getDimCyrcle(384, index)]" :class="[
+                    <div v-for="(color, index) in slider.classes" :key="index" :style="[color, getDimCyrcle(384, index)]" :class="[
                         getDimCyrcle(384, index), 
                         'm-auto absolute inset-0 rounded-full']"></div>
+                </div>
+            </div>
+
+            <div>
+                <h2>Globally accessible classes</h2>
+                <div class="grid grid-cols-4 gap-4 ">
+                    <div class="ex-wrap">
+                        <h3>Background colors</h3>
+                        <div v-for="clr in slider.globalClasses.backgroundColor" :class="[clr, 'p-4']">{{ clr }}</div>
+                    </div>
+
+                    <div class="ex-wrap">
+                        <h3>Text colors</h3>
+                        <div v-for="clr in slider.globalClasses.color" :class="[clr, 'p-4']">{{ clr }}</div>
+                    </div>
+
+                    <div class="ex-wrap">
+                        <h3>Border colors</h3>
+                        <div v-for="clr in slider.globalClasses.borderColor" :class="[clr, 'border-4 p-2']">{{ clr }}</div>
+                    </div>
+
+                    <div class="ex-wrap">
+                        <h3>SVG fill colors</h3>
+                        <div v-for="clr in slider.globalClasses.fill" >
+                            <AcceptIcon :class="[clr, ' w-10 h-10']" />
+                            <span class="p-1">
+                                {{ clr }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="ex-wrap">
+                        <h3>SVG stroke colors</h3>
+                        <div v-for="clr in slider.globalClasses.stroke" class="my-4" >
+                            <AcceptIcon :class="[clr, ' w-10 h-10']" />
+                            <span class="p-1">
+                                {{ clr }}
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <div class="ex-wrap">
+                        <h3>Button Outline colors</h3>
+                        <button v-for="clr in slider.globalClasses.outline" :class="['outline outline-offset-2 p-2 my-6 block rounded', clr]" >
+                            {{ clr }}
+                        </button>
+                    </div>
+
+                    <div class="ex-wrap">
+                        <h3>Caret colors</h3>
+                        <input v-for="clr in slider.globalClasses.caret" :class="['p-2 my-6 block bg-darker-200 text-2xl w-full rounded', clr]" :value="clr">
+                    </div>
+
+                    <div class="ex-wrap">
+                        <h3>Accent colors</h3>
+                        <div v-for="clr in slider.globalClasses.accent">
+                            <input type="checkbox" :class="['w-6 h-6 my-6 block', clr]" checked>
+                            <span>{{ clr }}</span>
+                        </div>
+                    </div>
+
+                    <div class="ex-wrap">
+                        <h3>Text decoration colors</h3>
+                        <div v-for="clr in slider.globalClasses.textDecorationColor">
+                            <p :class="['my-6 p-2 underline decoration-8', clr]" >{{ clr }}</p>
+                        </div>
+                    </div>
+
+                    <div class="ex-wrap">
+                        <h3>Shadow color </h3>
+                        <p>- this is a hard one. There are no 'shadow color properties', but if element has shadow and text color, it will use 'color' property for shadow</p>
+                        <div v-for="clr in slider.globalClasses.color" :class="['p-4 m-10', clr]" style="box-shadow: 10px 10px 10px;">
+
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -84,15 +161,16 @@ import * as ns from '@/Store/module_namespaces.js'
 
 import { HSLColorCalculator } from '@/Components/ColorCalculators/HSLColorCalculator/HSLColorCalculator.js'
 import ColorElement from '@/Components/ColorCalculators/Components/ColorElement.vue';
+import AcceptIcon from '@/Components/Reuseables/Icons/AcceptIcon.vue'
 
 export default {
-    components: { ColorElement, },
+    components: { ColorElement, AcceptIcon, },
 
     data(){
         return {
             scheme: {},
             loopIntervalId: null,
-            showCyrcle: true,
+            showCyrcle: false,
 
             binder: {
                 hue: {
@@ -108,10 +186,52 @@ export default {
                 lightness: {
                     active: false,
                     difference: 0
-                }
+                },
+
             },
 
             slider1: {
+                colorz: {
+                    backgroundColor: {
+                        prefix: 'colorz-bg-',
+                        property: ' background-color: '
+                    },
+                    color: {
+                        prefix: 'colorz-text-',
+                        property: ' color: '
+                    },
+                    borderColor: { 
+                        prefix: 'colorz-border-',
+                        property: ' border-color: '     
+                    },
+                    fill: {
+                        prefix: 'colorz-fill-',
+                        property: ' fill: '
+                    },
+                    stroke: {
+                        prefix: 'colorz-stroke-',
+                        property: ' stroke: '
+                    },
+                    outline: {
+                        prefix: 'colorz-outline-',
+                        property: 'outline-color:'
+                    },
+                    caret: {
+                        prefix: 'colorz-caret-',
+                        property: 'caret-color:'
+                    },
+                    accent: {
+                        prefix: 'colorz-accent-',
+                        property: 'accent-color:'
+                    },
+                    textDecorationColor: {
+                        prefix: 'colorz-txtdec-',
+                        property: 'text-decoration-color:'
+                    },
+                    
+                    
+                },
+
                 scheme: "hsl",
                 numColors: 10,
                 hue:{
@@ -216,7 +336,7 @@ export default {
             const cc = new HSLColorCalculator(this.slider1)
             cc.make() 
 
-            return cc.classes
+            return cc
         },
 
         canLoop(){
@@ -237,7 +357,7 @@ export default {
     },
 
     created(){
-
+        
     },
 
     methods: {
@@ -322,11 +442,13 @@ export default {
     }
 
     .sliderInputWrapper {
-        @apply w-full;
+        @apply w-full cursor-col-resize;
     }
 
     .rowName {
         @apply my-auto w-[70px];
     }
+
+    .ex-wrap{ @apply bg-gray-400 dark:bg-darker-50 }
 
 </style>
