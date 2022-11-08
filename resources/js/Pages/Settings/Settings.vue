@@ -1,5 +1,5 @@
 <template>
-    <div class="page-space-top grow flex flex-col sm:flex-row font-light select-none mx-2 sm:mx-4 md:mx-8 xl:mx-20 ">
+    <div class="page-space-top grow h-full flex flex-col sm:flex-row font-light select-none mx-2 sm:mx-4 md:mx-8 xl:mx-20 ">
 
         <!-- This aside and Drop comp below are doing aboslutely same thing. I just dont know how to convert a list into dropdown in mobile -->
         <aside class="mb-2 sm:mr-2 sm:mb-0 hidden sm:block">
@@ -35,11 +35,11 @@ import Account from '@/Pages/Settings/Account.vue';
 import Appearance from '@/Pages/Settings/Appearance.vue';
 import Notifications from '@/Pages/Settings/Notifications.vue';
 import DropDownInput from '@/Components/Reuseables/DropDownInput.vue'
-
+import Colorz from '@/Pages/Settings/Colorz/Colorz.vue'
 import { mapGetters } from 'vuex';
 
 export default {
-    components: { Account, Appearance, Notifications, DropDownInput },
+    components: { Account, Appearance, Notifications, DropDownInput, Colorz },
 
     data(){
         return {
@@ -55,6 +55,10 @@ export default {
                 {
                     show: false,
                     name: 'Notifications'
+                }, 
+                {
+                    show: false,
+                    name: 'Colorz'
                 }
             ],
 

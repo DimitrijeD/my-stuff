@@ -11,9 +11,7 @@
         <!-- Right side of navigation bar -->
         <div class="flex justify-end">
             <ProfileDropdown v-if="user" @dropdownToggled="dropdownToggled" />
-
             <button v-if="!user" class="nav-btn" @click="isDark = !isDark">{{isDark ? 'Light' : 'Dark'}}</button>
-
             <router-link v-if="!user" class="nav-btn" to="login"   >Login   </router-link>
             <router-link v-if="!user" class="nav-btn" to="register">Register</router-link>
         </div>

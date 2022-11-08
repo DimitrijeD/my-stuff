@@ -23,6 +23,7 @@ class UserSettingsFactory extends Factory
             'open_all_chats_on_new_message' => UserSettings::OPEN_ALL_CHATS_ON_NEW_MESSAGE,
             'show_only_important_notifications' => UserSettings::SHOW_ONLY_IMPORTANT_NOTIFICATIONS,
             'theme' => UserSettings::DEFAULT_THEME,
+            'colorz' => null
         ];
     }
 }

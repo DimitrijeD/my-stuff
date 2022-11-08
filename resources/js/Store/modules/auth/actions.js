@@ -181,7 +181,7 @@ const actions = {
                     ...{ 
                         responseContext:{
                             moduleName: 'main',
-                            important: false
+                            important: true
                         }
                     }
                 } , {root:true} )

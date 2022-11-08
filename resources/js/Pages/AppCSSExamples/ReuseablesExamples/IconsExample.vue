@@ -40,6 +40,9 @@ import CheckBoxCheckIcon from "@/Components/Reuseables/Icons/CheckBoxCheckIcon.v
 import NumbersIcon from "@/Components/Reuseables/Icons/NumbersIcon.vue"
 import InfoIcon from "@/Components/Reuseables/Icons/InfoIcon.vue"
 import LoadingIcon from "@/Components/Reuseables/Icons/LoadingIcon.vue"
+import LockOpenIcon from "@/Components/Reuseables/Icons/LockOpenIcon.vue"
+import LockClosedIcon from "@/Components/Reuseables/Icons/LockClosedIcon.vue"
+
 
 export default {
     components:{
@@ -72,6 +75,8 @@ export default {
         NumbersIcon,
         InfoIcon,
         LoadingIcon,
+        LockOpenIcon,
+        LockClosedIcon,
     },
 
     data(){
@@ -106,6 +111,8 @@ export default {
                 'NumbersIcon',
                 'InfoIcon',
                 'LoadingIcon',
+                'LockOpenIcon',
+                'LockClosedIcon',
             ]
         }
     }
