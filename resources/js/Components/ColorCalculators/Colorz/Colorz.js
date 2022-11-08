@@ -1,13 +1,4 @@
-/**
- * Creates 'numColors' colors from provided params
- * 
- * @todo add min as boundary for overflow, 0 is default
- * @todo Create pipeline function which only changes colors which have different config than one which are already set
- *      this requires splitting "make" methods into 2 methods, one which calls all neccessary colors updates, and one which actualy creates values
- *      then after finishing, return colors/classes 
- */
-
-export class HSLColorCalculator {
+export class Colorz {
     constructor(params){
         this.START_TO_END = 'to';
         this.INC         = 'inc'; 
@@ -17,6 +8,9 @@ export class HSLColorCalculator {
         
         this.colors = [] 
         this.classes = []
+
+        this.testing = params?.testing ? true : false
+        this.makeGlobal = params?.makeGlobal ? true : false
 
         params.hue.start = parseInt(params.hue.start)
         params.hue.end   = parseInt(params.hue.end)
@@ -44,8 +38,20 @@ export class HSLColorCalculator {
         this.configElement(params.lightness)
 
         this.colorz = params.colorz
+
         this.globalClasses = {}
         this.prepareGlobalClassesContainer()
+    }
+
+    /**
+     * Poulates object with key: [] which is just a placeholder for classes which have been created
+     * 
+     * Usefull for testing purposes only. Has no effect on global classes
+     */
+    prepareGlobalClassesContainer(){
+        for(let j in this.colorz){
+            this.globalClasses[j] = []
+        }
     }
 
     configElement(elementParams){
@@ -107,10 +113,6 @@ export class HSLColorCalculator {
         return 0
     }
 
-    pipeline(){
-
-    }
-
     make(){
         let hueSum        = this.hue.start
         let saturationSum = this.saturation.start
@@ -127,16 +129,21 @@ export class HSLColorCalculator {
             this.colors.push([hueSum, saturationSum, lightnessSum])
         }
 
-        this.createClasses()
+        if(!this.testing){
+            this.createClasses()
+        }
 
-        // add param which calcs this
-        if(true){
-            this.replaceColorsInDOM(this.makeColorz())
+        if(this.makeGlobal){
+            // this.replaceRules(this.makeColorz())
+            this.globalRules = this.makeColorz()
+        } else {
+            this.globalRules = ''
         }
 
         return {
             classes: this.classes,
-            globalClasses: this.globalClasses
+            globalClasses: this.globalClasses,
+            globalRules: this.globalRules,
         }
     }
 
@@ -216,11 +223,6 @@ export class HSLColorCalculator {
         return classes
     }
 
-    prepareGlobalClassesContainer(){
-        for(let j in this.colorz){
-            this.globalClasses[j] = []
-        }
-    }
 
     rawClassName(className, index){
         return `${className}${index}`
@@ -264,9 +266,7 @@ export class HSLColorCalculator {
     }
 
     //'.target {color: red} .anotherClass{ color: gray; }'
-    replaceColorsInDOM(str){
+    static replaceRules(str){
         colorz.replace(str)
     }
-
-      
 }

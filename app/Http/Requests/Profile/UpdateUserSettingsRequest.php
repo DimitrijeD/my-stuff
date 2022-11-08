@@ -21,7 +21,8 @@ class UpdateUserSettingsRequest extends FormRequest
 
             'settingsFiels.open_all_chats_on_new_message' => ['sometimes', 'boolean'],
             'settingsFiels.show_only_important_notifications' => ['sometimes', 'boolean'],
-            'settingsFiels.theme' => ['sometimes', 'string', $this->themeRule() ? new AvailableThemesRule($this->settingsFiels['theme']) : '' ],
+            'settingsFiels.theme' => ['sometimes', 'string', $this->themeRule() ? new AvailableThemesRule($this->settingsFiels['theme']) : '' ], // @todo, if colorz implementation is success, remove this field
+            'settingsFiels.colorz' => ['sometimes', 'array'], // @todo implement complete validation for this nested array. Idea: somehere in php, store structure and provide it to FE 
         ];
     }
 

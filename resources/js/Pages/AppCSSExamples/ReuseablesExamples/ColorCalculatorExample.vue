@@ -159,7 +159,7 @@
 import { mapGetters } from 'vuex';
 import * as ns from '@/Store/module_namespaces.js'
 
-import { HSLColorCalculator } from '@/Components/ColorCalculators/HSLColorCalculator/HSLColorCalculator.js'
+import { Colorz } from '@/Components/ColorCalculators/Colorz/Colorz.js'
 import ColorElement from '@/Components/ColorCalculators/Components/ColorElement.vue';
 import AcceptIcon from '@/Components/Reuseables/Icons/AcceptIcon.vue'
 
@@ -191,6 +191,10 @@ export default {
             },
 
             slider1: {
+                testing: true,
+                makeGlobal: true,
+                scheme: "hsl",
+                numColors: 10,
                 colorz: {
                     backgroundColor: {
                         prefix: 'colorz-bg-',
@@ -228,12 +232,7 @@ export default {
                         prefix: 'colorz-txtdec-',
                         property: 'text-decoration-color:'
                     },
-                    
-                    
                 },
-
-                scheme: "hsl",
-                numColors: 10,
                 hue:{
                     name: "hue", 
                     slider: {
@@ -333,7 +332,7 @@ export default {
 
     computed: {
         slider(){
-            const cc = new HSLColorCalculator(this.slider1)
+            const cc = new Colorz(this.slider1)
             cc.make() 
 
             return cc

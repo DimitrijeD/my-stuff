@@ -29,6 +29,7 @@ class UserSettings extends Model
         'theme', 
         'open_all_chats_on_new_message', 
         'show_only_important_notifications',  
+        'colorz'
     ];
 
     public function user()

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->boolean('open_all_chats_on_new_message')->default(UserSettings::OPEN_ALL_CHATS_ON_NEW_MESSAGE);
             $table->boolean('show_only_important_notifications')->default(UserSettings::SHOW_ONLY_IMPORTANT_NOTIFICATIONS);
             $table->enum('theme', UserSettings::THEMES)->default(UserSettings::DEFAULT_THEME);
+            $table->json('colorz')->nullable();
         });
     }
 
