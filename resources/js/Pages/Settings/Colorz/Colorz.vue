@@ -2,7 +2,7 @@
     <div class="space-y-10">
         <h1 class="text-center">Colorz</h1>
 
-        <p>Panel for creating global color classes. Configuration which is used for creating classes will be stored in database. If user hasn't modified configuration or hasn't saved any, default will be used to generate classes.</p>
+        <p class="hover-test-bg-0">Panel for creating global color classes. Configuration which is used for creating classes will be stored in database. If user hasn't modified configuration or hasn't saved any, default will be used to generate classes.</p>
         <!-- <div class="">
             <div class="space-x-2 inline-flex">
                 <label class="my-auto">Number of colors - this input should be disabled for global Colorz. </label>
@@ -293,5 +293,4 @@ export default {
     }
 
     .ex-wrap{ @apply bg-gray-400 dark:bg-darker-50 p-2; }
-
 </style>

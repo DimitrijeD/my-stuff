@@ -1,7 +1,10 @@
-import * as h from '@/Store/functions/helpers.js';
+import * as h from '@/Store/functions/helpers.js'
 import * as ns from '@/Store/module_namespaces.js'
-import store from '@/Store/index.js';
-import group_module from '@/Store/modules/group_module/group_module.js';
+import * as collection from '@/UtilityFunctions/collection.js'
+import { fuzzyDeep } from '@/UtilityFunctions/fuzzyDeep.js'
+
+import store from '@/Store/index.js'
+import group_module from '@/Store/modules/group_module/group_module.js'
 
 const root = {root:true}
 
@@ -24,8 +27,30 @@ const actions = {
         })
     },
 
+    /**
+     * Both search approaches work, but should only use one, duh
+     */
     filterGroupsBySearchString({ commit, getters }, str){
-        commit('setFilteredGroupsIds', h.getAllIds(h.sortNewest( getters['getGroupsById'](h.getBySearchString(getters['getAllGroups'], str)) )))
+        // ------------------------------------------------- Search using RegX --------------------------------------------- //
+        // commit('setFilteredGroupsIds', h.getAllIds(h.sortNewest( getters['getGroupsById'](h.getBySearchString(getters['getAllGroups'], str)) )))
+        //-------------------------------------------------------------------------------------------------------------------//
+
+        // ------------------------------------------------- Search suing Fuzzy Package -------------------------------------//
+        // commit('setFilteredGroupsIds', h.getAllIds(h.sortNewest( 
+        //     fuzzyDeep(str, getters['getAllGroups'], nestedProperties)
+        // )))
+        commit('setFilteredGroupsIds', h.getAllIds( 
+            fuzzyDeep(str, getters['getAllGroups'], [
+                {
+                    path: '',
+                    props: ['name']
+                },
+                {
+                    path: 'participants',
+                    props: ['first_name', 'last_name']
+                },
+            ])
+        ))
     },
 
     sortNewstGroups({ commit, getters }){
@@ -44,11 +69,18 @@ const actions = {
     },
 
     storeGroup({ commit, dispatch }, data){
-        axios.post('chat/group/store', data).then( res => {
-            dispatch('initGroup', res.data).then(() => {
-                dispatch('sortNewstGroups')
-                commit('openWindow', res.data.id)
-                commit(ns.groupModule(res.data.id, 'gotEarliestMsg'), true, root)
+        return new Promise((resolve, reject) => {
+            axios.post('chat/group/store', data).then( res => {
+
+                dispatch('initGroup', res.data).then(() => {
+                    dispatch('sortNewstGroups')
+                    commit('openWindow', res.data.id)
+                    commit(ns.groupModule(res.data.id, 'gotEarliestMsg'), true, root)
+                })
+                resolve(res)
+            }).catch((error) =>{
+                dispatch(ns.actionResponse('createChatGroup', 'inject'), error.response.data, root)
+                reject(error)
             })
         })
     },

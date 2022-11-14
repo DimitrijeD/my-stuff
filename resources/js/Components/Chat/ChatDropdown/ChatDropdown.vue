@@ -1,20 +1,15 @@
 <template>
     <div class="relative" ref="wrap" >
-        <MailIcon @click="toggleClickListener" :class="[ 'h-full stroke-transparent', iconCls ]" />
+        <MailIcon @click="toggleClickListener" :class="[ 'h-full p-1 opacity-90 stroke-transparent', iconCls ]" />
 
-        <div 
-            ref="dropdown"
-            v-show="showDrop" 
-            class="def-dropdown def-resize-trans fixed px-2 pb-2 "
-        >
+        <div ref="dropdown" v-show="showDrop" class="def-dropdown">
             <div class="flex">
-                <button :class="[ 'small-nav-btn ', showNav.ChatHistory ? 'small-nav-btn-active' : 'small-nav-btn-inactive', ]" @click="chatNav('ChatHistory')" >
+                <CardNavBtn :isActive="showNav.ChatHistory" @click="chatNav('ChatHistory')">
                     Chat history
-                </button>
-
-                <button :class="[ 'small-nav-btn ', showNav.CreateChatGroup ? 'small-nav-btn-active' : 'small-nav-btn-inactive', ]" @click="chatNav('CreateChatGroup')">
+                </CardNavBtn>
+                <CardNavBtn :isActive="showNav.CreateChatGroup" @click="chatNav('CreateChatGroup')">
                     Create new chat
-                </button>
+                </CardNavBtn>
             </div>
             <div class="grow flex flex-col pt-2 ">
                 <ChatHistory     class="grow" v-show="showNav.ChatHistory"     @closeDropdown="removeClickListener" /> 
@@ -30,9 +25,10 @@ import * as ns from '@/Store/module_namespaces.js'
 import CreateChatGroup from "@/Components/Chat/ChatDropdown/CreateChatGroup.vue";
 import ChatHistory from '@/Components/Chat/ChatDropdown/ChatHistory.vue'
 import MailIcon from "@/Components/Reuseables/Icons/MailIcon.vue"
+import CardNavBtn from '@/Components/Reuseables/Buttons/CardNavBtn.vue'
 
 export default {
-    components: { CreateChatGroup, ChatHistory, MailIcon },
+    components: { CreateChatGroup, ChatHistory, MailIcon, CardNavBtn },
 
     data(){
         return {

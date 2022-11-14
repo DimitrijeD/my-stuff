@@ -5,7 +5,7 @@
             <button v-if="interval"  @click="end"   class="p-4 bg-darker-300">end</button>
         </div>
 
-        <div v-for="index in inc" class="flex">
+        <div v-for="index in inc" class="flex flex-row">
             <!-- <div :class="[' dim ']" :style="[getStyle(index)]"></div> -->
             <div v-for="index1 in inc" class="flex">
                 <div :class="[' dim ']" :style="[getStyle(index1)]"></div>
@@ -40,7 +40,7 @@ export default {
         start(){
             this.interval = setInterval(()=>{
                 this.inc++
-            }, 60)
+            }, 100)
         },
 
         end(){
@@ -56,6 +56,6 @@ export default {
 
 
 .dim {
-    @apply w-8 h-1 opacity-70;
+    @apply w-4 h-1 opacity-70;
 }
 </style>

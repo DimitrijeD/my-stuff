@@ -58,6 +58,8 @@ Route::group(['prefix' => 'chat', 'middleware' => ['auth:sanctum', 'chat_group_a
     Route::post('group/remove-user', [ParticipantsController::class, 'removeUserFromGroup']);
     Route::post('group/{group_id}/add-users', [ParticipantsController::class, 'addUsersToGroup']);
     Route::post('group/change-user-role', [ParticipantsController::class, 'chageParticipantsRole']);
+    Route::post('group/change-group-type', [GroupController::class, 'chageGroupType']);
+
 
     Route::post('group/change-group-name', [GroupController::class, 'changeGroupName']);
     Route::get('group/{group_id}', [GroupController::class, 'getGroupById']);
@@ -67,5 +69,6 @@ Route::group(['prefix' => 'chat', 'middleware' => ['auth:sanctum', 'chat_group_a
     Route::get('group/{group_id}/from-msg/{latest_msg_id}',     [MessageController::class, 'getMissingMessages']);
     Route::post('message/store', [MessageController::class, 'store'])->middleware(['can_chat']);
     Route::post('message/seen', [MessageController::class, 'messageIsSeen']);
+    
 
 });

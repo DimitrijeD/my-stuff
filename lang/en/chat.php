@@ -32,6 +32,16 @@ return [
     'name' => [
         'updated' => 'Chat name updated.',
         'failedUpdating' => 'Failed changing chat name.',
+    ],
+    
+    'storeGroup' => [
+        'minNumUsers' => 'Chat must contain at least 2 users.',
+        'invalidGroupType' => 'Group type is not available.',
+        'someUsersDontExist' => "Cannot add participants which don't exist."
+    ],
+    
+    'type' => [
+        'success' => 'Chat type has been changed. Users in group now have different authorizations according to their role.',
+        'failedUpdating' => 'An error occured while trying to update group type.',
     ]
-
 ];

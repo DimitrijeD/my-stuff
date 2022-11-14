@@ -29,6 +29,7 @@ class ChatRole
     const ACTION_KEY_SEND_MESSAGE = 'send_message';
     const ACTION_KEY_CHANGE_ROLE = 'change_role';
     const ACTION_KEY_CHANGE_GROUP_NAME = 'change_group_name';
+    const ACTION_KEY_CHANGE_GROUP_TYPE = 'change_group_type';
 
     const ACTION_KEYS = [
         self::ACTION_KEY_ADD,
@@ -36,6 +37,7 @@ class ChatRole
         self::ACTION_KEY_SEND_MESSAGE,
         self::ACTION_KEY_CHANGE_ROLE,
         self::ACTION_KEY_CHANGE_GROUP_NAME,
+        self::ACTION_KEY_CHANGE_GROUP_TYPE
     ];
 
 
@@ -138,16 +140,16 @@ class ChatRole
 
     const ROLE_CAN_SEND_MESSAGE_IN = [
         self::CREATOR => [
-            ChatGroup::TYPE_PRIVATE,
-            ChatGroup::TYPE_PROTECTED, 
+            ChatGroup::TYPE_PUBLIC_CLOSED, 
             ChatGroup::TYPE_PUBLIC_OPEN,
-            ChatGroup::TYPE_PUBLIC_CLOSED,
+            ChatGroup::TYPE_PROTECTED,
+            ChatGroup::TYPE_PRIVATE,
         ], 
         self::MODERATOR => [
-            ChatGroup::TYPE_PRIVATE,
-            ChatGroup::TYPE_PROTECTED, 
+            ChatGroup::TYPE_PUBLIC_CLOSED, 
             ChatGroup::TYPE_PUBLIC_OPEN,
-            ChatGroup::TYPE_PUBLIC_CLOSED,
+            ChatGroup::TYPE_PROTECTED,
+            ChatGroup::TYPE_PRIVATE,
         ],
         self::PARTICIPANT => [
             ChatGroup::TYPE_PRIVATE,
@@ -202,7 +204,7 @@ class ChatRole
     const ROLE_CAN_CHANGE_GROUP_NAME = [
         self::CREATOR => [
             ChatGroup::TYPE_PUBLIC_CLOSED, 
-            ChatGroup::TYPE_PUBLIC_OPEN, 
+            ChatGroup::TYPE_PUBLIC_OPEN,
             ChatGroup::TYPE_PROTECTED,
             ChatGroup::TYPE_PRIVATE,
         ],
@@ -215,6 +217,15 @@ class ChatRole
             ChatGroup::TYPE_PRIVATE,
         ],
         self::LISTENER => []
+    ];
+
+    const ROLE_CAN_CHANGE_GROUP_TYPE = [
+        self::CREATOR => [
+            ChatGroup::TYPE_PUBLIC_CLOSED, 
+            ChatGroup::TYPE_PUBLIC_OPEN,
+            ChatGroup::TYPE_PROTECTED,
+            ChatGroup::TYPE_PRIVATE,
+        ],
     ];
 
     public static function can(array $levels, string $action = null)
@@ -236,6 +247,9 @@ class ChatRole
 
             case self::ACTION_KEY_CHANGE_GROUP_NAME:
                 return self::onLevel2($levels, self::ROLE_CAN_CHANGE_GROUP_NAME);
+
+            case self::ACTION_KEY_CHANGE_GROUP_TYPE:
+                return self::onLevel2($levels, self::ROLE_CAN_CHANGE_GROUP_TYPE);
 
             default:
                 return false;

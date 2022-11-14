@@ -67,7 +67,7 @@ export default {
         return {
             currentShow: '',
             components: [
-                'ColorCalculatorExample',
+                // 'ColorCalculatorExample',
                 'AreYouSureLayoutExample',
                 'DoubleScrollContentCardLayoutExample',
                 'HeadingTag',

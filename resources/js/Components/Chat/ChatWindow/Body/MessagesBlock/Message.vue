@@ -1,17 +1,12 @@
 <template>
-    <div  class=" px-2 pb-2 rounded-2xl def-trans"
-        :class="[ 
-            isSelf ? '' : '',
-            msgNotSeen(message_id) && !isSelf ? 'bg-green-200 dark:bg-green-600/20' : '',
-        ]"
-    >
+    <div :class="['px-2 pb-0.5 rounded-2xl def-trans', msgNotSeen(message_id) && !isSelf ? 'bg-green-200 dark:bg-green-600/20' : '']">
         <!-- @TODO Need delete message component here with SVG icon -->
         <!-- <span class="float-right text-sm rounded-full border border-gray-200 cursor-pointer border hover:border-red-300">X</span> -->
 
         <!-- Message Content style="white-space: pre;" -->
         <!-- @TODO - caused issue where messages woudnt break into new line but it did include new lines and tabs... -->
-        <p  class="font-serif mt-0.5 text-lg text-gray-700 dark:text-gray-300 tracking-wide break-words">
-            <MomentsAgo :date="group.messages[message_id].created_at" class="def-moments-ago float-right pl-2 pb-2" />
+        <p  class="my-1 font-light text-base text-gray-700 dark:text-gray-300 tracking-wide break-words">
+            <MomentsAgo :date="group.messages[message_id].created_at" class="def-moments-ago float-right pl-2 " />
             {{ group.messages[message_id].text }}
             
         </p>

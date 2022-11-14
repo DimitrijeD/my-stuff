@@ -8,10 +8,6 @@ use App\Rules\ChatGroup\Store\IsModelTypeValidRule;
 use App\Rules\ChatGroup\Store\ParticipantsExistRule;
 use App\Rules\ChatGroup\Store\MoreThanOneParticipantRule;
 
-use Illuminate\Contracts\Validation\Validator;
-// use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-
 class StoreGroupRequest extends FormRequest
 {
     /**
@@ -36,17 +32,6 @@ class StoreGroupRequest extends FormRequest
             'model_type' => ['string', 'max:255', 'nullable', new IsModelTypeValidRule($this->model_type)],
             'users_ids' => [new MoreThanOneParticipantRule($this->users_ids), new ParticipantsExistRule($this->users_ids), ],
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        $errors = $validator->errors();
-
-        $response = response()->json([
-            'errors' => $errors->messages(),
-        ], 422);
-
-        throw new HttpResponseException($response);
     }
     
 }

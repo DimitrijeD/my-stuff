@@ -1,121 +1,80 @@
 <template>
-    <DoubleScrollContentCardLayout>
+    <DefaultCardLayout>
         <template #header >
             <div class="space-y-2 mb-2 relative">    
                 <input
-                    class="small-input"
+                    class="small-input dark:bg-darker-200 dark:border-darker-300"
                     placeholder="Name of new group chat"
                     type="text"
                     v-model="newChatGroup.name"
+                    autocomplete="none"
                 >
-
-                <select class="small-input" v-model="selected_model_type" >
-                    <option 
-                        v-for="(type, index) in getHumanReadableGroupTypes" 
-                        v-bind:value="type.value" 
-                        :key="index"
-                    >
-                        {{ type.text }}
-                    </option>
-                </select>
-
-                <SearchInput
-                    :actions="input.actions"
-                    :exclude="newChatGroup.users_ids"
-                    :placeholder="input.placeholder"
-                    class="small-input" 
-                    @typed="searchedAtLeastOnce()"
-                    @awaitingApi="awaitingApi"
-                />
             </div>
         </template>
 
-        <template #content-left>
-            <div class="relative h-full">
-                <LoadingCyrcle 
-                    :show="isAwaitingApi" 
-                    :iconCls="'w-10 h-10 stroke-blue-500'" />
-
-                <template v-for="(id, index) in users" :key="index" >
-                    <SmallUser                     
-                        v-if="!newChatGroup.users_ids.includes(id)"
-                        :user="getUser(id)"
-                        class="py-1 select-none"
-                        @click.stop.prevent="add(id)"
-                    /> 
-                </template>
-
-                <div v-if="users.length == 0" class="h-full flex">
-                    <p v-if="!hasSearched" class="info-txt">Users will appear in this list.</p>
-                    <p v-else              class="info-txt">Nothing found.</p>
-                </div>
-            </div>
-        </template>
-
-        <template #content-right>
-            <SmallUser 
-                v-for="(id, index) in newChatGroup.users_ids" 
-                :key="index"
-                :user="getUser(id)"
-                :class="['py-1 select-none', isUserSelected(id) ? 'text-green-500' : '']"
-                @click.stop.prevent="remove(id)"
+        <template #body>
+            <DoubleUserSelectList 
+                :searchInput="{
+                    actions: actions,
+                    exclude: newChatGroup.users_ids, 
+                    placeholder: 'Find users', 
+                    cls: 'dark:bg-darker-200 dark:border-darker-300',
+                }"
+                @toggled="toggled"
+                :flushSelected="flushSelected"
+                :stopLoadingIconOnFail="stopLoadingIconOnFail"
             />
-            <div v-if="newChatGroup.users_ids.length == 0" class="h-full flex">
-                <p class="info-txt">
-                    Selected users will appear in this list.
-                </p>
-            </div>
         </template>
 
         <template #footer>
-            <p v-for="(error, index) in errors" class="def-error-text text-center p-2" :key="index">
-                {{ error }}
-            </p>
-
-            <button :class="['py-2 mt-2', canCreate ? 'not-disabled-btn' : 'disabled-btn', ]" @click="createNewChatGroup()">
-                Create chat group
-            </button>
+            <div class="relative">
+                <ActionResponseList 
+                    :moduleId="`createChatGroup`" 
+                    :dieAfter="15" 
+                    :cardCls="'w-[90%] h-32 mx-auto'"
+                    class="bottom-14 absolute z-10 mx-auto w-full" 
+                />
+                <button :class="['py-2 mt-2 def-btn', 
+                    canCreate 
+                        ? 'text-white bg-blue-500 hover:bg-blue-600 dark:text-green-300 dark:bg-darker-400 dark:hover:text-green-500' 
+                        : 'cursor-not-allowed text-gray-600 bg-gray-200 dark:text-gray-500 dark:bg-darker-200', 
+                    ]" 
+                    @click="createNewChatGroup()"
+                >
+                    Create chat group
+                </button>
+            </div>
         </template>
-    </DoubleScrollContentCardLayout>
+
+    </DefaultCardLayout>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import * as ns from '@/Store/module_namespaces.js'
 
-import SmallUser from '@/Components/Reuseables/SmallUser.vue';
-import SearchInput from '@/Components/Chat/reuseables/SearchInput.vue'
-import DoubleScrollContentCardLayout from '@/Layouts/DoubleScrollContentCardLayout.vue'
-import LoadingCyrcle from '@/Components/Reuseables/LoadingCyrcle.vue'
+import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue'
+import DoubleUserSelectList from '@/Components/Chat/reuseables/DoubleUserSelectList.vue'
+import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.vue';
 
 export default {
-    components: { SearchInput, SmallUser, DoubleScrollContentCardLayout, LoadingCyrcle },
+    components: { DefaultCardLayout, DoubleUserSelectList, ActionResponseList },
 
     data() {
         return {
-            showCreateDropdown: false,
             newChatGroup: {
                 name: '',
                 users_ids: [],
-                model_type: '',
-            },
-            errors: [],
-            nothingFound: false,
-            hasSearched: false,
-            isAwaitingApi: false,
-            hideLoadingAfterMS: 800,
-
-            selected_model_type: 'PRIVATE',
-            defaultNewGroupType: 'PRIVATE',
-
-            input: {
-                actions: {
-                    api: ns.users('searchForAddUsersInApi'),
-                    store: ns.users('searchForAddUsersInStore')
-                },
-                placeholder: "Find users to add",
+                model_type: "PRIVATE",
             },
 
+            actions: {
+                api: ns.users('searchForAddUsersInApi'),
+                store: ns.users('searchForAddUsersInStore'),
+                responseModuleName: 'createChatGroup'
+            },
+            flushSelected: 0,
+            stopLoadingIconOnFail: 0,
         }
     },
 
@@ -142,7 +101,9 @@ export default {
             return this.$store.getters[ns.users('getFilterForAddUsers')] 
         },
 
-        canCreate(){ return this.newChatGroup.users_ids.length }
+        canCreate(){ 
+            return this.newChatGroup.users_ids.length > 0
+        }
     },
 
     methods:{        
@@ -151,82 +112,34 @@ export default {
         },
 
         createNewChatGroup(){
-            this.checkForErrors()
+            if(this.newChatGroup.users_ids.length === 0) return
 
-            if(this.errors.length > 0) return
-            this.resolveGroupParams()
+            this.newChatGroup.users_ids.push(this.user.id)
 
             this.$store.dispatch(ns.groupsManager('storeGroup'), this.newChatGroup).then(() => {
                 this.resetComponentVars()
+
                 this.$emit('closeDropdown')
+            }).catch((error) => {
+                this.stopLoadingIconOnFail++
             })
-        },
-
-        checkForErrors(){
-            // reset errors before pushing new messages
-            this.errors = []
-
-            if(this.newChatGroup.users_ids.length === 0) this.errors.push('Select at least one user')
-
-            return this.errors
         },
 
         resetComponentVars(){
             this.newChatGroup = {
                 name: '',
                 users_ids: [],
-                model_type: '',
+                model_type: "PRIVATE",
             }
-            this.errors = []
-            this.showCreateDropdown = false
+            this.triggerClearSelectedUsersList()
         },
 
-        resolveGroupParams(){
-            this.newChatGroup.users_ids.push(this.user.id)
-            this.resolveGroupType()
+        triggerClearSelectedUsersList(){
+            this.flushSelected++
         },
 
-        resolveGroupType(){
-            if(this.selected_model_type == "PRIVATE" && this.newChatGroup.users_ids.length > 2){
-                this.newChatGroup.model_type = "PROTECTED" 
-                return
-            }
-
-            this.newChatGroup.model_type = this.selected_model_type         
-                ? this.selected_model_type 
-                : this.defaultNewGroupType
-
-        },
-
-        getUser(id) { return this.$store.getters[ns.users('getById')](id)},
-
-        add(id){
-            if(!this.newChatGroup.users_ids.includes(id)) this.newChatGroup.users_ids.push(id)
-        },
-
-        remove(id){
-            if(this.newChatGroup.users_ids.includes(id)) this.newChatGroup.users_ids.splice(this.newChatGroup.users_ids.indexOf(id), 1)
-        },
-
-        isUserSelected(id){ return this.newChatGroup.users_ids.includes(id) },
-
-        hideWindow(){ this.$emit('hideCreateChatGroupDropdown') },
-
-        /**
-         * After user typed in search user input, only once set 'hasSearched' to true indicating if 'no users found should be displayed or not' 
-         */
-        searchedAtLeastOnce(){
-            this.hasSearched = true
-        },
-
-        awaitingApi(bool){
-            if(bool){
-                this.isAwaitingApi = true
-            } else {
-                setTimeout(()=> {
-                    this.isAwaitingApi = false
-                }, this.hideLoadingAfterMS)
-            }
+        toggled(users){
+            this.newChatGroup.users_ids = users
         },
     }
 

@@ -1,9 +1,9 @@
 <template>
-    <div class="page-space-top grow h-full flex flex-col sm:flex-row font-light select-none mx-2 sm:mx-4 md:mx-8 xl:mx-20 ">
+    <div class="page-space-top grow h-full flex flex-col sm:flex-row font-light select-none mx-2 sm:mx-4 md:mx-8 xl:mx-20  ">
 
         <!-- This aside and Drop comp below are doing aboslutely same thing. I just dont know how to convert a list into dropdown in mobile -->
         <aside class="mb-2 sm:mr-2 sm:mb-0 hidden sm:block">
-            <p class="text-lg pb-3 pl-2 pr-3">Settings</p>
+            <p class=" text-lg pb-3 pl-2 pr-3">Settings</p>
             <button 
                 v-for="(component, index) in components" 
                 @click="show(index)"

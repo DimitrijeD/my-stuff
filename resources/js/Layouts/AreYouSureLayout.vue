@@ -1,5 +1,5 @@
 <template>
-    <div class="relative overflow-hidden rounded">
+    <div class="select-none relative overflow-hidden rounded">
         <div class="absolute top-0 left-0 h-full w-full flex flex-col">
             <div v-if="!show" @click="showMore()" class="grow cursor-pointer grid grid-rows-1 place-content-center">
                 <slot name="button-as-wrapper"></slot><!--  'grow' on button is required to be provided from parent ;( -->

@@ -53,21 +53,11 @@ import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.v
 export default {
     props: [ 'group_id', 'size' ],
 
-    components: {
-        MessagesBlock,
-        MessageInput,
-        Config,
-        ChatWindow_v1Layout,
-        Header,
-        ActionResponseList,
-    },
+    components: { MessagesBlock, MessageInput, Config, ChatWindow_v1Layout, Header, ActionResponseList, },
 
     data(){
         return {
             permissions: {},
-            config: {
-                refreshGroupOnLoad: false
-            },
         }
     },
 
@@ -92,6 +82,10 @@ export default {
         chatRole: function () {
             this.createPermissions()
         },
+
+        'group.model_type': function () {
+            this.createPermissions()
+        },
     },
 
     created(){
@@ -114,10 +108,6 @@ export default {
             if(this.last_message.user_id == this.user.id) return
 
             this.$store.dispatch(  ns.groupModule(this.group_id, 'allMessagesSeen') , this.last_message.id)
-        },
-
-        refreshGroup(){
-            if(this.config.refreshGroupOnLoad) this.$store.dispatch( ns.groupModule(this.group_id, 'refreshGroup') , {group_id: this.group_id})
         },
 
         getInitMessages(){ 

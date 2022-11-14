@@ -1,13 +1,8 @@
 <template>
-    <div class="target">asasassas</div>
-    <div class="anotherClass">asasassas</div>
-
-
 
 </template>
 
 <script>
-
 
 export default{
     data(){
@@ -21,7 +16,7 @@ export default{
     },
 
     created(){
-     
+
     },
 
     mounted(){
@@ -29,8 +24,6 @@ export default{
         //     // console.log(window.innerWidth)
         //     // console.log(window.innerHeight)
         // }
-        
-        // colorz.replace('.target {color: red} .anotherClass{ color: gray; }')
     },
 
     methods: {
@@ -38,3 +31,7 @@ export default{
     }
 }
 </script>
+
+<style scoped>
+
+</style>

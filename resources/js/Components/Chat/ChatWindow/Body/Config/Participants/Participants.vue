@@ -1,16 +1,23 @@
 <template>
     <DefaultCardLayout class="space-y-2">
         <template #header >
-            <input 
-                class="small-input"
-                type="text" 
-                placeholder="todo input for filtering these users"
-            > 
+            <div class="w-full relative">
+                <input
+                    class="search-loop bg-gray-200 text-gray-700 dark:text-gray-300 dark:bg-darker-300 dark:border-darker-400"
+                    placeholder="Find participants"
+                    type="text"
+                    v-model="searchStr"
+                    @keyup="searchParticipants()"
+                    autocomplete="none"
+                >
+
+                <SearchIcon class="w-8 h-full p-1 absolute left-1 top-0 fill-blue-500 dark:fill-blue-400 opacity-80" />
+            </div>
         </template>
 
-        <template #content>
-            <div class="grid grid-cols-2 gap-2 items-center" v-for="participant in participants" :key="participant.id">
-                <div class="p-2 sm:p-1">
+        <template #body>
+            <div v-for="participant in listedParticipants" :key="participant.id" :class="['grid gap-2 items-center', canRemoveAnybody ? 'grid-cols-2' : 'grid-cols-4']" >
+                <div :class="['p-2 sm:p-1', canRemoveAnybody ? '' : 'col-span-3']">
                     <SmallUser :user="participant"  /> 
                 </div>
 
@@ -35,28 +42,47 @@
 
 <script>
 import DeleteIcon from "@/Components/Reuseables/Icons/DeleteIcon.vue"
+import SearchIcon from '@/Components/Reuseables/Icons/SearchIcon.vue'
+
 import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
 import ChangeUserRole from '@/Components/Chat/ChatWindow/Body/Config/Participants/ChangeUserRole.vue'
-import * as ns from '@/Store/module_namespaces.js'
-import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue';
-import AreYouSureLayout from '@/Layouts/AreYouSureLayout.vue'
 import RoleBlock from '@/Components/Chat/ChatWindow/Body/Config/Participants/RoleBlock.vue'
 
-export default {
-    props: [ 'group', 'chatRole', 'permissions', 'roles' ],
+import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue';
+import AreYouSureLayout from '@/Layouts/AreYouSureLayout.vue'
 
-    components: { SmallUser, ChangeUserRole, DefaultCardLayout, DeleteIcon, AreYouSureLayout, RoleBlock, },
+import * as collection from '@/UtilityFunctions/collection.js'
+import * as ns from '@/Store/module_namespaces.js'
+import { mapGetters } from 'vuex'
+import { fuzzyImmidiate }  from  '@/UtilityFunctions/fuzzyImmidiate.js'
+
+export default {
+    props: [ 'group', 'permissions'],
+
+    components: { SmallUser, ChangeUserRole, DefaultCardLayout, DeleteIcon, AreYouSureLayout, RoleBlock, SearchIcon, },
 
     data() {
         return {
-            user: this.$store.state.auth.user,
+            searchStr: '',
+            listedParticipants: []
         }
     },
 
     computed: {
-        participants(){ 
-            return this.sortParticipantsByRoleHierarchy(this.$store.getters[ns.groupModule(this.group.id, 'participants')]) 
+        ...mapGetters({ 
+            user: "user",
+            roles: ns.chat_rules('StateRoles'),
+        }),
+
+        canRemoveAnybody(){
+            return this.permissions.remove.length != 0 ? true : false
         },
+
+        chatRole(){ return this.$store.getters[ ns.groupModule(this.group.id, 'getUserRole') ](this.user.id) },
+    },
+
+    created(){
+        this.listedParticipants = collection.sortParticipantsByRoleHierarchy(this.group.participants, this.roles)
     },
 
     methods: {
@@ -100,6 +126,43 @@ export default {
             return participant.pivot.participant_role.toLowerCase()
         },
 
+
+        searchParticipants(){
+            this.listedParticipants = collection.sortParticipantsByRoleHierarchy(
+                fuzzyImmidiate(
+                    this.searchStr, 
+                    this.group.participants, 
+                    ['first_name', 'last_name']
+                ),
+                this.roles
+            )
+        },
+
+        /**
+         * -------------------------------------------------------------------------------------------------------------
+         *                                  Alternative methods for searching participants                             -
+         * -------------------------------------------------------------------------------------------------------------
+         */
+
+        /**
+        searchParticipants(){
+            this.listedParticipants = []
+
+            for(let i in this.group.participants){
+                if(this.regExpressionMatch(this.searchStr, this.group.participants[i].first_name) || this.regExpressionMatch(this.searchStr, this.group.participants[i].last_name)){
+                    this.listedParticipants.push(this.group.participants[i])
+                }
+            }
+
+            this.listedParticipants = this.sortParticipantsByRoleHierarchy(this.listedParticipants)
+        },
+
+        regExpressionMatch(find, text){
+            let regex = new RegExp(find, 'i');
+            return text.match(regex)
+        }
+
+
         sortParticipantsByRoleHierarchy(participants){
             let groupedByRole = {}
             let sortedByRole = []
@@ -117,7 +180,14 @@ export default {
             }
 
             return sortedByRole
-        }
+        },
+
+        */
+        /**
+         * -------------------------------------------------------------------------------------------------------------
+         *                                                                                                             -
+         * -------------------------------------------------------------------------------------------------------------
+         */
 
     }
 }

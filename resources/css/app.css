@@ -75,15 +75,15 @@
 
     .def-input { @apply def-trans placeholder:italic w-full outline-none rounded-xl; }
 
-    .def-btn { @apply def-trans w-full text-center select-none rounded cursor-pointer; }
+    .def-btn { @apply def-trans w-full text-center select-none rounded cursor-pointer text-lg ; }
 
-    .def-nav-btn { @apply def-trans text-lg font-light select-none cursor-pointer; }
+    .def-nav-btn { @apply def-trans font-normal text-lg select-none cursor-pointer; }
 
     .def-error-text { @apply def-trans text-red-500; }
 
-    .def-dropdown { @apply flex flex-col px-2 z-10 absolute border-4 rounded
-        border-gray-300 bg-gray-50 
-        dark:border-darker-500 dark:bg-darker-100 ; }
+    .def-dropdown { @apply fixed def-resize-trans flex flex-col px-2 pb-2 z-10 border-2 rounded
+        bg-white border-gray-300  
+        dark:bg-darker-100 dark:border-darker-300; }
 
     .def-paragraph { @apply def-trans font-light p-2
         text-gray-700 
@@ -93,6 +93,7 @@
         text-gray-900 
         dark:text-gray-400; }
     /*--------------------------------------*/
+
     
     /*------------Containers------------*/
     .container-narrow { @apply w-[95%] md:w-[80%] lg:w-[70%] mx-auto;}
@@ -102,6 +103,7 @@
     .page-space-top { @apply mt-2 sm:mt-6; }
     /*--------------------------------------*/
 
+    
     /*------------Example Context------------*/
     .examples-span-emphasis { @apply text-blue-500 dark:text-blue-500; }
 
@@ -123,19 +125,16 @@
     /*--------------------------------------*/
 
     /*------------Submit Buttons---------------*/
-    .disabled-btn { @apply def-btn text-lg font-light cursor-not-allowed 
-        text-gray-600 bg-gray-200
-        dark:bg-darker-50; }
+    .disabled-btn { @apply def-btn cursor-not-allowed; }
 
-    .not-disabled-btn { @apply def-btn text-lg font-light
-        text-white bg-blue-500 hover:bg-blue-600  
+    .not-disabled-btn { @apply def-btn text-white bg-blue-500 hover:bg-blue-600  
         dark:text-green-300 dark:bg-darker-400 dark:hover:text-green-500; }
 
     .danger-btn { @apply grow text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-600; }
     /*-----------------------------------------*/
 
     /*------------Naviation buttons------------*/
-    .nav-btn { @apply def-nav-btn py-0.5 px-2 flex place-items-center text-blue-600 dark:text-gray-200; }
+    .nav-btn { @apply def-nav-btn py-0.5 px-2 flex place-items-center text-blue-500 dark:text-gray-200; }
                     
     .nav-btn-svg { @apply h-[3rem] w-[3rem] stroke-transparent
         fill-blue-500 hover:fill-blue-600 
@@ -153,15 +152,13 @@
     /*--------------------------------------*/
 
     /*------------Input------------*/
-    .small-input { @apply def-input py-1 px-2 sm:py-2 sm:px-3 border-2 
-        text-gray-700 placeholder:text-gray-500 border-blue-200
-        dark:text-gray-400 dark:bg-darker-300 dark:border-darker-400; }
+    .small-input { @apply def-input py-1 px-2 sm:py-2 sm:px-3 border-2 ; }
+    .search-loop { @apply def-input py-1 pr-2 pl-10 sm:py-2 border-2 ; }
     /*--------------------------------------*/
 
     /*------------Lists------------*/
     .profile-dropdown-list-item { @apply def-trans py-2 w-full font-light select-none text-center
-        text-gray-400 hover:text-gray-500
-        dark:text-gray-300 dark:hover:text-gray-100; }
+        text-gray-600 dark:text-gray-400; }
     /*--------------------------------------*/
 
     /*------------Auth------------*/
@@ -198,8 +195,10 @@
 
     /*------------Settings------------*/
     .setting-block { @apply grid grid-cols-4 gap-2 sm:gap-4 my-auto; }
-    .setting-label { @apply p-1 sm:p-2 flex-none my-auto; }
-    .setting-input { @apply small-input col-span-3 bg-transparent dark:bg-transparent; }
+    .setting-label { @apply text-gray-700 dark:text-gray-400; }
+    .setting-input { @apply py-1 px-2 sm:py-2 sm:px-3 border-2 rounded w-full outline-none
+        text-gray-800 placeholder:text-gray-500 border-gray-300
+        dark:bg-darker-200 dark:text-gray-300 dark:border-darker-300; }
     .setting-btn-do { @apply p-4 def-btn w-full border rounded bg-white border-gray-300 dark:bg-darker-200 dark:border-darker-400 hover:bg-gray-100 dark:hover:bg-darker-300 ; }
     .setting-btn-save   { @apply p-4 def-btn border text-green-600 bg-gray-100 border-green-300 dark:bg-darker-200 dark:border-green-600 hover:bg-gray-200 dark:hover:bg-darker-300 ; }
     .setting-btn-cancel { @apply p-4 def-btn border bg-gray-50 border-gray-300 dark:bg-darker-200 dark:border-darker-400 hover:bg-gray-200 dark:hover:bg-darker-300 ; }

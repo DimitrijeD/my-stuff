@@ -18,7 +18,7 @@
                     <p  class="examples-header">Header of card</p>
                 </template>
                         
-                <template #content>
+                <template #body>
                     <div class="examples-body ">
                         <p class="pb-20">asd</p>
                         <p class="pb-20">asd</p>

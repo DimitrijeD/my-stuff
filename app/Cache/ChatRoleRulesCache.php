@@ -33,6 +33,7 @@ class ChatRoleRulesCache
             ChatRole::ACTION_KEY_ADD               => $this->depth3($this->chatRole::ACTION_KEY_ADD),
             ChatRole::ACTION_KEY_REMOVE            => $this->depth3($this->chatRole::ACTION_KEY_REMOVE),
             ChatRole::ACTION_KEY_CHANGE_ROLE       => $this->depth4($this->chatRole::ACTION_KEY_CHANGE_ROLE),
+            ChatRole::ACTION_KEY_CHANGE_GROUP_TYPE => $this->depth2($this->chatRole::ACTION_KEY_CHANGE_GROUP_TYPE),
         ]);
     }
 

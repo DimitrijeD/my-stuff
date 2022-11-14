@@ -21,6 +21,7 @@ export class Permissions {
         this.permission_canChangeRole()
         this.permission_canSendMessage()
         this.permission_canChangeGroupName()
+        this.permission_canChangeGroupType()
 
         return this.permissions
     }
@@ -40,7 +41,6 @@ export class Permissions {
         this.ruleDepth4(this.rules[action][this.chatRole], action)
     }
 
-
     permission_canSendMessage(){
         let action = 'send_message'
         this.ruleDepth2(this.rules[action][this.chatRole], action)
@@ -48,6 +48,11 @@ export class Permissions {
 
     permission_canChangeGroupName(){
         let action = 'change_group_name'
+        this.ruleDepth2(this.rules[action][this.chatRole], action)
+    }
+
+    permission_canChangeGroupType(){
+        let action = 'change_group_type'
         this.ruleDepth2(this.rules[action][this.chatRole], action)
     }
 

@@ -48,33 +48,33 @@ export default {
     },
 
     created(){
-        this.$store.dispatch('getUser').then(()=>{
-            let colorScheemas = []
-            let allRules = ''
+        // this.$store.dispatch('getUser').then(()=>{
+        //     let colorScheemas = []
+        //     let allRules = ''
             
-            if(this.user?.user_setting?.colorz){
-                colorScheemas = this.user.user_setting.colorz
-            } else {
-                colorScheemas = defaultConfig
-            }
+        //     if(this.user?.user_setting?.colorz){
+        //         colorScheemas = this.user.user_setting.colorz
+        //     } else {
+        //         colorScheemas = defaultConfig
+        //     }
 
-            for(let i in colorScheemas){
-                let cc = new Colorz(colorScheemas[i])
-                cc.make() 
+        //     for(let i in colorScheemas){
+        //         let cc = new Colorz(colorScheemas[i])
+        //         cc.make() 
 
-                allRules += cc.globalRules
-            }
+        //         allRules += cc.globalRules
+        //     }
 
-            Colorz.replaceRules(allRules)
+        //     Colorz.replaceRules(allRules)
 
-            if(this.user.user_setting.theme == 'light'){
-                localStorage.setItem('vueuse-color-scheme', 'auto')
-                this.isDark = false
-            } else {
-                localStorage.setItem('vueuse-color-scheme', 'dark')
-                this.isDark = true
-            }
-        })
+        //     if(this.user.user_setting.theme == 'light'){
+        //         localStorage.setItem('vueuse-color-scheme', 'auto')
+        //         this.isDark = false
+        //     } else {
+        //         localStorage.setItem('vueuse-color-scheme', 'dark')
+        //         this.isDark = true
+        //     }
+        // })
     },
 }
 </script>

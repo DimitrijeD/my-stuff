@@ -120,7 +120,7 @@ export default{
                 }
             } 
 
-            if(this.step != 4) this.increaseStepAfter(this.range[this.step].max - ms)
+            if(this.step < 4) this.increaseStepAfter(this.range[this.step].max - ms)
         },
 
         getTimeValue(){

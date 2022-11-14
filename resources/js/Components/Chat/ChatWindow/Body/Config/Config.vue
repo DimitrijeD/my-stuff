@@ -4,7 +4,7 @@
             <ul class="flex" > 
                 <li v-for="(setting, key) in settings" :key="key" @click="openSetting(key)"
                     :class="[ 'small-nav-btn flex-1', setting.opened ? 'small-nav-btn-active' : 'small-nav-btn-inactive', ]">
-                    {{ setting.name }} 
+                    {{ setting.forHuman }} 
                 </li>
             </ul>
         </template>
@@ -17,31 +17,20 @@
                     :cardCls="'w-[70%] h-24 mx-auto'"
                     class="absolute z-10 mx-auto w-full" 
                 />
-                <AddUsers
-                    v-show="settings.hasOwnProperty('add_users') && settings.add_users.opened" 
-                    :group="group"  
-                    :permissions="permissions"  
-                />
 
-                <Info 
-                    v-show="settings.hasOwnProperty('info') && settings.info.opened" 
-                    :group="group" 
-                    :permissions="permissions"
-                />
+                <KeepAlive>
+                    <component :is="openedComponent"
+                        :group="group" 
+                        :permissions="permissions" 
+                    />
+                </KeepAlive>
 
-                <Participants 
-                    v-show="settings.hasOwnProperty('participants') && settings.participants.opened" 
-                    :group="group" 
-                    :chatRole="chatRole"
-                    :permissions="permissions"
-                    :roles="roles"
-                />
-
-                <Options 
-                    v-show="settings.hasOwnProperty('options') && settings.options.opened"
-                    :group="group" 
-                    :permissions="permissions"
-                />
+                <!-- 
+                    Participants : 'group', 'permissions', 
+                    AddUsers: 'group', 'permissions'
+                    Info: 'group', 'permissions'
+                    Options: 'group', 'permissions'
+                 -->
             </div>
         </template>
     </FillRemainingSpaceLayout>
@@ -50,11 +39,12 @@
 <script>
 import Participants from '@/Components/Chat/ChatWindow/Body/Config/Participants/Participants.vue'
 import Info         from '@/Components/Chat/ChatWindow/Body/Config/Info.vue'
-import Options      from '@/Components/Chat/ChatWindow/Body/Config/Options.vue'
+import Options      from '@/Components/Chat/ChatWindow/Body/Config/Options/Options.vue'
 import AddUsers     from '@/Components/Chat/ChatWindow/Body/Config/AddUsers.vue'
 
 import FillRemainingSpaceLayout from '@/Layouts/FillRemainingSpaceLayout.vue'
 import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.vue';
+import * as ns from '@/Store/module_namespaces.js'
 
 export default {
     props: [ 'group', 'permissions', 'chatRole', 'roles', ],
@@ -65,46 +55,65 @@ export default {
         return {
             user: this.$store.state.auth.user,
 
+            allSettingComp: ['AddUsers', 'Participants', 'Info', 'Options'],
+
             settings: {
-                add_users: {
-                    name: 'Add Users',
+                AddUsers: {
+                    forHuman: 'Add Users',
                     opened: false, 
+                    name: 'AddUsers'
                 },
 
-                info: {
-                    name: 'Info',
+                Info: {
+                    forHuman: 'Info',
                     opened: false,
+                    name: 'Info'
+
                 },
 
-                participants: {
-                    name: 'Participants',
+                Participants: {
+                    forHuman: 'Participants',
                     opened: false, 
+                    name: 'Participants'
                 },
 
-                options: {
-                    name: 'Options',
+                Options: {
+                    forHuman: 'Options',
                     opened: false, 
+                    name: 'Options'
                 },
             },
         }
     },
 
-    watch: {
-        chatRole: function () {
-            this.createPermissibleSettings() // reset UI when users role changes
-        },
+    computed: {
+        openedComponent(){
+            for(let key in this.settings){
+                if(this.settings[key].opened){
+                    return this.settings[key].name
+                }
+            }
+        }
     },
+
+    watch: {
+        permissions: {
+            handler: function () {
+                this.createPermissibleSettings() // reset UI when users role changes
+            },
+            deep: true,
+        },
+    }, 
 
     created(){
         this.createPermissibleSettings()
         this.setFirstOpenedConfig()
     },
 
-    methods: 
-    {
+    methods: {
         openSetting(key){
-            for(let type in this.settings){
-                this.settings[type].opened = false
+            for(let key in this.settings){
+                this.settings[key].opened = false
             }
 
             this.settings[key].opened = true
@@ -115,17 +124,33 @@ export default {
          */
         createPermissibleSettings(){
             if(this.permissions.add.length){
-                if(!this.settings.hasOwnProperty('add_users')){
-                    this.settings.add_users = {
-                        name: 'Add Users',
+                if(!this.settings?.AddUsers){
+                    this.settings.AddUsers = {
+                        forHuman: 'Add Users',
                         opened: false, 
+                        name: 'AddUsers'
                     }
                 }
             } else {
-                if(this.settings.hasOwnProperty('add_users')) delete this.settings.add_users
+                delete this.settings.AddUsers
             }
 
-            if(this.group.model_type == "PRIVATE") delete this.settings['participants']
+            this.sortNav()
+        },
+
+        /**
+         * After users permissions have been changed, navbar will change as well. This method sorts navbar to default state
+         */
+        sortNav(){
+            let temp = {}
+
+            for(let i in this.allSettingComp){
+                if(this.settings[this.allSettingComp[i]]){
+                    temp[ this.allSettingComp[i] ] = this.settings[ this.allSettingComp[i] ]
+                }
+            }
+            
+            this.settings = temp
         },
 
         setFirstOpenedConfig(){

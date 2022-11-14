@@ -1,19 +1,33 @@
 import * as h from '@/Store/functions/helpers.js';
+import * as ns from '@/Store/module_namespaces.js'
 
 const actions = {
     searchForAddUsersInApi({ commit, dispatch, getters }, data){
-        h.prepareUsersSearchRequest(data, getters.getAllUsersIds)
+        const responseContext = {responseContext: data.responseContext }
+        delete data.responseContext
 
-        return axios.post('users/search', h.prepareUsersSearchRequest(data, getters.getAllUsersIds)).then((res) => {
-            if(!res.data.length) return
+        return new Promise((resolve, reject) => {
+            axios.post('users/search', h.prepareUsersSearchRequest(data, getters.getAllUsersIds)).then((res) => {
+                if(!res.data.length) 
+                    resolve(res)
 
-            commit('mergeUsers', h.createDict(res.data, 'id'))
+                commit('mergeUsers', h.createDict(res.data, 'id'))
 
-            dispatch('searchForAddUsersInStore', {
-                search_str: data.search_str,
-                exclude: data.exclude
+                dispatch('searchForAddUsersInStore', {
+                    search_str: data.search_str,
+                    exclude: data.exclude
+                })
+
+                resolve(res)
+            }).catch((error) =>{
+                dispatch( ns.actionResponseManager('provide'), { 
+                    ...error.response.data, 
+                    ...responseContext
+                } , {root:true} )
+                reject(error)
             })
         })
+
     },
 
     searchForAddUsersInStore({ state, commit }, data){

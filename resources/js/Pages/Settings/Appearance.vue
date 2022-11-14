@@ -34,7 +34,7 @@ export default {
 
     methods: {
         selectedTheme(theme){
-            if(theme == 'light'){
+            if(theme.forHumans == 'light'){
                 localStorage.setItem('vueuse-color-scheme', 'auto')
                 this.isDark = false
             } else {
@@ -44,7 +44,7 @@ export default {
 
             this.$store.dispatch('updateProfile', {
                 settingsFiels: {
-                    theme: theme
+                    theme: theme.forHumans
                 }
             })
         }

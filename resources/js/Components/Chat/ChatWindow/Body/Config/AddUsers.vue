@@ -1,48 +1,29 @@
 <template>
-    <DoubleScrollContentCardLayout class="select-none ">
-        <template #header >
-            <SearchInput 
-                :actions="input.actions"
-                :exclude="excludeUsersFromSearch"
-                :placeholder="input.placeholder"
+    <DefaultCardLayout>
+        <template #body>
+            <DoubleUserSelectList 
+                :searchInput="{
+                    actions: actions,
+                    exclude: excludeUsersFromSearch, 
+                    placeholder: 'Find users', 
+                    cls: 'dark:bg-darker-300 dark:border-darker-400',
+                }"
+                @toggled="toggled"
+                :flushSelected="flushSelected"
             />
         </template>
 
-        <template #content-left >
-            <ul> 
-                <li v-for="(id, index) in listUsers" :key="index" >
-                    <small-user 
-                        v-if="!addedUsersIds.includes(id)"
-                        :user="getUser(id)"
-                        @click.native="add(id)"
-                    /> 
-                </li>
-            </ul>
-        </template>
-
-        <template #content-right>
-            <p v-if="addedUsersIds.length == 0" class="text-center italic font-extralight text-gray-500">
-                Selected users will appear in this list
-                <br><br>
-                After adding user, you can remove him by clicking on him
-            </p>
-            <ul> 
-                <li v-for="(id, index) in addedUsersIds" :key="index">
-                    <SmallUser 
-                        :user="getUser(id)"
-                        @click.native="remove(id)"
-                        class="dark:hover:text-green-500"
-                    />
-                </li>
-            </ul>
-        </template>
-
         <template #footer>
-            <button :class="['py-2 mt-2', anySelected ? 'not-disabled-btn' : '' , !anySelected ? 'disabled-btn' : '', ]" @click="addParticipants()">
+            <button :class="['py-2 mt-2 def-btn', anySelected 
+                ? 'text-white bg-blue-500 hover:bg-blue-600 dark:text-green-300 dark:bg-darker-400 dark:hover:text-green-500' 
+                : 'cursor-not-allowed text-gray-600 bg-gray-200 dark:text-gray-400 dark:bg-darker-400']" 
+                @click="addParticipants()"
+            >
                 {{ btnTxt }}
             </button>
         </template>
-    </DoubleScrollContentCardLayout>
+
+    </DefaultCardLayout>
 </template>
 
 <script>
@@ -51,22 +32,24 @@ import SearchInput from '@/Components/Chat/reuseables/SearchInput.vue'
 import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
 import * as ns from '@/Store/module_namespaces.js'
 import DoubleScrollContentCardLayout from '@/Layouts/DoubleScrollContentCardLayout.vue'
+import LoadingCyrcle from '@/Components/Reuseables/LoadingCyrcle.vue'
+import DoubleUserSelectList from '@/Components/Chat/reuseables/DoubleUserSelectList.vue'
+import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue'
 
 export default {
     props: [ 'group', 'permissions' ],
 
-    components: { SearchInput, SmallUser, DoubleScrollContentCardLayout, },
+    components: { DefaultCardLayout, DoubleUserSelectList, LoadingCyrcle, SearchInput, SmallUser, DoubleScrollContentCardLayout, },
 
     data() {
         return {
             addedUsersIds: [],
-            input: {
-                actions: {
-                    api: ns.users('searchForAddUsersInApi'),
-                    store: ns.users('searchForAddUsersInStore')
-                },
-                placeholder: "Find users to add",
+            actions: {
+                api: ns.users('searchForAddUsersInApi'),
+                store: ns.users('searchForAddUsersInStore')
             },
+
+            flushSelected: 0,
             
         }
     },
@@ -90,7 +73,7 @@ export default {
 
         excludeUsersFromSearch(){ 
             return Object.keys( this.group.participants )
-         },
+        },
     },
 
     methods: {
@@ -98,12 +81,8 @@ export default {
             return this.$store.getters[ns.users('getById')](id)
         },
         
-        add(id){
-            if(!this.addedUsersIds.includes(id)) this.addedUsersIds.push(id)
-        },
-
-        remove(id){
-            if(this.addedUsersIds.includes(id)) this.addedUsersIds.splice(this.addedUsersIds.indexOf(id), 1)
+        toggled(users){
+            this.addedUsersIds = users
         },
 
         addParticipants(){
@@ -115,8 +94,14 @@ export default {
             }).then(() =>{
                 this.addedUsersIds = []
                 this.$store.dispatch(ns.users('clearAddedUsersFromList'), this.excludeUsersFromSearch)
+                this.flushSelected++
             })
         },
+
     },
 }
 </script>
+
+<style scoped>
+    .info-txt { @apply m-auto italic font-light text-gray-600 dark:text-gray-400;}
+</style>

@@ -19,7 +19,6 @@ const actions = {
     },
 
     provide({state, dispatch, rootState}, data){
-        
         let shouldDispatch = false
 
         if(data.responseContext.important){

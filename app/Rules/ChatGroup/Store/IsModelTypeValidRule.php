@@ -19,6 +19,6 @@ class IsModelTypeValidRule implements Rule
 
     public function message()
     {
-        return __("Group type is not available.");
+        return __("chat.storeGroup.invalidGroupType");
     }
 }

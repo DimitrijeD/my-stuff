@@ -1,6 +1,6 @@
 <template>
     <div class="def-trans min-h-screen max-h-screen flex flex-col overflow-hidden
-        bg-gray-200 text-gray-600 
+        bg-white text-gray-800 
         dark:bg-black dark:text-gray-300"
     >
         <div>

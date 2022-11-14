@@ -10,7 +10,7 @@
         <div class="grow">
             <div class="h-full flex flex-row gap-2 ">
                 <div class="grow overflow-hidden relative">
-                    <div class="absolute top-0 left-0 right-0 bottom-0 scroll1">
+                    <div class="absolute top-0 left-0 right-0 bottom-0 scroll1 overflow-x-hidden">
                         <slot name="content-left"></slot>
                     </div>
                 </div>
@@ -18,7 +18,7 @@
                 <hr class="w-0.5 h-full bg-gray-300 dark:bg-darker-400 border-0" />
 
                 <div class="grow overflow-hidden relative">
-                    <div class="absolute top-0 left-0 right-0 bottom-0 scroll1">
+                    <div class="absolute top-0 left-0 right-0 bottom-0 scroll1 overflow-x-hidden">
                         <slot name="content-right"></slot>
                     </div>
                 </div>

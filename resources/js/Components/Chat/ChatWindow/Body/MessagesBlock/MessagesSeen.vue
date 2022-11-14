@@ -1,10 +1,10 @@
 <template>
-    <div class="flex justify-end flex-wrap">
+    <div :class="['flex justify-end flex-wrap gap-0.5', anybodyDisplayed ? 'mt-1.5' : '']">
         <div v-for="participant_id in user_ids" :key="participant_id">
             <img
                 v-if="toShow(participant_id)"
                 :src="getParticipantThumbnail(participant_id)"
-                :class="['w-7 h-7 object-cover m-0.5 rounded-full']"
+                class="w-7 h-7 object-cover m-0.5 rounded-full"
                 alt="User thumbnail"
             >    
         </div>
@@ -30,7 +30,8 @@ export default {
             config: {
                 neverShowUserBewlowHisOwnMsg: true,
                 neverShowSelf: true,
-            }
+            },
+            anybodyDisplayed: false,
         }
     },
 
@@ -60,6 +61,7 @@ export default {
                 if(this.isSelf(participant_id)) return false
             }
 
+            this.anybodyDisplayed = true
             return true
         },
 

@@ -10,8 +10,11 @@ use App\Http\Requests\ChatGroup\ChangeGroupNameRequest;
 use App\Http\Requests\ChatGroup\StoreGroupRequest;
 use Illuminate\Http\Request;
 use App\Events\GroupNameChangeEvent;
+use App\Events\GroupTypeChangeEvent;
+
 use App\Exceptions\InternalServerErrorException;
 use App\Http\Response\ApiResponse;
+use App\Http\Requests\ChatGroup\ChangeGroupTypeRequest;
 
 class GroupController extends Controller
 {
@@ -31,6 +34,7 @@ class GroupController extends Controller
 
         $request_initiator_id = auth()->user()->id;
 
+        // @todo fix this nonsence
         foreach($request->users_ids as $user_id){
             $participantPivotRepo->create([
                 'user_id' => $user_id, 
@@ -67,7 +71,7 @@ class GroupController extends Controller
     public function changeGroupName(ChangeGroupNameRequest $request)
     {
         if( !$this->chatGroupRepo->update($request->group, [ 'name' => $request->new_name ]) )
-        throw new InternalServerErrorException(__("chat.name.failedUpdating")); 
+            throw new InternalServerErrorException(__("chat.name.failedUpdating")); 
 
         broadcast(new GroupNameChangeEvent([
             'group_id' => $request->group->id,
@@ -91,4 +95,18 @@ class GroupController extends Controller
     //         : response()->json(['errors' => __("You have no access rights to this chat group.")], 403);
     // }
 
+    public function chageGroupType(ChangeGroupTypeRequest $request)
+    {
+        if( !$this->chatGroupRepo->update($request->group, [ 'model_type' => $request->model_type ]) )
+            throw new InternalServerErrorException(__("chat.type.failedUpdating")); 
+
+        broadcast(new GroupTypeChangeEvent([
+            'model_type' => $request->model_type,
+            'group_id' => $request->group->id
+        ]));
+        
+        return response()->json( ApiResponse::success([
+            'messages' => [[ __('chat.type.success') ]],
+        ]) );
+    }
 }

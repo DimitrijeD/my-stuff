@@ -1,12 +1,10 @@
 <template>
-    <div class="space-y-2 mx-2">
+    <div class="space-y-3 mx-2">
         <SameUserMessageBlock 
             v-for="(block, index) in blocks" 
             :key="index"
-            :data-index="index"
             :block="block"
             :group="group"
-            
         />
         <ParticipantsTyping :group_id="group.id" />
     </div>
@@ -22,10 +20,7 @@ import SameUserMessageBlock from '@/Components/Chat/ChatWindow/Body/MessagesBloc
 export default {
     props: [ 'group', ],
 
-    components: {
-        ParticipantsTyping,
-        SameUserMessageBlock,
-    },
+    components: { ParticipantsTyping, SameUserMessageBlock, },
 
     data() {
         return {

@@ -5,7 +5,7 @@ import * as actionMessageFormater from  './actionMessageFormater.js';
 import store from '@/Store/index.js';
 
 const actions = {
-    initGroup({ state, rootState, commit, dispatch, getters, rootGetters }, group){
+    initGroup({ state, rootState, commit }, group){
         const selfId = rootState.auth.user.id
         if(group?.id)           commit('id',           group.id)
         if(group?.last_message) commit('last_message', group.last_message)
@@ -422,6 +422,10 @@ const actions = {
                 }
 
             })
+            
+            .listen('.group.model_type', e => {
+                commit('model_type', e.data.model_type)
+            })
     },
 
     toggleWindow({commit}){
@@ -439,7 +443,39 @@ const actions = {
         if(!state.window.minimized){
             dispatch( ns.actionResponseManager('provide'), data, {root:true} )
         } 
-    }
+    },
+
+    changeGroupType({ state, dispatch }, payload){
+        if(!payload.group_id || !payload.model_type) return       
+
+        return new Promise((resolve, reject) => {
+            axios.post("chat/group/change-group-type", payload).then((res) => {
+                dispatch('makeActionResponseMessage', {
+                    ...res.data,
+                    ...{
+                        responseContext:{
+                            moduleName: `config.groupId_${state.id}`,
+                            important: true
+                        }
+                    } 
+                }) 
+
+                resolve(res)  
+            })
+        }).catch( error => { 
+            dispatch('makeActionResponseMessage', {
+                ...error.response.data,
+                ...{
+                    responseContext:{
+                        moduleName: `groupId_${state.id}`,
+                        important: true
+                    }
+                } 
+            })
+            
+            reject(error)
+        })
+    },
     
 }
 

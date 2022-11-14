@@ -1,5 +1,5 @@
 <template>
-    <nav :class="['flex justify-between', headerHeight, anyDropsOpened() ? 'z-50 bg-gray-200 dark:bg-black relative' : '']">
+    <nav :class="['flex justify-between', headerHeight, anyDropsOpened() ? 'z-50 bg-white dark:bg-black relative' : '']">
         <!-- Left side of navigation bar -->
         <div class="flex justify-start relative">
             <router-link class="nav-btn" to="/">Home</router-link>

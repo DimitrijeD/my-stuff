@@ -24,6 +24,6 @@ class ParticipantsExistRule implements Rule
 
     public function message()
     {
-        return __("Cannot add participants which don't exist. Incorrect id.");
+        return __("chat.storeGroup.someUsersDontExist");
     }
 }

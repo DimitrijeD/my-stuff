@@ -20,6 +20,6 @@ class MoreThanOneParticipantRule implements Rule
 
     public function message()
     {
-        return __('Chat group must contain at least 2 users.');
+        return __('chat.storeGroup.minNumUsers');
     }
 }

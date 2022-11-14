@@ -1,18 +1,18 @@
 <template>
     <div class="space-y-8">
         <div class="space-y-4">
-            <div class="setting-block">
-                <label for="first_name" class="setting-label">First name</label>
+            <div class="space-y-1">
+                <label class="setting-label">First name</label>
                 <input class="setting-input" v-model="form.userFields.first_name"  >
             </div>
 
-            <div class="setting-block">
-                <label for="last_name" class="setting-label">Last name</label>
+            <div class="space-y-1">
+                <label class="setting-label">Last name</label>
                 <input class="setting-input" v-model="form.userFields.last_name"  >
             </div>
 
-            <div class="setting-block">
-                <p class="setting-label ">Email</p>
+            <div class="space-y-1">
+                <p class="setting-label">Email</p>
                 <p class="setting-input cursor-not-allowed text-left" >{{ user?.email }}</p>
             </div>
 

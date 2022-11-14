@@ -43,6 +43,8 @@ class ChatGroupClusterSeeder extends Seeder
     const MIN_NUM_MESSAGES = 10;
     const MAX_NUM_MESSAGES = 100;
 
+    const USE_INC_INT_AS_TXT = false;
+    
     /**
      * Define seeder's behaviour and type
      */
@@ -58,10 +60,10 @@ class ChatGroupClusterSeeder extends Seeder
 
         $this->msgType = self::DISTRIBUTION_DEFAULT;
         $this->timeType = self::DISTRIBUTION_DEFAULT;
-        $this->seenType = self::DISTRIBUTION_DEFAULT;
+        $this->seenType = self::DISTRIBUTION_MAX_ACTIVITY;
 
-        // $this->numUsers = 20;
-        $this->numUsers = null;
+        $this->numUsers = 20;
+        // $this->numUsers = null;
 
         $this->users = (new BuildUsers([], $this->numUsers))
             ->resolve()
@@ -97,7 +99,7 @@ class ChatGroupClusterSeeder extends Seeder
             ->build();
 
         $this->messages->fillAssembledMessageModels($timeClusteredMessages, ['created_at', 'updated_at']);
-        $this->messages->fillAssembledMessageModels( (new ChatMessageTextGenerator($this->numMessages, $this->minTextLen, $this->maxTextLen, true))->build(), ['text'] );
+        $this->messages->fillAssembledMessageModels( (new ChatMessageTextGenerator($this->numMessages, $this->minTextLen, $this->maxTextLen, self::USE_INC_INT_AS_TXT))->build(), ['text'] );
         $this->messages->bulkCreateModels();
 
         $this->createdMessages = $this->messages->getChatGroupMessages();

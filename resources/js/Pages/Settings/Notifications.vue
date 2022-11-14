@@ -1,27 +1,25 @@
 <template>
-    <div class="space-y-10">
-        <div class="space-y-7">
-            <div class="grid grid-cols-2 ">
-                <label class="my-auto">Open chat on new message</label>
-                <CheckBoxInput 
-                    :boxCls="'fill-gray-600 dark:fill-gray-500/80'" 
-                    class="w-10 h-10 m-auto" 
-                    :name="'open_all_chats_on_new_message'" 
-                    :value="form.settingsFiels.open_all_chats_on_new_message" 
-                    @inputC="save" 
-                />
-            </div>
+    <div class="space-y-4">
+        <div class="flex space-x-4">
+            <label class="my-auto">Open chat on new message</label>
+            <CheckBoxInput 
+                :boxCls="'fill-gray-600 dark:fill-gray-500/80'" 
+                class="w-10 h-10 " 
+                :name="'open_all_chats_on_new_message'" 
+                :value="form.settingsFiels.open_all_chats_on_new_message" 
+                @inputC="save" 
+            />
+        </div>
 
-            <div class="grid grid-cols-2 ">
-                <label class="my-auto">Show only important notifications</label>
-                <CheckBoxInput 
-                    :boxCls="'fill-gray-600 dark:fill-gray-500/80'" 
-                    class="w-10 h-10 m-auto" 
-                    :name="'show_only_important_notifications'" 
-                    :value="form.settingsFiels.show_only_important_notifications" 
-                    @inputC="save" 
-                />
-            </div>
+        <div class="flex space-x-4">
+            <label class="my-auto">Show only important notifications</label>
+            <CheckBoxInput 
+                :boxCls="'fill-gray-600 dark:fill-gray-500/80'" 
+                class="w-10 h-10 " 
+                :name="'show_only_important_notifications'" 
+                :value="form.settingsFiels.show_only_important_notifications" 
+                @inputC="save" 
+            />
         </div>
     </div>
 </template>

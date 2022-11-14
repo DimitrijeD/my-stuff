@@ -1,5 +1,5 @@
 <template>
-    <div :class="[ 'def-resize-trans self-end visible flex-none bg-white dark:bg-darker-300']" 
+    <div :class="[ 'def-resize-trans self-end visible flex-none bg-white dark:bg-darker-300 text-gray-600 dark:text-gray-300']" 
         :style="{ height: group.window.minimized ? '' : size.height, width: size.width,  }"
     >
         <div class="flex flex-col overflow-hidden h-full">

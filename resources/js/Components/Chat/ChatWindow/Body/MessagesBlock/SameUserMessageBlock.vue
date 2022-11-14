@@ -1,8 +1,10 @@
 <template>
-    <div :class="['rounded-2xl p-1.5', isSelf ? 'bg-blue-200 dark:bg-darker-600/20' : 'bg-gray-200 dark:bg-darker-200'] " >
+    <div :class="['rounded-2xl p-1.5', isSelf 
+        ? 'self-shadow bg-blue-200 dark:bg-darker-600/20' 
+        : 'notself-shadow bg-gray-200 dark:bg-darker-200']"
+    >
         <SmallUser
             :user="getUser(this.block.blockOwnerId)"
-            :userNameCls="'text-gray-600 dark:text-gray-300 '"
             :imgCls="'w-10 h-10'"
             class="py-1"
         /> 
@@ -70,5 +72,12 @@ export default {
         position: absolute;
         width: 100%;
         
+    }
+
+    .self-shadow {
+        box-shadow: -3px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    }
+    .notself-shadow {
+        box-shadow: -1px 1px 1px 1px rgba(6, 2, 125, 0.2); 
     }
 </style>

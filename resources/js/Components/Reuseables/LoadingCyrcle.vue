@@ -1,6 +1,6 @@
 <template>
     <Transition name="loading">
-        <LoadingIcon v-show="show" :class="['absolute inset-0 mx-auto ', iconCls]" />
+        <LoadingIcon v-show="show" :class="[' absolute inset-0 mx-auto ', iconCls]" />
     </Transition>
 </template>
 
