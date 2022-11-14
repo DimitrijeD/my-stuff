@@ -43,7 +43,7 @@ class ChatGroupClusterSeeder extends Seeder
     const MIN_NUM_MESSAGES = 10;
     const MAX_NUM_MESSAGES = 100;
 
-    const USE_INC_INT_AS_TXT = false;
+    const USE_INC_INT_AS_TXT = true;
     
     /**
      * Define seeder's behaviour and type

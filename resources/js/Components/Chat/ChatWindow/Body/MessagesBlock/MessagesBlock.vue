@@ -6,7 +6,7 @@
             :block="block"
             :group="group"
         />
-        <ParticipantsTyping :group_id="group.id" />
+        <ParticipantsTyping :group_id="group.id" :participants="group.participants" />
     </div>
 </template>
 
@@ -34,7 +34,7 @@ export default {
          }),
 
         seen(){ 
-            return this.$store.getters[ ns.groupModule(this.group.id, 'seen')]
+            return this.$store.getters[ ns.groupModule(this.group.id, 'seen') ]
         },
     },
 

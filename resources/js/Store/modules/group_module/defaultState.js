@@ -17,9 +17,7 @@ export default () => {
             minimized: false,
             showConfig: false,
             hasInitMessages: false,
-            scrolledDownInitialy: false, // it's called like that to tell text chat window load that he sould scroll down
+            scrolledDownInitialy: false,
         },
-
-        
     }
 }

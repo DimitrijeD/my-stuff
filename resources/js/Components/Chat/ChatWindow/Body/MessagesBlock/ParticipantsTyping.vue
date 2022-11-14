@@ -1,13 +1,9 @@
 <template>
-    <div class="m-2">
-        <div
-            v-for="user in usersTyping"
-            v-bind:key="user.id"
-            class=" italic text-sm text-gray-500 dark:text-gray-400 ml-2 select-none"
-        >
-            <div v-if="user" class="">
-                {{ user.first_name }} is typing ...
-            </div>
+    <div class="py-1">
+        <div v-for="id in usersTyping" :key="id" >
+            <span class="italic text-sm text-gray-500 dark:text-gray-400 ml-2 select-none">
+                {{ getDisplay(id) }} is typing ...
+            </span>
         </div>
     </div>
 </template>
@@ -15,9 +11,7 @@
 <script>
 
 export default {
-    props:[
-        'group_id',
-    ],
+    props:[ 'group_id', 'participants'],
 
     /**
      * usersTyping = {
@@ -36,40 +30,33 @@ export default {
             usersTyping: {},
             usersTimeouts: {},
             config: {
-                removeTyperAfterMS: 3000,
+                removeTyperAfterMS: 900000,
                 showNtypers: 5, // @TODO Maximum number of typers to show in chat 
             },
         }
     },
 
     mounted() {
-        Echo.private("group." + this.group_id)
-        .listenForWhisper('typing', user => {
-            this.addOrUpdateTyper(user)
-        })
-
-        Echo.private("group." + this.group_id)
-        .listenForWhisper('stoped-typing', user => {
-            this.removeTyper(user.id)
+        Echo.private("group." + this.group_id).listenForWhisper('typing', data => {
+            if(data.isTyping)
+                this.addOrUpdateTyper(data.id)
+            else
+                this.removeTyper(data.id)
         })
     },
 
     methods:{
-        addOrUpdateTyper(user){
-            this.$emit('typing')
+        addOrUpdateTyper(id){
+            this.usersTyping[id] = id
 
-            let temp = {}
-            temp[user.id] = user
-
-            this.usersTyping = Object.assign({}, this.usersTyping, temp)
-            this.addOrResetTimer(user.id)
+            this.addOrResetUser(id)
         },
 
         removeTyper(id){ 
             delete this.usersTyping[id]
         },
 
-        addOrResetTimer(id){
+        addOrResetUser(id){
             if(this.usersTimeouts[id]) clearTimeout(this.usersTimeouts[id])
 
             this.usersTimeouts[id] = setTimeout(() => {
@@ -77,6 +64,9 @@ export default {
             }, this.config.removeTyperAfterMS)
         },
 
+        getDisplay(id){
+            return `${this.participants[id]?.first_name}`
+        }
     },
 
 }
