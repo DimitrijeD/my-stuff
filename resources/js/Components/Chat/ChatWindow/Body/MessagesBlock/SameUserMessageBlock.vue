@@ -5,7 +5,8 @@
     >
         <SmallUser
             :user="getUser(this.block.blockOwnerId)"
-            :imgCls="'w-10 h-10'"
+            :imgCls="'w-12 h-12 img-shadow'"
+            :layoutCls="'gap-1'"
             class="py-1"
         /> 
 
@@ -75,9 +76,10 @@ export default {
     }
 
     .self-shadow {
-        box-shadow: -3px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        box-shadow: -3px 2px 2px 1px rgba(0, 0, 0, 0.1);
     }
     .notself-shadow {
-        box-shadow: -1px 1px 1px 1px rgba(6, 2, 125, 0.2); 
+        box-shadow: -1px 1px 1px 1px rgba(0, 0, 0, 0.4); 
     }
+
 </style>

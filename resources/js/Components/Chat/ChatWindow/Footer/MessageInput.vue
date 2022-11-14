@@ -5,7 +5,7 @@
             rows="3"
             @keyup.enter.exact.prevent="sendMessageEvent()"
             @keydown.enter.shift.exact.prevent="message += '\n'"
-            @keydown.exact="userTyping"
+            @keydown="typingWhisper(true)"
             type="text"
             v-model="message"
             placeholder="Message ..."
@@ -33,47 +33,35 @@ export default {
 
     computed: {
         ...mapGetters({ user: "user" }),
-
     },
 
     methods: {
         sendMessageEvent(){
-            this.userStopedTyping()
+            this.typingWhisper(false)
             this.sendMessage()
         },
 
         sendMessage(){
             if(this.message === '' || this.message.trim() == '') return
 
-            this.$store.dispatch(ns.groupModule(this.group_id, 'storeMessage'), this.getMessageFormat()).then(()=> {
+            this.$store.dispatch(ns.groupModule(this.group_id, 'storeMessage'), this.messagePayload()).then(()=> {
                 this.message = ''
-            }).catch(error => {
-                //
             })
         },
 
-        userTyping(){
-            Echo.private("group." + this.group_id).whisper("typing", this.getWhisperData())
+        typingWhisper(isTyping){
+            Echo.private("group." + this.group_id).whisper("typing", {
+                id: this.user.id,
+                isTyping: isTyping
+            })
         },
 
-        userStopedTyping(){
-            Echo.private("group." + this.group_id).whisper("stoped-typing", this.getWhisperData())
-        },
-
-        getMessageFormat(){
+        messagePayload(){
             return {
                 text: this.message,
                 group_id: this.group_id,
                 user_id: this.user.id
             };
-        },
-
-        getWhisperData(){
-            return {
-                'id': this.user.id,
-                'first_name': this.user.first_name,
-                'last_name': this.user.last_name,
-            }
         },
     }
 }
