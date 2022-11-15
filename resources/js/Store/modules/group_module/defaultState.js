@@ -19,5 +19,10 @@ export default () => {
             hasInitMessages: false,
             scrolledDownInitialy: false,
         },
+        typing: {
+            user_ids: [],
+            timeouts: {},
+            showTyperFor: 3500,
+        }
     }
 }

@@ -1,73 +1,107 @@
 <template>
-    <div class="py-1">
-        <div v-for="id in usersTyping" :key="id" >
-            <span class="italic text-sm text-gray-500 dark:text-gray-400 ml-2 select-none">
-                {{ getDisplay(id) }} is typing ...
-            </span>
-        </div>
-    </div>
+    <TransitionGroup tag="div" name="list" class="py-1 space-y-0.5 relative">
+        <p v-for="(someone, index) in someoneTyping" :key="index" class="italic text-sm text-gray-500 dark:text-gray-400 ml-2 select-none">
+            {{ someone }} 
+        </p>
+    </TransitionGroup>
 </template>
 
 <script>
+import * as ns from '@/Store/module_namespaces.js'
 
 export default {
     props:[ 'group_id', 'participants'],
 
-    /**
-     * usersTyping = {
-     *     int user1_Id: user1,
-     *     int user2_Id: user2,
-     *     ...
-     * }
-     *
-     * Each time user1 types, his value and timer is reset.
-     * When user stops typing for 'config.removeTyperAfterMS' milliseconds, his name will dissapear from DOM.
-     * Feature is supposed to work for any number of chat participants utilizing hash table 'usersTyping'.
-     *
-     */
     data(){
         return{
-            usersTyping: {},
-            usersTimeouts: {},
-            config: {
-                removeTyperAfterMS: 900000,
-                showNtypers: 5, // @TODO Maximum number of typers to show in chat 
-            },
+            showNtypers: 5,
+        }
+    },
+
+    computed: {
+        someoneTyping(){
+            let typers = this.$store.getters[ ns.groupModule(this.group_id, 'usersTyping') ]
+            let num = typers.length
+
+            if(num == 0) return []
+
+            if(num == 1){
+                return [
+                    `${this.getUserName(typers[0])} is typing...`
+                ]
+            }
+
+            if(num < this.showNtypers){
+                return this.prepareMultipleTyping(typers, num)
+            } else {
+                typers = typers.slice(0, this.showNtypers)
+
+                return this.prepareMultipleTyping(typers, typers.length, num - this.showNtypers)
+            }
         }
     },
 
     mounted() {
-        Echo.private("group." + this.group_id).listenForWhisper('typing', data => {
-            if(data.isTyping)
-                this.addOrUpdateTyper(data.id)
-            else
-                this.removeTyper(data.id)
-        })
+
     },
 
     methods:{
-        addOrUpdateTyper(id){
-            this.usersTyping[id] = id
+        // getMoreStrTypers(num){
+        //     return `and ${num} others are typing.`
+        // },
 
-            this.addOrResetUser(id)
+        oneIsTyping(){
+            return 'is typing ...'
         },
 
-        removeTyper(id){ 
-            delete this.usersTyping[id]
+        getUserName(id){
+            if(this.participants[id]){
+                return this.participants[id].first_name
+            }
+
+            for(let i in this.participants){
+                if(this.participants[i].id == id){
+                    return this.participants[i].first_name
+                }
+            }
         },
 
-        addOrResetUser(id){
-            if(this.usersTimeouts[id]) clearTimeout(this.usersTimeouts[id])
+        prepareMultipleTyping(typers, num, remaining = null){
+            let display = []
 
-            this.usersTimeouts[id] = setTimeout(() => {
-                this.removeTyper(id)
-            }, this.config.removeTyperAfterMS)
+            for(let i = 0; i < num; i++){
+                display.push(`${this.getUserName(typers[i])},`)
+            }
+
+            // remove ',' char from last user in list
+            display[display.length - 1] = display[display.length - 1].slice(0, -1)
+
+            remaining
+                ? display[display.length - 1] += ` and ${remaining} are typing.`
+                : display[display.length - 1] += ` are typing.`
+
+            return display
         },
-
-        getDisplay(id){
-            return `${this.participants[id]?.first_name}`
-        }
     },
 
 }
 </script>
+
+<style scoped>
+    .list-move,
+    .list-enter-active,
+    .list-leave-active{
+        transition: all 0.1s ease-in;
+    }
+    
+    .list-enter-from,
+    .list-leave-to{
+        opacity: 0;
+        transform: scaleY(0.01) translateX(-10px);
+    }
+    
+    .list-leave-active {
+        position: absolute;
+    }
+
+</style>

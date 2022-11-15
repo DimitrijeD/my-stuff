@@ -1,5 +1,5 @@
 <template>
-    <div class="dark:bg-gradient-to-t dark:bg-transparent dark:from-neutral-800 px-2 pb-2 flex gap-2">
+    <div class="dark:bg-gradient-to-t dark:bg-transparent dark:from-neutral-800 p-2 flex gap-2">
         <textarea
             class="flex-grow p-4 resize-none rounded-2xl outline-none bg-white border border-blue-400 text-gray-700 dark:bg-darker-400 dark:text-gray-300 dark:border-none"
             rows="3"
