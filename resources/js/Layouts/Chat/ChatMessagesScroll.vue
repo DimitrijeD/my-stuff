@@ -73,6 +73,17 @@ export default {
             },
         },
 
+        'group.typing.user_ids': {
+            deep: true,
+            handler(){
+                console.log('called?')
+                this.position = this.getPosition()
+                this.$nextTick(()=> {
+                    this.scrollDownOnEvents()
+
+                })
+            },
+        }
     },
 
     mounted(){

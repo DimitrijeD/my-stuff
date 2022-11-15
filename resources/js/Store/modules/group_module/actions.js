@@ -426,6 +426,14 @@ const actions = {
             .listen('.group.model_type', e => {
                 commit('model_type', e.data.model_type)
             })
+            .listenForWhisper('typing', data => {
+                if(data.isTyping){
+                    commit('addTyper', data.id)
+                    commit('setTypingTimeout', data.id)
+                } else{
+                    commit('removeTyper', data.id)
+                }
+            })
     },
 
     toggleWindow({commit}){

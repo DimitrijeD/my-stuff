@@ -1,13 +1,13 @@
 <template>
-    <div class="space-y-3 mx-2">
+    <TransitionGroup tag="div" name="list" class="relative space-y-3 mx-2">
         <SameUserMessageBlock 
             v-for="(block, index) in blocks" 
             :key="index"
             :block="block"
             :group="group"
         />
-        <ParticipantsTyping :group_id="group.id" :participants="group.participants" />
-    </div>
+        <ParticipantsTyping :group_id="group.id" :participants="group.participants" :key="'typers'" />
+    </TransitionGroup>
 </template>
 
 <script>
@@ -119,3 +119,22 @@ export default {
 }
 
 </script>
+
+<style scoped>
+    .list-move,
+    .list-enter-active,
+    .list-leave-active{
+        transition: all 0.1s ease-in;
+    }
+    
+    .list-enter-from,
+    .list-leave-to{
+        opacity: 0;
+        transform: scaleY(0.01) translateX(-10px);
+    }
+    
+    .list-leave-active {
+        position: absolute;
+        width: 100%;
+    }
+</style>
