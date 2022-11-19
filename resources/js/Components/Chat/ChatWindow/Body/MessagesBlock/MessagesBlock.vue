@@ -22,6 +22,8 @@ export default {
         return {
             blocks: [], 
             block: {},
+
+            fourMinsMS: 4000
         }
     },
 
@@ -74,6 +76,8 @@ export default {
             
             this.block = {}
 
+            this.makeTimeline()
+
             // @todo add check if this is testing env
             this.testCheckIfAllMessagesArePlacedInCollector()
         },
@@ -96,8 +100,9 @@ export default {
 
         getFreshBlockCollector(){
             return {
-                messages: [],
-                blockOwnerId: null,
+                messages: [], // array of message ids to be shown in block
+                blockOwnerId: null, // id of user which sent these messages
+                showTime: [], // array of message ids which will have Moments ago
             }
         },
 
@@ -142,6 +147,51 @@ export default {
                 console.log(notCollectedIds)
             }
         },
+
+        makeTimeline(){
+            for(let i = 0; i < this.blocks.length; i++){
+                let block = this.blocks[i]
+
+                let j = 0
+
+                while(block.messages.length > j){
+                    if(block.messages[j + 1] != undefined){
+                        if(
+                            this.showTimeForCurrentRelativeToNextMessage(
+                                this.messages[ block.messages[j    ]].created_at, 
+                                this.messages[ block.messages[j + 1]].created_at 
+                            )
+                        ) this.blocks[i].showTime.push( this.messages[block.messages[j]].id )
+
+                    } else {
+                        // if this is last message in block, show time
+                        this.blocks[i].showTime.push( this.messages[block.messages[j]].id )
+                    }
+
+                    j++
+                }
+            }
+        },
+
+        /**
+         * For two dates where current < next == true, 
+         * datermine if they are close enough together to not display time for current
+         * 
+         * @todo difference for older messages should have lesser tolerance for determining to show or not
+         *  currently it only uses 4 minutes as tolerance
+         * 
+         * @param {Date} current 
+         * @param {Date} next 
+         */
+         showTimeForCurrentRelativeToNextMessage(current, next){
+            let currentMS = (new Date(current)).getTime()
+            let nextMS    = (new Date(next)).getTime()
+
+            let msDifference = nextMS - currentMS
+
+            return msDifference > this.fourMinsMS
+        },
+
     },
 
 }
@@ -158,7 +208,7 @@ export default {
     .list-enter-from,
     .list-leave-to{
         opacity: 0;
-        transform: scaleY(0.01) translateX(-40px);
+        transform: scaleY(0.1) translateX(-40px);
     }
     
     .list-leave-active {

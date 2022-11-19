@@ -1,5 +1,5 @@
 <template>
-    <div :class="['flex justify-end flex-wrap gap-0.5', anybodyDisplayed ? 'mt-1.5' : '']">
+    <TransitionGroup tag="div" name="list" :class="['relative flex justify-end flex-wrap gap-0.5', anybodyDisplayed ? 'mt-1.5' : '']">
         <div v-for="participant_id in user_ids" :key="participant_id">
             <img
                 v-if="toShow(participant_id)"
@@ -8,7 +8,7 @@
                 alt="User thumbnail"
             >    
         </div>
-    </div>
+    </TransitionGroup>
 </template>
 
 <script>
@@ -61,3 +61,21 @@ export default {
 
 }
 </script>
+
+<style scoped>
+.list-move,
+.list-enter-active,
+.list-leave-active{
+    transition: all 0.3s ease-out;
+}
+
+.list-enter-from,
+.list-leave-to{
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+.list-leave-active {
+    position: absolute;
+}
+</style>
