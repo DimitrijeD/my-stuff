@@ -15,6 +15,7 @@
                 v-for="(message_id, index) in block.messages" 
                 :key="index" 
                 :message_id="message_id" 
+                :showTime="block.showTime.includes(message_id)"
                 :isSelf="isSelf" 
             />
         </TransitionGroup>
@@ -67,7 +68,7 @@ export default {
     .list-enter-from,
     .list-leave-to{
         opacity: 0;
-        transform: scaleY(0.01) translate(30px, -20px);
+        transform: scaleY(0.01) translate(20px, -10px);
     }
     
     .list-leave-active {

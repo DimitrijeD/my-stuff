@@ -6,16 +6,18 @@
         <!-- Message Content style="white-space: pre;" -->
         <!-- @TODO - caused issue where messages woudnt break into new line but it did include new lines and tabs... -->
         <p  class="my-1 font-light text-base text-gray-700 dark:text-gray-300 tracking-wide break-words">
-            <MomentsAgo :date="message.created_at" class="def-moments-ago float-right pl-2 " />
+            <MomentsAgo v-if="showTime" :date="message.created_at" class="def-moments-ago float-right pl-2 " />
             {{ message.text }}
         </p>
 
-        <MessagesSeen 
-            v-if="whoSawWhat[message_id]"
-            :message_id="message_id"
-            :message="message"
-            :user_ids="whoSawWhat[message_id]"
-        />
+        <Transition name="fade">
+            <MessagesSeen 
+                v-if="whoSawWhat[message_id]"
+                :message_id="message_id"
+                :message="message"
+                :user_ids="whoSawWhat[message_id]"
+            />
+        </Transition>
     </div>
 </template>
 
@@ -27,7 +29,7 @@ import { mapGetters } from "vuex";
 export default {
     inject: ['group_id'],
 
-    props: [ 'message_id', 'isSelf', ],
+    props: [ 'message_id', 'isSelf', 'showTime' ],
 
     components: { MomentsAgo, MessagesSeen },
 
@@ -65,3 +67,17 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: scaleY(0);
+}
+
+</style>
