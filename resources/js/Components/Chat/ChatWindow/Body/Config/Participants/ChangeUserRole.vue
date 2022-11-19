@@ -1,15 +1,12 @@
 <template>
     <div class="h-full">
-        <div v-show="pendingRoleChangeAccept" 
-            class="h-full flex place-items-center gap-2 p-0.5 text-center grid grid-cols-4 bg-gradient-to-b border 
-            from-yellow-400 to-yellow-200 
-            dark:from-darker-500 dark:to-darker-300 dark:border-darker-500 "
-        >
-            <span class="col-span-2">Make user <span class="text-white dark:text-blue-400">{{ this.chosenNewRole?.toLowerCase() }} ?</span></span>
+        <div v-show="pendingRoleChangeAccept" class="h-full flex flex-rows place-items-center pl-1 py-1 pop-card-color gap-0.5">
+            <p class="text-center">
+                Make user <span class="break text-white dark:text-blue-400">{{ this.chosenNewRole?.toLowerCase() }}</span>?
+            </p>
 
-            <button class="text-green-500 hover:text-green-600 " @click="confirmedChangeRole">Yes</button>
-
-            <button class="text-gray-700 dark:text-gray-300" @click="declinedChangeRole">No</button>
+            <AcceptIcon @click="confirmedChangeRole()" class="h-14 py-2 fill-gray-500 dark:hover:fill-green-800" />
+            <DeclineIcon @click="declinedChangeRole()" class="h-14 py-2 fill-gray-500" />
         </div>
 
         <div v-show="!pendingRoleChangeAccept" class="h-full flex place-items-center">
@@ -28,14 +25,18 @@
 </template>
 
 <script>
-import * as ns from '@/Store/module_namespaces.js'
 import DropDownInput from '@/Components/Reuseables/DropDownInput.vue'
 import * as StringUtil from '@/UtilityFunctions/str.js'
+import AreYouSureLayout from '@/Layouts/AreYouSureLayout.vue'
+import DeclineIcon from "@/Components/Reuseables/Icons/DeclineIcon.vue"
+import AcceptIcon from "@/Components/Reuseables/Icons/AcceptIcon.vue"
 
 export default{
-    props:[ 'participant', 'roleColors',  'changeableRoles', 'group_id' ],
+    inject: ['group_id'],
 
-    components: { DropDownInput,  }, 
+    props:[ 'participant', 'changeableRoles', ],
+
+    components: { DropDownInput, AreYouSureLayout, AcceptIcon, DeclineIcon }, 
 
     data(){
         return {
@@ -54,6 +55,7 @@ export default{
         roleUpdate(role){
             this.chosenNewRole = role.raw
             this.pendingRoleChangeAccept = true
+            this.$emit('roleCard', this.pendingRoleChangeAccept)
         },
 
         confirmedChangeRole(){
@@ -70,6 +72,7 @@ export default{
         resetVars(){
             this.pendingRoleChangeAccept = false
             this.chosenNewRole = null
+            this.$emit('roleCard', this.pendingRoleChangeAccept)
         },
 
         getPrticipantRole(){

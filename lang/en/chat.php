@@ -23,7 +23,7 @@ return [
         'role' => [
             'change' => "User's role has been changed.",
             'forTargetChange' => "Your role in this chat has been changed.",
-            'gone' => 'User you are trying to change role to is not in chat. First add him.',
+            'gone' => 'User you are trying to change role to user which is not in chat.',
         ]
     ],
 

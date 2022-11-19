@@ -2,12 +2,11 @@
     <div v-if="canPromoteDemote" class="grow h-full my-auto ">
         <ChangeUserRole
             :participant="participant"
-            :changeableRoles="permissions.change_role[getPrticipantRole(participant)]"
-            :group_id="group_id"
-            :roleColors="roleColors"
+            :changeableRoles="changeableRoles"
+            @roleCard="roleCard"
         />
     </div>
-    <div v-else :class="['px-4 py-1.5 my-auto', roleColors[getPrticipantRole(participant)]]">
+    <div v-else class="px-4 py-1.5 my-auto">
         {{ getParticipantRoleForHumans(participant) }} 
     </div>
 </template>
@@ -16,29 +15,18 @@
 import ChangeUserRole from '@/Components/Chat/ChatWindow/Body/Config/Participants/ChangeUserRole.vue'
 
 export default {
-    props: [ 'canPromoteDemote', 'participant', 'permissions', 'group_id'  ],
+    props: [ 'canPromoteDemote', 'participant', 'changeableRoles', ],
 
     components: { ChangeUserRole, },
 
-    data() {
-        return {
-            roleColors: {
-                CREATOR:     'text-blue-600 dark:text-blue-600',
-                MODERATOR:   'text-blue-600 dark:text-blue-400',
-                PARTICIPANT: 'text-blue-600 dark:text-gray-600',
-                LISTENER:    'text-blue-600 dark:text-gray-400',
-            }
-        }
-    },
-
     methods: {
-        getPrticipantRole(participant){
-            return participant.pivot.participant_role
-        },
-
         getParticipantRoleForHumans(participant){
             return participant.pivot.participant_role.toLowerCase()
         },
+
+        roleCard(data){
+            this.$emit('roleCard', data)
+        }
     }
 }
 

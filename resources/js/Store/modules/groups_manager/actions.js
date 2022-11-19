@@ -1,5 +1,4 @@
 import * as h from '@/Store/functions/helpers.js'
-import * as ns from '@/Store/module_namespaces.js'
 import * as collection from '@/UtilityFunctions/collection.js'
 import { fuzzyDeep } from '@/UtilityFunctions/fuzzyDeep.js'
 
@@ -11,17 +10,22 @@ const root = {root:true}
 const actions = {
     /**
      * Entry point for chat data.
-     * Includes: all bussiness logic and all users chat groups
      */
-    init({ dispatch }){
-        axios.get('chat/init').then((res)=>{
-            for(let i in res.data.groups){
-                dispatch('initGroup', res.data.groups[i])
-            }
-
-            dispatch(ns.chat_rules('setupRules'), res.data.chat_rules, root).then(() => {
-                dispatch('numGroupsWithUnseen')
+     init({ dispatch }){
+        return axios.get('chat/init').then((res)=>{
+            return dispatch(ns.chat_rules('setupRules'), res.data.chat_rules, root).then(() => {
+                for(let i in res.data.groups){
+                    dispatch('setupGroupModule', res.data.groups[i])
+                }
             })
+        }).then(()=>{
+            /**
+             * @todo FUCKING PLSEASE FOR THE LOVE OF GOD CAN U NOT DO THIS UNTILL REST OF CODE HAS FINISHED DOING SHIT
+             */
+            setTimeout(() => {
+                dispatch('sortNewstGroups')
+                dispatch('numGroupsWithUnseen')
+            }, 1000)
         }).catch(error => {
             // Fatal error, request reload because without this successful request, chatting will not work
         })
@@ -57,12 +61,11 @@ const actions = {
         commit('setFilteredGroupsIds', h.getAllIds(h.sortNewest(getters['getGroupsById'](getters['filteredGroupsIds']))))
     },
 
-    initGroup({ commit, dispatch }, group){
+    setupGroupModule({ commit, dispatch }, group){
         let namespace = ns.groupModule(group.id)
         store.registerModule(namespace, group_module)
 
-        return dispatch(namespace + '/initGroup', group, root).then(() => {
-            dispatch(namespace + '/listenForNewMessages', group.id , root)
+        return dispatch(ns.groupModule(group.id, 'initGroup'), group, root).then(() => {
             commit('addGroupsIds', [group.id])
             commit('addToFilteredGroups', group.id)
         })
@@ -72,7 +75,7 @@ const actions = {
         return new Promise((resolve, reject) => {
             axios.post('chat/group/store', data).then( res => {
 
-                dispatch('initGroup', res.data).then(() => {
+                dispatch('setupGroupModule', res.data).then(() => {
                     dispatch('sortNewstGroups')
                     commit('openWindow', res.data.id)
                     commit(ns.groupModule(res.data.id, 'gotEarliestMsg'), true, root)
@@ -110,7 +113,7 @@ const actions = {
 
     getMissingGroup({ dispatch }, id){
         return axios.get('chat/group/' + id).then((res)=>{
-            dispatch('initGroup', res.data).then(()=>{
+            dispatch('setupGroupModule', res.data).then(()=>{
                 dispatch('numGroupsWithUnseen').then(()=>{
                     dispatch('sortNewstGroups')
                 })
@@ -122,14 +125,15 @@ const actions = {
 
     closeGroup({ commit, getters, dispatch }, group_id){
         if(getters['isGroupOpened'](group_id)) commit('closeWindow', group_id)
-        dispatch(ns.groupModule(group_id, 'scrolledDownInitialy'), true, {root:true})
+        // dispatch(ns.groupModule(group_id, 'scrolledDownInitialy'), true, root)
+        dispatch(ns.groupModule(group_id, 'closed'), null, root)
         // * Disconnect irelevant listeners here
     },
 
     numGroupsWithUnseen({ state, commit, rootGetters }){
         let num = 0
         const seenGetter = '/seen'
-        
+
         for(let i in state.groupsIds){
             let namespace = ns.groupModule(state.groupsIds[i]) 
 
@@ -143,7 +147,6 @@ const actions = {
         }
 
         commit('numGroupsWithUnseen', num)
-        return 
     },
 
     // When user logs out, all chat related stored data must be purged

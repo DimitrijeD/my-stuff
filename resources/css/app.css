@@ -14,21 +14,24 @@
     input:-webkit-autofill:focus {
         transition: background-color 600000s 0s, color 600000s 0s;
     } 
-/* 
+
     /* Firefox */
     .scrollbar-dark {
         scrollbar-width: 8px;
-        scrollbar-color: blue orange;
+        scrollbar-color: theme(colors.blue.500) theme(colors.darker.400);
     }
 
+    /* -------------------------------------------------------------------- */
+
     /* Chrome, Edge, and Safari */
+    .scrollbar::-webkit-scrollbar,
     .scrollbar-dark::-webkit-scrollbar { 
         width: 8px;
      }
 
     .scrollbar-dark::-webkit-scrollbar-track { 
         background-color: transparent;
-        border: 1px solid theme(colors.darker.400); 
+        border: 1px solid transparent; 
         border-radius: 20px;
     }
 
@@ -37,21 +40,14 @@
         border-radius: 20px;
     }
 
-
     /* Firefox */
     .scrollbar {
         scrollbar-width: 8px;
-        scrollbar-color: blue orange;
-    }
-
-    /*Chrome, Edge, and Safari */
-    .scrollbar::-webkit-scrollbar { 
-        width: 8px;
+        scrollbar-color: theme(colors.blue.500) ;
     }
 
     .scrollbar::-webkit-scrollbar-track { 
         background-color: transparent;
- 
         border-radius: 20px;
     }
 
@@ -63,9 +59,35 @@
     .scroll1 {
         @apply overflow-y-auto scrollbar dark:scrollbar-dark;
     }
+    /* -------------------------------------------------------------------- */
 
+    /* Firefox */
+    .scrollbar2,
+    .scrollbar-dark2 {
+        scrollbar-width: 8px;
+        scrollbar-color: theme(colors.blue.500) theme(colors.darker.400);
+    }
 
+    /* Chrome, Edge, and Safari */
+    .scrollbar2::-webkit-scrollbar,
+    .scrollbar-dark2::-webkit-scrollbar { 
+        width: 8px;
+     }
 
+    .scrollbar2::-webkit-scrollbar-track,
+    .scrollbar-dark2::-webkit-scrollbar-track { 
+        background-color: transparent;
+    }
+
+    .scrollbar2::-webkit-scrollbar-thumb,
+    .scrollbar-dark2::-webkit-scrollbar-thumb {
+        @apply bg-blue-500;
+        border-radius: 40px;
+    }
+
+    .scroll2 {
+        @apply overflow-y-auto scrollbar2 dark:scrollbar-dark2;
+    }
 }
 
 @layer components {
@@ -177,19 +199,6 @@
     /*--------------------------------------*/
 
     /*------------Chat Window classes------------*/
-    .cw-head-btn{ @apply def-trans w-full h-full cursor-pointer; }
-
-    .cw-head-btn-fill{ @apply cw-head-btn stroke-transparent
-        fill-white hover:fill-gray-200
-        dark:fill-gray-400 dark:hover:fill-gray-200; }
-
-    .cw-head-btn-fill-active{ @apply fill-green-400 hover:fill-green-300
-        dark:fill-blue-400 dark:hover:fill-blue-300;}
-
-    .cw-head-btn-stroke{ @apply cw-head-btn fill-transparent
-        stroke-white hover:stroke-gray-300 
-        dark:stroke-gray-400 dark:hover:stroke-gray-200; }
-
     .cw-head-text { @apply font-semibold ml-2 text-white dark:text-gray-300; }
     /*-------------------------------------------*/
 
@@ -205,8 +214,32 @@
     /*--------------------------------*/
 
 
+    /*------------Shadows------------*/
     .img-shadow{
         box-shadow: -2px 3px 2px 0 rgba(0, 0, 0, 0.2); 
     }
+    .green-glow {
+        animation: green-glow 2s infinite alternate;
+    }
+    
+    @keyframes green-glow {
+        from {
+            box-shadow: 0 0px 1px rgba(2, 115, 32, 0.1), 
+                        0 4px 4px rgba(2, 115, 32, 0.1), 
+                        0 6px 6px rgba(2, 115, 32, 0.1);
+        }
+        to {
+            box-shadow: 0 1px  2px rgba(24, 158, 60, 0.3), 
+                        0 4px  8px rgba(24, 158, 60, 0.3), 
+                        0 6px 12px rgba(24, 158, 60, 0.3);
+        }   
+    }
+    /*--------------------------------*/
+
+    .pop-card-color{ @apply bg-gradient-to-b  
+            from-gray-400 to-gray-200 
+            dark:from-darker-400 dark:to-darker-200;
+    }
+
 }
   

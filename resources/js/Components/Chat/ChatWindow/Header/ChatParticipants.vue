@@ -1,15 +1,9 @@
 <template>
-    <div class="w-full m-auto truncate text-gray-500 dark:text-gray-200">
+    <div class="w-full m-auto truncate">
         <div class="ml-2">
-            <ListChatParticipants 
-                v-if="showComponent == 'list-chat-participants'"
-                :participants="group.participants"
-            />
+            <ListChatParticipants v-if="showComponent == 'list-chat-participants'" :participants="participants"  />
             
-            <GroupName 
-                v-if="showComponent == 'group-name'"
-                :group_name="group.name"
-            />
+            <GroupName v-if="showComponent == 'group-name'" :group_name="group_name" />
 
             <div class="cw-head-text" v-if="showComponent == 'default-show'">{{ defaultText }}</div>
             <div class="cw-head-text" v-if="showComponent == 'many-user-text'">{{ manyUserText }}</div>
@@ -18,20 +12,13 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import ListChatParticipants from "@/Components/Chat/ChatWindow/Header/ChatParticipants/ListChatParticipants.vue";
 import GroupName from "@/Components/Chat/ChatWindow/Header/ChatParticipants/GroupName.vue";
-import * as ns from '@/Store/module_namespaces.js'
 
 export default {
-    props:[
-        'group',
-    ],
+    inject: ['group_id'],
 
-    components: {
-        ListChatParticipants,
-        GroupName,
-    },
+    components: { ListChatParticipants, GroupName, },
 
     data(){
         return{
@@ -40,32 +27,37 @@ export default {
         }
     },
 
+    computed: {
+        manyUserText(){
+            return `Group with ${Object.keys(this.participants).length} participants`
+        },
+
+        participants(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participants') ]
+        },
+
+        group_name(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'name') ]
+        },
+
+        model_type(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'model_type') ]
+        },
+    },
+
     created() {
         this.whatToShowInHeader()
     },
 
-    mounted() {
-    
-    },
-
-    computed: {
-        ...mapGetters({ user: "user" }),
-
-        manyUserText(){
-            return `Group with ${Object.keys(this.group.participants).length} participants`
-        }
-    },
-
     watch: {
         // these 2 watchers make sure header content is reset when participants or group name are changed
-        'group.participants': function (){
+        participants(){
             this.whatToShowInHeader()
         },
 
-        'group.name': function (){
+        group_name(){
             this.whatToShowInHeader()
         },
-        // -----------------------------------------------------------------------------------------------
     },
 
     methods:{
@@ -75,17 +67,17 @@ export default {
          * List of users or group name.
          */
         whatToShowInHeader(){
-            if(this.group.name){
+            if(this.group_name){
                 this.showComponent = 'group-name'
                 return
             } 
 
-            if(this.group.model_type == "PRIVATE"){
+            if(this.group_name == "PRIVATE"){
                 this.showComponent = 'list-chat-participants'
                 return
             }
 
-            const numParticipants = Object.keys(this.group.participants).length
+            const numParticipants = Object.keys(this.participants).length
 
             if(numParticipants == 1){
                 this.showComponent = 'default-show'

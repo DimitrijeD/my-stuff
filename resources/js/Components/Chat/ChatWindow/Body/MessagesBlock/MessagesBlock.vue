@@ -1,110 +1,97 @@
 <template>
-    <TransitionGroup tag="div" name="list" class="relative space-y-3 mx-2">
+    <TransitionGroup tag="div" name="list" class="space-y-3 mx-2 relative">
         <SameUserMessageBlock 
             v-for="(block, index) in blocks" 
             :key="index"
             :block="block"
-            :group="group"
         />
-        <ParticipantsTyping :group_id="group.id" :participants="group.participants" :key="'typers'" />
+        <ParticipantsTyping :key="'typing'" />
     </TransitionGroup>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import * as ns from '@/Store/module_namespaces.js'
-
-import ParticipantsTyping from "@/Components/Chat/ChatWindow/Body/MessagesBlock/ParticipantsTyping.vue";
-import SameUserMessageBlock from '@/Components/Chat/ChatWindow/Body/MessagesBlock/SameUserMessageBlock.vue';
+import ParticipantsTyping from "@/Components/Chat/ChatWindow/Body/MessagesBlock/ParticipantsTyping.vue"
+import SameUserMessageBlock from '@/Components/Chat/ChatWindow/Body/MessagesBlock/SameUserMessageBlock.vue'
 
 export default {
-    props: [ 'group', ],
+    inject: ['group_id'],
 
     components: { ParticipantsTyping, SameUserMessageBlock, },
 
     data() {
         return {
-            blocks: [],
+            blocks: [], 
+            block: {},
         }
     },
 
     computed: {
-        ...mapGetters({ 
-            user: "user",
-         }),
-
         seen(){ 
-            return this.$store.getters[ ns.groupModule(this.group.id, 'seen') ]
+            return this.$store.getters[ ns.groupModule(this.group_id, 'seen') ]
+        },
+
+        messages(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messages') ]
         },
     },
 
     created(){
-        this.createBlocks()
+        this.createOrUpdateBlocks()
     },
 
     watch: {
-        'group.messages': {
+        messages: {
             handler: function () {
-                this.createBlocks()
+                this.createOrUpdateBlocks()
             },
             deep: true,
         },
-
     }, 
 
     methods: {
-        /**
-         * Groups messages that belong to distinct users into array from start to finish
-         * 
-         * New block is created once iterator finds another user
-         * Called uppon creation and every time messages obj changes
-         * 
-         * @todo no need to recreate blocks on messages change, instead, only recreate affected blocks
-         *      every new message which has been added in stack,
-         *      every message which has been deleted, updated
-         * 
-         *      Do this by finding neighbouring messages by id, as their blocks for userId
-         *      and determine if message should:
-         *          be in separate block 
-         *          or merged into upper or lower block 
-         *              then determine if newly updated block should be merged into neighbouring block
-         *      Stuff like that, 
-         */
-        createBlocks(){
+        createOrUpdateBlocks(){
+            if(this.isObjEmpty(this.messages)) return 
+
             this.blocks = []
-            
-            if(!Object.keys( this.group.messages).length) return 
+            let ids = this.getAllIds()
 
-            const msgIds = Object.keys( this.group.messages).map(id => {
-                return Number(id);
-            }).sort((a, b) => {
-                return a - b;
-            })
+            for(let i = 0; i < ids.length; i++){
+                let message = this.messages[ids[i]]
 
-            let block = this.getFreshBlockCollector()
-
-            let blockOwnerId = this.group.messages[msgIds[0]].user_id
-            let msgId = null
-            let message = null
-
-            for(let i = 0; i < msgIds.length; i++){
-                msgId = msgIds[i]
-                message = this.group.messages[msgId]
-
-                if(message.user_id == blockOwnerId){
-                    block.messages.push(message)
-                    block.blockOwnerId = message.user_id
+                if(this.isObjEmpty(this.block)){
+                    this.createNewBlock(message)
                 } else {
-                    this.blocks.push(block)
-                    block = this.getFreshBlockCollector()
-                    block.messages.push(message)
-                    blockOwnerId = message.user_id
-                    block.blockOwnerId = message.user_id
+                    if(this.areSameUsers(message)){
+                        this.updateBlock(message)
+                    } else {
+                        this.addBlockToContainer()
+                        this.createNewBlock(message)
+                    }
                 }
-            }
 
-            // add last collected block if not empty
-            if(block.messages.length != 0) this.blocks.push(block)
+                if(ids[i + 1] == undefined) this.addBlockToContainer()
+            }
+            
+            this.block = {}
+
+            // @todo add check if this is testing env
+            this.testCheckIfAllMessagesArePlacedInCollector()
+        },
+
+        areSameUsers(message){ return this.block.blockOwnerId == message.user_id },
+
+        updateBlock(message){
+            this.block.messages.push(message.id)
+        },
+
+        addBlockToContainer(){
+            this.blocks.push(this.block)
+        },
+
+        createNewBlock(message){
+            this.block = this.getFreshBlockCollector()
+            this.block.messages.push(message.id)
+            this.block.blockOwnerId = message.user_id
         },
 
         getFreshBlockCollector(){
@@ -114,6 +101,47 @@ export default {
             }
         },
 
+        /**
+         * Since messages are dictionary, get all keys(returns strings then convert to int)
+         */
+        getAllIds(){
+            let ids = Object.keys(this.messages)
+
+            if(ids.length == 0) return []
+
+            return ids.map(id => {
+                return Number(id)
+            })
+        },
+
+        isObjEmpty(o){ return _.isEmpty(o) },
+
+        testCheckIfAllMessagesArePlacedInCollector(){
+            let notCollectedIds = []
+            let msgIds = this.getAllIds()
+
+            for(let i = 0; i < msgIds.length; i++){
+                let collected = false
+
+                for(let j = 0; j < this.blocks.length; j++){
+                    
+                    if(this.blocks[j].messages.includes(msgIds[i])){
+                        collected = true
+                        break
+                    }
+                }
+
+                if(!collected){
+                    notCollectedIds.push(msgIds[i])
+                }
+            }
+
+            if(notCollectedIds.length != 0){
+                console.log('Test: testCheckIfAllMessagesArePlacedInCollector:')
+                console.log('there are messages which havent been placed in collector')
+                console.log(notCollectedIds)
+            }
+        },
     },
 
 }
@@ -124,13 +152,13 @@ export default {
     .list-move,
     .list-enter-active,
     .list-leave-active{
-        transition: all 0.1s ease-in;
+        transition: all 0.2s ease-out;
     }
     
     .list-enter-from,
     .list-leave-to{
         opacity: 0;
-        transform: scaleY(0.01) translateX(-10px);
+        transform: scaleY(0.01) translateX(-40px);
     }
     
     .list-leave-active {

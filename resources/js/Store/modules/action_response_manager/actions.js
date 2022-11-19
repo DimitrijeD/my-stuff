@@ -1,6 +1,5 @@
 import store from '@/Store/index.js';
 import action_responses from '@/Store/modules/action_responses/action_responses.js';
-import * as ns from '@/Store/module_namespaces.js';
 
 const actions = {
     /**

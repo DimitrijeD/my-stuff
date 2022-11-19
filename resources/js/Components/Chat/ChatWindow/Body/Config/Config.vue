@@ -12,31 +12,23 @@
         <template #content>
             <div class="h-full p-2 text-gray-600 dark:text-gray-300 font-light relative">
                 <ActionResponseList 
-                    :moduleId="`config.groupId_${group.id}`" 
+                    :moduleId="`config.groupId_${group_id}`" 
                     :dieAfter="15" 
                     :cardCls="'w-[70%] h-24 mx-auto'"
                     class="absolute z-10 mx-auto w-full" 
                 />
 
                 <KeepAlive>
-                    <component :is="openedComponent"
-                        :group="group" 
-                        :permissions="permissions" 
-                    />
+                    <component :is="openedComponent" :permissions="permissions" />
                 </KeepAlive>
-
-                <!-- 
-                    Participants : 'group', 'permissions', 
-                    AddUsers: 'group', 'permissions'
-                    Info: 'group', 'permissions'
-                    Options: 'group', 'permissions'
-                 -->
             </div>
         </template>
     </FillRemainingSpaceLayout>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import Participants from '@/Components/Chat/ChatWindow/Body/Config/Participants/Participants.vue'
 import Info         from '@/Components/Chat/ChatWindow/Body/Config/Info.vue'
 import Options      from '@/Components/Chat/ChatWindow/Body/Config/Options/Options.vue'
@@ -44,17 +36,14 @@ import AddUsers     from '@/Components/Chat/ChatWindow/Body/Config/AddUsers.vue'
 
 import FillRemainingSpaceLayout from '@/Layouts/FillRemainingSpaceLayout.vue'
 import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.vue';
-import * as ns from '@/Store/module_namespaces.js'
 
 export default {
-    props: [ 'group', 'permissions', 'chatRole', 'roles', ],
+    inject: ['group_id'],
 
     components: { AddUsers, Participants, Info, Options, FillRemainingSpaceLayout, ActionResponseList, },
 
     data(){
         return {
-            user: this.$store.state.auth.user,
-
             allSettingComp: ['AddUsers', 'Participants', 'Info', 'Options'],
 
             settings: {
@@ -87,13 +76,22 @@ export default {
     },
 
     computed: {
+        ...mapGetters({ 
+            user: "user",
+            roles: ns.chat_rules('StateRoles'),
+        }),
+
         openedComponent(){
             for(let key in this.settings){
                 if(this.settings[key].opened){
                     return this.settings[key].name
                 }
             }
-        }
+        },
+
+        permissions(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'permissions') ]
+        },
     },
 
     watch: {

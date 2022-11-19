@@ -81,6 +81,9 @@ export default{
         displayTime(){
             clearInterval(this.valueIntervalId)
 
+            if(this.step < 0 || this.step > this.range.length)
+                this.step = this.range.length - 1
+
             switch(this.range[this.step].in){
                 case 'moments':
                     return `${this.range[this.step].date} ${this.range[this.step].sufix}`
@@ -106,21 +109,17 @@ export default{
 
             const ms = this.getMs()
 
-            if(this.step == null){
-                if(ms >= this.range[0].min && ms <= this.range[0].max){
-                    this.step = 0
-                } else if(ms >= this.range[1].min && ms <= this.range[1].max){
-                    this.step = 1
-                } else if(ms >= this.range[2].min && ms <= this.range[2].max){
-                    this.step = 2
-                } else if(ms >= this.range[3].min && ms <= this.range[3].max){
-                    this.step = 3
-                } else {
-                    this.step = 4
-                }
-            } 
+            if(this.step == null) this.step = this.getRange(ms)
 
             if(this.step < 4) this.increaseStepAfter(this.range[this.step].max - ms)
+        },
+
+        getRange(ms){
+            for(let i = 0; i < this.range.length; i++){
+                if(ms >= this.range[i].min && ms <= this.range[i].max) return i
+            }
+
+            return this.range.length - 1 
         },
 
         getTimeValue(){

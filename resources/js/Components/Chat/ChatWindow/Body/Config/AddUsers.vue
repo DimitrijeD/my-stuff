@@ -27,17 +27,17 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import SearchInput from '@/Components/Chat/reuseables/SearchInput.vue'
 import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
-import * as ns from '@/Store/module_namespaces.js'
 import DoubleScrollContentCardLayout from '@/Layouts/DoubleScrollContentCardLayout.vue'
 import LoadingCyrcle from '@/Components/Reuseables/LoadingCyrcle.vue'
 import DoubleUserSelectList from '@/Components/Chat/reuseables/DoubleUserSelectList.vue'
 import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue'
 
 export default {
-    props: [ 'group', 'permissions' ],
+    inject: ['group_id'],
+
+    props: [ 'permissions' ],
 
     components: { DefaultCardLayout, DoubleUserSelectList, LoadingCyrcle, SearchInput, SmallUser, DoubleScrollContentCardLayout, },
 
@@ -55,13 +55,13 @@ export default {
     },
 
     computed: {
-        ...mapGetters({ 
-            user: "user",
-        }),
+        listUsers(){ 
+            return this.$store.getters[ns.users('getFilterForAddUsers')] 
+        },
 
-        listUsers(){ return this.$store.getters[ns.users('getFilterForAddUsers')] },
-
-        anySelected(){ return this.addedUsersIds.length ? true : false }, 
+        anySelected(){ 
+            return this.addedUsersIds.length ? true : false 
+        }, 
 
         btnTxt(){
             let numSelected = this.addedUsersIds.length
@@ -72,8 +72,13 @@ export default {
         },
 
         excludeUsersFromSearch(){ 
-            return Object.keys( this.group.participants )
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participantsIds') ] 
         },
+
+        model_type(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'model_type') ] 
+        },
+        
     },
 
     methods: {
@@ -88,9 +93,9 @@ export default {
         addParticipants(){
             if(!this.addedUsersIds.length) return
 
-            this.$store.dispatch(ns.groupModule(this.group.id, 'addParticipants'), {
+            this.$store.dispatch(ns.groupModule(this.group_id, 'addParticipants'), {
                 addedUsersIds: this.addedUsersIds,
-                massAssignRolesTo: this.group.model_type == "PUBLIC_CLOSED" ? "LISTENER" : "PARTICIPANT"
+                massAssignRolesTo: this.model_type == "PUBLIC_CLOSED" ? "LISTENER" : "PARTICIPANT" // @todo do not hard code this shit
             }).then(() =>{
                 this.addedUsersIds = []
                 this.$store.dispatch(ns.users('clearAddedUsersFromList'), this.excludeUsersFromSearch)

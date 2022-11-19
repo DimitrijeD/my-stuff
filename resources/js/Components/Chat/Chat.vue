@@ -1,19 +1,17 @@
 <template>
-    <div class="absolute invisible left-0 bottom-0 w-full h-full overflow-hidden flex items-stretch space-x-3" :class="[!isFullScreen ? 'pl-2' : '']">
+    <TransitionGroup name="list" tag="div" class="absolute invisible left-0 bottom-0 w-full h-full overflow-hidden flex items-stretch space-x-3" :class="[!isFullScreen ? 'pl-2' : '']">
         <ChatWindow
             v-for="group_id in openedGroupsIds"
             :key="group_id"
             :group_id="group_id"
             :size="{ width: width, height: height }"
         />
-
-    </div>
+    </TransitionGroup>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import ChatWindow from "@/Components/Chat/ChatWindow/ChatWindow.vue";
-import * as ns from '@/Store/module_namespaces.js'
 
 export default {
     inject: ['headerHeight'],
@@ -47,10 +45,7 @@ export default {
     },
 
     created(){
-        this.$store.dispatch(ns.groupsManager('init')).then(()=>{
-            this.$store.dispatch(ns.groupsManager('sortNewstGroups'))
-            this.$store.dispatch(ns.groupsManager('numGroupsWithUnseen'))
-        })
+        this.$store.dispatch(ns.groupsManager('init'))
 
         this.listenUserToUserNotifications()
     },
@@ -116,6 +111,25 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.list-move,
+.list-enter-active {
+    transition: all 0.2s ease-in;
+}
+.list-leave-active {
+    transition: all 0.2s ease-in;
+}
 
+.list-enter-from {
+    opacity: 0;
+    transform: translateY(500px);
+}
+.list-leave-to {
+    opacity: 0;
+    transform: scale(0);
+}
+
+.list-leave-active {
+    position: absolute;
+}
 </style>

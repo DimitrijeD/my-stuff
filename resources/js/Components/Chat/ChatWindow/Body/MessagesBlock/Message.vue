@@ -1,23 +1,20 @@
 <template>
-    <div :class="['px-2 pb-0.5 rounded-2xl def-trans', msgNotSeen(message_id) && !isSelf ? 'bg-green-200 dark:bg-green-600/20' : '']">
+    <div :class="['px-2 pb-0.5 rounded-2xl def-trans', msgNotSeen() && !isSelf ? 'bg-green-200 dark:bg-green-600/20' : '']">
         <!-- @TODO Need delete message component here with SVG icon -->
         <!-- <span class="float-right text-sm rounded-full border border-gray-200 cursor-pointer border hover:border-red-300">X</span> -->
 
         <!-- Message Content style="white-space: pre;" -->
         <!-- @TODO - caused issue where messages woudnt break into new line but it did include new lines and tabs... -->
         <p  class="my-1 font-light text-base text-gray-700 dark:text-gray-300 tracking-wide break-words">
-            <MomentsAgo :date="group.messages[message_id].created_at" class="def-moments-ago float-right pl-2 " />
-            {{ group.messages[message_id].text }}
-            
+            <MomentsAgo :date="message.created_at" class="def-moments-ago float-right pl-2 " />
+            {{ message.text }}
         </p>
-        <!-- / -->
 
         <MessagesSeen 
-            v-if="group.whoSawWhat[message_id]"
+            v-if="whoSawWhat[message_id]"
             :message_id="message_id"
-            :group_id="group.id"
-            :message="group.messages[message_id]"
-            :user_ids="group.whoSawWhat[message_id]"
+            :message="message"
+            :user_ids="whoSawWhat[message_id]"
         />
     </div>
 </template>
@@ -25,27 +22,46 @@
 <script>
 import MomentsAgo from '@/Components/Reuseables/MomentsAgo.vue';
 import MessagesSeen from '@/Components/Chat/ChatWindow/Body/MessagesBlock/MessagesSeen.vue';
+import { mapGetters } from "vuex";
 
 export default {
-    props: [ 'group', 'message_id', 'isSelf', 'user_id' ],
+    inject: ['group_id'],
+
+    props: [ 'message_id', 'isSelf', ],
 
     components: { MomentsAgo, MessagesSeen },
 
-    data(){
-        return {
+    computed: {
+        ...mapGetters({ 
+            user: "user",
+        }),
 
-        }
+        message(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messageById') ](this.message_id)
+        },
+
+        messages_tracker(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messages_tracker') ]
+        },
+
+        last_message_seen_id(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'last_message_seen_id') ](this.user.id)
+        },
+
+        whoSawWhat(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'whoSawWhat') ]
+        },
+
     },
 
     methods: {
-        msgNotSeen(msg_id){
-            if(this.group.messages_tracker.seen) return false
+        msgNotSeen(){
+            if(this.messages_tracker.seen) return false
 
-            if(this.group.participants[this.user_id].pivot.last_message_seen_id < msg_id) return true
+            if(this.last_message_seen_id < this.message_id) return true
 
             return false
         },
-
     }
 }
 </script>

@@ -51,8 +51,6 @@
 </template>
 
 <script>
-import * as ns from '@/Store/module_namespaces.js'
-
 import SmallUser from '@/Components/Reuseables/SmallUser.vue';
 import SearchInput from '@/Components/Chat/reuseables/SearchInput.vue'
 import DoubleScrollContentCardLayout from '@/Layouts/DoubleScrollContentCardLayout.vue'

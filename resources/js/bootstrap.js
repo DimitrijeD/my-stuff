@@ -1,13 +1,16 @@
 import _ from 'lodash';
 window._ = _;
 
+import * as ns from '@/Store/module_namespaces.js'
+window.ns = ns
+
 window.colorz = new CSSStyleSheet();
 document.adoptedStyleSheets = [colorz];
 
 import axios from 'axios'
 
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
-axios.defaults.withCredentials = true
+// axios.defaults.withCredentials = true
 
 window.axios = axios.create({
     baseURL: import.meta.env.VITE_APP_URL + '/api/'
@@ -18,7 +21,6 @@ window.axios.interceptors.request.use(function (config) {
 
     return config
 })
-
 
 import Echo from 'laravel-echo'
 
@@ -37,7 +39,7 @@ window.Echo = new Echo({
     authorizer: (channel, options) => {
         return {
             authorize: (socketId, callback) => {
-                axios.post('broadcasting/auth', {
+                axios.post(`${import.meta.env.VITE_APP_URL}/broadcasting/auth`, {
                     socket_id: socketId,
                     channel_name: channel.name
                 },{

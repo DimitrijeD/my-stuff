@@ -1,12 +1,9 @@
-import * as ns from '@/Store/module_namespaces.js'
-
 const actions = {
-    storeUser: (context, user) => {
+    storeUser(context, user){
         context.commit('setUser', user)
     }, 
 
-    logout({commit, dispatch}) 
-    {
+    logout({commit, dispatch}){
         commit("logout")
         
         axios.get('logout').then((res)=>{
@@ -36,8 +33,7 @@ const actions = {
         })
     },
 
-    getUser({state, commit}) 
-    {
+    getUser({state, commit}){
         if(state.user) return
 
         return axios.get('user').then((res)=>{
@@ -250,6 +246,12 @@ const actions = {
                 })
             })
         })
+    },
+
+    getUserIfTokenExists({ dispatch,commit }, form){
+        if(!localStorage.getItem("token")) return
+
+        dispatch('getUser')
     },
 
 }

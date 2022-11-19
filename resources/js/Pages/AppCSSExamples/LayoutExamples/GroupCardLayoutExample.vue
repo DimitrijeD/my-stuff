@@ -49,8 +49,6 @@
 import { mapGetters } from "vuex"
 import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
 import MessageCard from "@/Components/Chat/reuseables/MessageCard.vue"
-import * as ns from '@/Store/module_namespaces.js'
-
 import ExamplesLayout from '@/Layouts/ExamplesLayout.vue'
 import GroupCardLayout from '@/Layouts/GroupCardLayout.vue'
 

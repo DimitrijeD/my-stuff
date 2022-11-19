@@ -120,8 +120,11 @@ class ChatRole
             self::PARTICIPANT => [
                 ChatGroup::TYPE_PROTECTED,
                 ChatGroup::TYPE_PUBLIC_OPEN,
+                ChatGroup::TYPE_PUBLIC_CLOSED,
             ],
             self::LISTENER => [
+                ChatGroup::TYPE_PROTECTED,
+                ChatGroup::TYPE_PUBLIC_OPEN,
                 ChatGroup::TYPE_PUBLIC_CLOSED,
             ],
         ],
@@ -163,7 +166,8 @@ class ChatRole
             self::MODERATOR => [
                 self::PARTICIPANT => [
                     ChatGroup::TYPE_PROTECTED, 
-                    ChatGroup::TYPE_PUBLIC_OPEN
+                    ChatGroup::TYPE_PUBLIC_OPEN,
+                    ChatGroup::TYPE_PUBLIC_CLOSED,
                 ],
                 self::LISTENER => [
                     ChatGroup::TYPE_PUBLIC_CLOSED,
@@ -172,10 +176,12 @@ class ChatRole
             self::PARTICIPANT => [
                 self::MODERATOR => [
                     ChatGroup::TYPE_PROTECTED,
-                ],
-                self::MODERATOR => [
+                    ChatGroup::TYPE_PUBLIC_CLOSED,
                     ChatGroup::TYPE_PUBLIC_OPEN,
                 ],
+                self::LISTENER => [
+                    ChatGroup::TYPE_PUBLIC_CLOSED,
+                ]
             ],
             self::LISTENER => [
                 self::MODERATOR => [

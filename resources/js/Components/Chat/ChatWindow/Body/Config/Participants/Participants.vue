@@ -16,26 +16,14 @@
         </template>
 
         <template #body>
-            <div v-for="participant in listedParticipants" :key="participant.id" :class="['grid gap-2 items-center', canRemoveAnybody ? 'grid-cols-2' : 'grid-cols-4']" >
-                <div :class="['p-2 sm:p-1', canRemoveAnybody ? '' : 'col-span-3']">
-                    <SmallUser :user="participant"  /> 
-                </div>
-
-                <div class="flex gap-2 h-full">
-                    <RoleBlock 
-                        :canPromoteDemote="canPromoteDemote(participant)" 
-                        :participant="participant" 
-                        :permissions="permissions" 
-                        :group_id="group.id"
-                    />
-
-                    <div class="ml-auto my-auto">
-                        <DeleteIcon v-if="canRemove(participant)" @click="removeParticipant(participant.id)"
-                            class="mr-2 stroke-gray-500 hover:stroke-red-400 fill-transparent h-8 cursor-pointer"
-                        />
-                    </div>
-                </div>
-            </div>
+            <ParticipantInList 
+                v-for="participant in listedParticipants" :key="participant.id" 
+                :participant="participant"
+                :canRemoveAnybody="canRemoveAnybody"
+                :canPromoteDemote="canPromoteDemote(participant)" 
+                :permissions="permissions"
+                :canRemove=canRemove(participant)
+            />
         </template>
     </DefaultCardLayout>
 </template>
@@ -44,27 +32,29 @@
 import DeleteIcon from "@/Components/Reuseables/Icons/DeleteIcon.vue"
 import SearchIcon from '@/Components/Reuseables/Icons/SearchIcon.vue'
 
-import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
+import SmallUser from '@/Components/Reuseables/SmallUser.vue';
 import ChangeUserRole from '@/Components/Chat/ChatWindow/Body/Config/Participants/ChangeUserRole.vue'
 import RoleBlock from '@/Components/Chat/ChatWindow/Body/Config/Participants/RoleBlock.vue'
-
+import ParticipantInList from '@/Components/Chat/ChatWindow/Body/Config/Participants/ParticipantInList.vue'
 import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue';
-import AreYouSureLayout from '@/Layouts/AreYouSureLayout.vue'
 
 import * as collection from '@/UtilityFunctions/collection.js'
-import * as ns from '@/Store/module_namespaces.js'
 import { mapGetters } from 'vuex'
 import { fuzzyImmidiate }  from  '@/UtilityFunctions/fuzzyImmidiate.js'
+import { RoleCan } from '@/Components/Chat/policies/RoleCan.js'
 
 export default {
-    props: [ 'group', 'permissions'],
+    inject: ['group_id'],
 
-    components: { SmallUser, ChangeUserRole, DefaultCardLayout, DeleteIcon, AreYouSureLayout, RoleBlock, SearchIcon, },
+    props: ['permissions'],
+
+    components: { SmallUser, ChangeUserRole, DefaultCardLayout, DeleteIcon, RoleBlock, SearchIcon, ParticipantInList },
 
     data() {
         return {
             searchStr: '',
-            listedParticipants: []
+            listedParticipants: [],
+            roleCan: {},
         }
     },
 
@@ -75,63 +65,55 @@ export default {
         }),
 
         canRemoveAnybody(){
-            return this.permissions.remove.length != 0 ? true : false
+            return this.roleCan.removeAnybody()
         },
 
-        chatRole(){ return this.$store.getters[ ns.groupModule(this.group.id, 'getUserRole') ](this.user.id) },
+        chatRole(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'getUserRole') ](this.user.id) 
+        },
+
+        participants(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participants') ]
+        },
     },
 
+    watch: {
+        //Adding or removing participants from group requires them to be added or removed from list 
+        participants: {
+            handler: function () {
+                this.searchParticipants()
+            },
+            deep: true,
+        },
+
+        permissions: {
+            handler: function () {
+                this.roleCan = new RoleCan(this.user, this.permissions)
+            },
+            deep: true,
+        },
+    }, 
+
     created(){
-        this.listedParticipants = collection.sortParticipantsByRoleHierarchy(this.group.participants, this.roles)
+        this.roleCan = new RoleCan(this.user, this.permissions)
+
+        this.listedParticipants = collection.sortParticipantsByRoleHierarchy(this.participants, this.roles)
     },
 
     methods: {
-        removeParticipant(id){
-            this.$store.dispatch(ns.groupModule(this.group.id, 'removeParticipant'), id)
-        },
-
         canRemove(participant){
-            if(!this.actionRule_ParticipantNotSelf(participant.id)) return false
-
-            if(!this.permissions.remove.includes(this.getPrticipantRole(participant))) return false 
-            
-            return true
+            return this.roleCan.remove(participant)
         },
 
         canPromoteDemote(participant){
-            if(!this.actionRule_ParticipantNotSelf(participant.id, this.user.id)) return false
-
-            let fromRoles = Object.keys(this.permissions.change_role)
-
-            if(!this.actionRule_RuleTableNotEmpty(fromRoles)) return false
-
-            if(!fromRoles.includes(this.getPrticipantRole(participant))) return false // participant is not among roles which can be changed under these conditions
-
-            return true
+            return this.roleCan.canPromoteDemote(participant)
         }, 
-
-        actionRule_ParticipantNotSelf(participant_id){
-            return participant_id == this.user.id ? false : true
-        },
-
-        actionRule_RuleTableNotEmpty(permissionKeys){
-            return permissionKeys.length == 0 ? false : true
-        },
-
-        getPrticipantRole(participant){
-            return participant.pivot.participant_role
-        },
-
-        getParticipantRoleForHumans(participant){
-            return participant.pivot.participant_role.toLowerCase()
-        },
-
 
         searchParticipants(){
             this.listedParticipants = collection.sortParticipantsByRoleHierarchy(
                 fuzzyImmidiate(
                     this.searchStr, 
-                    this.group.participants, 
+                    this.participants, 
                     ['first_name', 'last_name']
                 ),
                 this.roles
@@ -148,9 +130,9 @@ export default {
         searchParticipants(){
             this.listedParticipants = []
 
-            for(let i in this.group.participants){
-                if(this.regExpressionMatch(this.searchStr, this.group.participants[i].first_name) || this.regExpressionMatch(this.searchStr, this.group.participants[i].last_name)){
-                    this.listedParticipants.push(this.group.participants[i])
+            for(let i in this.participants){
+                if(this.regExpressionMatch(this.searchStr, this.participants[i].first_name) || this.regExpressionMatch(this.searchStr, this.participants[i].last_name)){
+                    this.listedParticipants.push(this.participants[i])
                 }
             }
 

@@ -10,15 +10,12 @@
             class="py-1"
         /> 
 
-        <!-- List of messages in this block -->
         <TransitionGroup tag="div" name="list" class=" space-y-2 relative">
             <Message 
-                v-for="(message, index) in block.messages" 
-                :key="message.id" 
-                :group="group" 
-                :message_id="message.id" 
+                v-for="(message_id, index) in block.messages" 
+                :key="index" 
+                :message_id="message_id" 
                 :isSelf="isSelf" 
-                :user_id="user.id" 
             />
         </TransitionGroup>
     </div>
@@ -27,12 +24,13 @@
 <script>
 import { mapGetters } from "vuex";
 
-import * as ns from '@/Store/module_namespaces.js';
 import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
 import Message from '@/Components/Chat/ChatWindow/Body/MessagesBlock/Message.vue'
 
 export default {
-    props: [ "block", "group" ],
+    inject: ['group_id'],
+
+    props: [ "block", ],
 
     components:{ SmallUser, Message,},
 
@@ -41,15 +39,18 @@ export default {
             user: "user",
         }),
 
-        blockOwner(){ return this.$store.getters[ns.groupModule(this.group.id, 'getParticipant')](this.block.blockOwnerId) },
+        blockOwner(){ 
+            return this.$store.getters[ns.groupModule(this.group_id, 'getParticipant')](this.block.blockOwnerId) 
+        },
         
-        isSelf(){ return this.block.blockOwnerId == this.user.id },
-
+        isSelf(){ 
+            return this.block.blockOwnerId == this.user.id 
+        },
     },
 
     methods: {
         getUser(id) { 
-            const user = this.$store.getters[ns.groupModule(this.group.id, 'getParticipant')](id) 
+            const user = this.$store.getters[ns.groupModule(this.group_id, 'getParticipant')](id) 
             return user ? user : null
         },
     }
@@ -60,26 +61,25 @@ export default {
     .list-move,
     .list-enter-active,
     .list-leave-active{
-        transition: all 0.8s cubic-bezier(0.55, 0, 0.1, 1);
+        transition: all 0.3s ease-out;
     }
     
     .list-enter-from,
     .list-leave-to{
         opacity: 0;
-        transform: scaleY(0.01) translate(40px, 0);
+        transform: scaleY(0.01) translate(30px, -20px);
     }
     
     .list-leave-active {
         position: absolute;
         width: 100%;
-        
     }
 
     .self-shadow {
-        box-shadow: -3px 2px 2px 1px rgba(0, 0, 0, 0.1);
+        box-shadow: -3px 2px 2px 1px rgba(0, 0, 0, 0.1), 0 -1px 1px 1px rgba(0, 0, 0, 0.05);
     }
     .notself-shadow {
-        box-shadow: -1px 1px 1px 1px rgba(0, 0, 0, 0.4); 
+        box-shadow: -1px 1px 1px 1px rgba(0, 0, 0, 0.4), 2px -2px 2px 0 rgba(0, 0, 0, 0.2); 
     }
 
 </style>

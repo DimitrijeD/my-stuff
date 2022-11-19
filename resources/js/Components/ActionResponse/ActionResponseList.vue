@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import * as ns from '@/Store/module_namespaces.js'
-
 import ActionResponseCard from '@/Components/ActionResponse/ActionResponseCard.vue'
 
 export default {

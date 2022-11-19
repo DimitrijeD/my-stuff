@@ -3,15 +3,10 @@
 namespace Tests\Feature\Chat\Message;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 
 use Database\Seeders\ChatGroupClusterSeeder;
 use App\Models\User;
-use App\Models\ChatGroup;
-use App\Models\ChatMessage;
-use App\Models\ParticipantPivot;
 
 class GetMissingMessagesTest extends TestCase
 {
@@ -19,7 +14,6 @@ class GetMissingMessagesTest extends TestCase
 
     protected function setUp(): void
     {
-        
         parent::setUp();
         
         $this->groupBuilderSetUp();
@@ -47,14 +41,9 @@ class GetMissingMessagesTest extends TestCase
 
     private function groupBuilderSetUp()
     {
-        $groupConfig = [
-
-        ];
-
         $this->chatGroupSeeder = (resolve(ChatGroupClusterSeeder::class));
-        $this->chatGroupSeeder->massSetter($groupConfig);
+        $this->chatGroupSeeder->massSetter([]);
         $this->allChatData = $this->chatGroupSeeder->run();
-
     }
 
     /**
@@ -72,9 +61,6 @@ class GetMissingMessagesTest extends TestCase
                 'text' => $this->last_message_in_group->text, 
                 'updated_at' => $this->last_message_in_group->updated_at->jsonSerialize(),
                 'created_at' => $this->last_message_in_group->created_at->jsonSerialize(),
-                'user' => [
-
-                ],
             ]
         ]);
     }

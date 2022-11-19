@@ -25,8 +25,8 @@ import Chat from '@/Components/Chat/Chat.vue';
 import Nav from  '@/Components/Nav/Nav.vue';
 import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.vue';
 import { useDark, useToggle } from '@vueuse/core';
-import { Colorz } from '@/Components/ColorCalculators/Colorz/Colorz.js'
-import defaultConfig from '@/Pages/Settings/Colorz/types/defaultConfig.js'
+// import { Colorz } from '@/Components/ColorCalculators/Colorz/Colorz.js'
+// import defaultConfig from '@/Pages/Settings/Colorz/types/defaultConfig.js'
 
 export default {
     provide: {
@@ -48,6 +48,7 @@ export default {
     },
 
     created(){
+        this.$store.dispatch('getUserIfTokenExists')
         // this.$store.dispatch('getUser').then(()=>{
         //     let colorScheemas = []
         //     let allRules = ''
@@ -66,15 +67,11 @@ export default {
         //     }
 
         //     Colorz.replaceRules(allRules)
-
-        //     if(this.user.user_setting.theme == 'light'){
-        //         localStorage.setItem('vueuse-color-scheme', 'auto')
-        //         this.isDark = false
-        //     } else {
-        //         localStorage.setItem('vueuse-color-scheme', 'dark')
-        //         this.isDark = true
-        //     }
         // })
     },
+
+    mounted(){
+        
+    }
 }
 </script>
