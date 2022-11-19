@@ -5,45 +5,70 @@
 </template>
 
 <script>
-import * as ns from '@/Store/module_namespaces.js'
 import { mapGetters } from 'vuex'
 
 export default {
-    props: [ 'group', ],
+    inject: ['group_id'],
 
     components: {},
 
     data(){
         return {
-            scrollName: `scroll_${this.group.id}`,
+            scrollName: `scroll_${this.group_id}`,
             scrolledDown: false,
-            scrollTopTriggeredOlderMessages: false,
+            awaitingOldMessages: false, // boolean which is true only while awaiting fetch for older messages, false otherwise
             stickyBot: true,
             position: 0,
-            preventConsecutivePullsForOlderMessagesinMS: 2000, // How long to wait until pulling older messages is allowed again
-            throttle: null,
-            minDistanceToGetOldMessages: 400,
-            maxDistanceFromBottomToFix: 200,
-            throttleMS: 60,
+            throttleId: null,
+            canPullOld: false,
+            activeFutureCallForOld: false, 
+            preventApiId: null,
+
+            config: {
+                throttleMS: 60,
+                autoFixPX: 200,
+                fromTopGetOldPX: 400,
+                canPullOldOnlyAfterCreatedMS: 1000
+            }
         }
     },
 
     computed: {
         ...mapGetters({ 
-            user: "user",
+            user_id: "user_id",
         }),
+
+        messages_tracker(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messages_tracker') ]
+        },
+
+        window(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'window') ]
+        },
+
+        numberOfMessages(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'numberOfMessages') ]
+        },
+
+        whoSawWhat(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'whoSawWhat') ]
+        },
+
+        usersTyping(){
+            return this.$store.getters[ ns.groupModule(this.group_id, 'usersTyping') ]
+        },
     },
 
     watch: {
-        'group.window.scrolledDownInitialy': function (){
-            if(this.group.window.scrolledDownInitialy){
+        'window.scrolledDownInitialy': function (){
+            if(this.window.scrolledDownInitialy){
                 this.$nextTick(()=> {
                     this.handleInitialMessagesLoad()
                 })
             }
         },
 
-        'group.messages': function (){
+        numberOfMessages(){
             this.position = this.getPosition()
             this.$nextTick(()=> {
                 this.scrollDownOnEvents()
@@ -51,17 +76,14 @@ export default {
             })
         },
 
-        'group.whoSawWhat': {
+        whoSawWhat: {
             deep: true,
             handler(newState, oldState){
                 for(let i in oldState){
-                    if(oldState[i].includes(this.user.id)){
-                        // if that key (message id) exist .Key not exist (be deleted) coz nobody has 'seen' on that message
-                        // and if user self is not 'seen' on that message,
-                        // meaning this event is called after he saw somebody elses message, but this 
-                        // watcher picked up change.
+                    if(oldState[i].includes(this.user_id)){
+                        // if user self not 'seen' on that message, meaning this event is called after he saw somebody elses message, but this watcher picked up change.
                         // Last check is to be consistent - dont scroll down, if initial load hasn't been executed
-                        if(newState.hasOwnProperty(i) && newState[i].includes(this.user.id) && this.scrolledDown){
+                        if(newState.hasOwnProperty(i) && newState[i].includes(this.user_id) && this.scrolledDown){
                             this.$nextTick(()=> {
                                 this.scrollDownOnEvents()
                             })
@@ -73,10 +95,9 @@ export default {
             },
         },
 
-        'group.typing.user_ids': {
+        usersTyping: {
             deep: true,
             handler(){
-                console.log('called?')
                 this.position = this.getPosition()
                 this.$nextTick(()=> {
                     this.scrollDownOnEvents()
@@ -87,10 +108,13 @@ export default {
     },
 
     mounted(){
+        setTimeout(() => {
+            this.canPullOld = true
+        }, this.canPullOldOnlyAfterCreatedMS);
 
         this.position = this.getPosition()
 
-        if(this.group.window.scrolledDownInitialy){
+        if(this.window.scrolledDownInitialy){
             this.$nextTick(()=> {
                 this.handleInitialMessagesLoad()
             })
@@ -98,29 +122,67 @@ export default {
     },
 
     methods: {
-        handleScroll(e) {
+        handleScroll() {
             this.position = this.getPosition()
+            
+            if(this.throttleId) return
 
-            if(this.throttle) return
-
-            this.throttle = setTimeout(()=> {
-                this.throttle = null
-            }, this.throttleMS)
+            this.throttleId = setTimeout(()=> {
+                this.throttleId = null
+            }, this.config.throttleMS)
 
             this.shouldFixBot()
-            this.shouldPullOlderMessages()
+
+            this.validatePullStatusOnOlderMessages()
         },
 
-        shouldPullOlderMessages(){
-            if(this.getScrollTop() < this.minDistanceToGetOldMessages && this.scrolledDown && !this.scrollTopTriggeredOlderMessages){ 
-                this.scrollTopTriggeredOlderMessages = true
-                this.$store.dispatch(ns.groupModule(this.group.id, 'getEarliestMessages')).then(() => {
-                    this.preventFetchingOlderMessagesViaTimeout()
-                    this.maintainScrollInCurrentViewport()
-                })
-            }
+        /**
+         * During scroll top user reaches breakpoint on which API is triggered, fetching older messages
+         */
+        validatePullStatusOnOlderMessages(){
+            if(!this.canPullOld) return
+            if(!this.scrolledDown) return
+            if(!this.hasScrollReachedAreaToPullOlderMessages()) return
+
+            if(!this.awaitingOldMessages) 
+                this.getOlderMessages()
         },
 
+        /**
+         * @todo
+         */
+        isAlreadyTopWhileAwaitingApi(){
+            // if(!this.hasScrollReachedAreaToPullOlderMessages()) return
+
+            // clearInterval(this.preventApiId)
+            // this.awaitingOldMessages = false
+
+            // this.getOlderMessages()
+        },
+
+        /**
+         * Fetches older messages from server, then sets cooldown for API and fixes scroll in same relative position to content it had before new messages
+         * added height to scrollable area 
+         * 
+         */
+        getOlderMessages(){
+            this.awaitingOldMessages = true
+            this.$store.dispatch(ns.groupModule(this.group_id, 'getOlderMessages')).then(() => {
+                this.awaitingOldMessages = false
+                this.maintainScrollInCurrentViewport()
+            })
+        },
+
+        /**
+         * Is viewport close enough to top of scrollable area in order to fetch older messages
+         */
+        hasScrollReachedAreaToPullOlderMessages(){
+            return this.getScrollTop() < this.config.fromTopGetOldPX
+        },
+
+        /**
+         * This solved issue: moved viewport when adding new messages on start of scrollable area.
+         */
         maintainScrollInCurrentViewport(){
             this.getScrollEl()?.scrollTo({
                 top: this.getScrollHeight() - this.position - this.getScrollOffsetHeight(),
@@ -129,8 +191,12 @@ export default {
             this.position = this.getPosition()
         },
 
+        /**
+         * Called only once pre initial chat load in order to make sure viewport is always on bottom of chat window
+         * where user spends most of the time (looking at latest message/s).
+         */
         handleInitialMessagesLoad(){
-            if(Object.keys(this.group.messages).length == 0) return
+            if(this.numberOfMessages == 0) return
 
             this.scrollDown()
 
@@ -139,7 +205,7 @@ export default {
             }, 3000)
             
             this.$nextTick(()=> {
-                this.$store.dispatch(ns.groupModule(this.group.id, 'scrolledDownInitialy'), false)
+                this.$store.dispatch(ns.groupModule(this.group_id, 'scrolledDownInitialy'), false)
             })
         },
 
@@ -166,29 +232,35 @@ export default {
             })
         },
 
-        preventFetchingOlderMessagesViaTimeout(){
-            setTimeout(() => {
-                this.scrollTopTriggeredOlderMessages = false
-            }, this.preventConsecutivePullsForOlderMessagesinMS) 
-        },
+        /**
+         * This formula calculates distance in px from bottom of scrollable area
+         */
+        getPosition(){ return this.getScrollHeight() - this.getScrollTop() - this.getScrollOffsetHeight() },
 
-        getPosition(){
-            return this.getScrollHeight() - this.getScrollTop() - this.getScrollOffsetHeight()
-        },
+        /**
+         * Distance in px from top to of scrollable area thumb.
+         */
+        getScrollTop(){ return this.getScrollEl()?.scrollTop },
 
-        getScrollTop()         { return this.getScrollEl()?.scrollTop },
-        getScrollHeight()      { return this.getScrollEl()?.scrollHeight },
+        /**
+         * Distance in px from top to bottom of scrollable area.
+         */
+        getScrollHeight(){ return this.getScrollEl()?.scrollHeight },
+
+        /**
+         * Height of viewport
+         */
         getScrollOffsetHeight(){ return this.getScrollEl()?.offsetHeight },
 
-        getScrollEl(){ 
-            return this.$refs[this.scrollName]
-         },
+        /**
+         * Ref to scrollable area
+         */
+        getScrollEl(){ return this.$refs[this.scrollName] },
          
         /**
-         * If user scrolls up this.maxDistanceFromBottomToFix or more, new events will not force scroll down
-         * if user scrolls below, scroll will go down on every new content
+         * If user scrolls close enough to bottom, viewport will be fixed to lowest point
          */
-        shouldFixBot(){ this.stickyBot = this.getPosition() < this.maxDistanceFromBottomToFix },
+        shouldFixBot(){ this.stickyBot = this.getPosition() < this.config.autoFixPX },
     }
 }
 </script>

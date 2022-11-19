@@ -1,4 +1,4 @@
-import * as h from '@/Store/functions/helpers.js';
+import * as h from '@/Store/functions/helpers.js'
 
 const getters = 
 {
@@ -51,10 +51,10 @@ const getters =
      */
     seen: (state) => state.messages_tracker.seen,
 
-    getUserRole:             (state) => (participant_id) => state.participants[participant_id].pivot.participant_role,
+    messages_tracker: (state) => state.messages_tracker,
 
+    getUserRole:             (state) => (participant_id) => state.participants[participant_id].pivot.participant_role,
     getParticipant:          (state) => (participant_id) => state.participants[participant_id],
-    
     getParticipantThumbnail: (state) => (participant_id) => state.participants[participant_id].thumbnail,
 
     /**
@@ -70,13 +70,25 @@ const getters =
     /**
      * Id of message participant saw last
      */
-    last_message_seen_id: (state) => (participant_id) => state.participant[participant_id].pivot.last_message_seen_id,
+    last_message_seen_id: (state) => (participant_id) => state.participants[participant_id].pivot.last_message_seen_id,
 
     /**
      * Array of users ids who are currently typing
      */
     usersTyping: (state) => state.typing.user_ids,
 
+    window: (state) => state.window,
+
+    messageById: (state) =>(id) => state.messages[id],
+
+    whoSawWhat: (state) => state.whoSawWhat,
+
+    participantsIds:      (state) => Object.keys(state.participants),
+    numberOfParticipants: (state) => Object.keys(state.participants).length,
+    numberOfMessages:     (state) => Object.keys(state.messages).length,
+
+    permissions: (state) => state.permissions,
+    canSendMessage: (state) => state.permissions.send_message,
 }
 
 export default getters 

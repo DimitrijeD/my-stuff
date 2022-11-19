@@ -16,10 +16,7 @@
         </template>
 
         <template #last-message>
-            <MessageCard 
-                v-if="lastMessage"
-                :message="lastMessage"
-            />
+            <MessageCard v-if="lastMessage" :message="lastMessage" :seen="seen" />
         </template>
         
     </GroupCardLayout>
@@ -30,7 +27,6 @@ import { mapGetters } from "vuex"
 
 import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
 import MessageCard from "@/Components/Chat/reuseables/MessageCard.vue"
-import * as ns from '@/Store/module_namespaces.js'
 import GroupCardLayout from '@/Layouts/GroupCardLayout.vue'
 
 export default {

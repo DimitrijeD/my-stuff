@@ -3,13 +3,13 @@
         <p class="left">Group name</p>
 
         <div class="right">
-            <p v-if="group.name">{{ group.name }}</p>
+            <p v-if="name">{{ name }}</p>
             <p v-else class="italic">This group has no name</p>
         </div>
 
         <p class="left">Number of participants</p>
 
-        <p class="right">{{ getNumberOfParticipants(group.participants) }}</p>
+        <p class="right">{{ numberOfParticipants }}</p>
 
         <p class="left">Group created</p>
 
@@ -17,34 +17,37 @@
 
         <p class="left">Group type</p>
 
-        <p class="right">{{ group.model_type }}</p>
+        <p class="right">{{ model_type }}</p>
     </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
-    props: [ 'group', 'permissions' ],
+    inject: ['group_id'],
 
-    data() {
-        return {
-            
-        }
-    },
+    props: [ 'permissions' ],
 
     computed: {
-        ...mapGetters({ 
-            user: "user",
-        }),
+        name(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'name') ] 
+        },
+
+        model_type(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'model_type') ] 
+        },
+
+        created_at(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'created_at') ] 
+        },
+
+        numberOfParticipants(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'numberOfParticipants') ] 
+        },
+
     },
 
-    methods: 
-    {
-        formatDate(){ return new Date(this.group.created_at) },
-
-        getNumberOfParticipants(participants){ return Object.keys(participants).length },
-
+    methods: {
+        formatDate(){ return new Date(this.created_at) },
     }
 }
 </script>

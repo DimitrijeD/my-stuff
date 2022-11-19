@@ -31,6 +31,8 @@ const mutations =
 
     hasInitMessages: (state, bool) => state.window.hasInitMessages = bool,
     scrolledDownInitialy: (state, bool) => state.window.scrolledDownInitialy = bool,
+    showConfig: (state, bool) => state.window.showConfig = bool,
+    minimized: (state, bool) => state.window.minimized = bool,
 
     removeTyper(state, id){
         if(state.typing.user_ids.includes(id))
@@ -50,8 +52,9 @@ const mutations =
             if(state.typing.user_ids.includes(id))
                 state.typing.user_ids.splice(state.typing.user_ids.indexOf(id), 1)
         }, state.typing.showTyperFor)
-    }
+    },
 
+    permissions: (state, permissions) => state.permissions = permissions,
 
 }
 

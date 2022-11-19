@@ -7,10 +7,8 @@
 </template>
 
 <script>
-import * as ns from '@/Store/module_namespaces.js'
-
 export default {
-    props:[ 'group_id', 'participants'],
+    inject: ['group_id'],
 
     data(){
         return{
@@ -31,14 +29,15 @@ export default {
                 ]
             }
 
-            if(num < this.showNtypers){
-                return this.prepareMultipleTyping(typers, num)
-            } else {
-                typers = typers.slice(0, this.showNtypers)
+            if(num < this.showNtypers) return this.prepareMultipleTyping(typers, num)
+            
+            typers = typers.slice(0, this.showNtypers)
+            return this.prepareMultipleTyping(typers, typers.length, num - this.showNtypers)
+        },
 
-                return this.prepareMultipleTyping(typers, typers.length, num - this.showNtypers)
-            }
-        }
+        participants(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participants') ]
+        },
     },
 
     mounted() {
@@ -46,10 +45,6 @@ export default {
     },
 
     methods:{
-        // getMoreStrTypers(num){
-        //     return `and ${num} others are typing.`
-        // },
-
         oneIsTyping(){
             return 'is typing ...'
         },

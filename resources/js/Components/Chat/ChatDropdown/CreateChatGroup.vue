@@ -51,8 +51,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import * as ns from '@/Store/module_namespaces.js'
-
 import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue'
 import DoubleUserSelectList from '@/Components/Chat/reuseables/DoubleUserSelectList.vue'
 import ActionResponseList from '@/Components/ActionResponse/ActionResponseList.vue';

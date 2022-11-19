@@ -21,7 +21,6 @@
 
 <script>
 import { mapGetters } from "vuex"
-import * as ns from '@/Store/module_namespaces.js'
 import CreateChatGroup from "@/Components/Chat/ChatDropdown/CreateChatGroup.vue";
 import ChatHistory from '@/Components/Chat/ChatDropdown/ChatHistory.vue'
 import MailIcon from "@/Components/Reuseables/Icons/MailIcon.vue"

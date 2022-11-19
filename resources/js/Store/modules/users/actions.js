@@ -1,5 +1,4 @@
 import * as h from '@/Store/functions/helpers.js';
-import * as ns from '@/Store/module_namespaces.js'
 
 const actions = {
     searchForAddUsersInApi({ commit, dispatch, getters }, data){

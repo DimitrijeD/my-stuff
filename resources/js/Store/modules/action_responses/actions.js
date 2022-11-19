@@ -1,5 +1,3 @@
-import * as ns from '@/Store/module_namespaces.js'
-
 const actions = {
 
     // For test only, can be deleted

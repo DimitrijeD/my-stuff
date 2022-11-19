@@ -11,7 +11,7 @@ export default function auth_verified({ to, next, store, router })
             store.getters.user.email_verified_at 
                 ? next() 
                 : router.push({ name: 'EmailVerification' }) 
-        }).catch((error) => {
+        }).catch(error => {
             if(error.response.status == 401) {
                 // if user is not logged in, go to Login
                 router.push({ name: 'Login' }) 

@@ -157,8 +157,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import * as ns from '@/Store/module_namespaces.js'
-
 import { Colorz } from '@/Components/ColorCalculators/Colorz/Colorz.js'
 import ColorElement from '@/Components/ColorCalculators/Components/ColorElement.vue';
 import AcceptIcon from '@/Components/Reuseables/Icons/AcceptIcon.vue'

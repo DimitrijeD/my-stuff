@@ -1,6 +1,5 @@
-import * as h from '@/Store/functions/helpers.js';
-import * as ns from '@/Store/module_namespaces.js'
-import store from '@/Store/index.js';
+import * as h from '@/Store/functions/helpers.js'
+import store from '@/Store/index.js'
 
 const getters = {
     groupsIds: (state) => state.groupsIds,

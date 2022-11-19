@@ -1,6 +1,6 @@
 <template>
-    <ChatParticipants :group="group" />
-    <WindowManagement :group="group" />
+    <ChatParticipants />
+    <WindowManagement />
 </template>
 
 <script>
@@ -8,8 +8,6 @@ import ChatParticipants from '@/Components/Chat/ChatWindow/Header/ChatParticipan
 import WindowManagement from "@/Components/Chat/ChatWindow/Header/WindowManagement.vue"
 
 export default {
-    props: [ 'group', ],
-
     components: { ChatParticipants, WindowManagement, },
 }
 

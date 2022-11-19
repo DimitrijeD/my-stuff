@@ -20,7 +20,6 @@ class ChatMessageEloquentRepo implements ChatMessageRepo
         return ChatMessage::
               where('group_id', $group_id)
             ->where('id', '>', $latest_msg_id)
-            ->with('user')
             ->get();
     }
 
@@ -29,7 +28,6 @@ class ChatMessageEloquentRepo implements ChatMessageRepo
         return ChatMessage::
               where('group_id', $group_id)
             ->orderBy('id', 'desc')
-            ->with('user')
             ->take(ChatMessage::INIT_NUM_MESSAGES)
             ->get();
     }
@@ -39,7 +37,6 @@ class ChatMessageEloquentRepo implements ChatMessageRepo
         return ChatMessage::
               where('group_id', $group_id)
             ->where('id', '<', $earliest_msg_id)
-            ->with('user')
             ->take(ChatMessage::EARLIEST_NUM_MESSAGES)
             ->orderBy('id', 'desc')
             ->get();

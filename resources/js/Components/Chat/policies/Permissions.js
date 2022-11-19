@@ -1,21 +1,16 @@
-import * as ns from '@/Store/module_namespaces.js'
-
 export class Permissions {
-    constructor(actionKeys, rules, chatRole, group, user) {
+    constructor(actionKeys, rules, chatRole, model_type) {
         this.actionKeys = actionKeys
         this.rules = rules
         this.chatRole = chatRole
-        this.group = group
-        this.user = user
-        this.gm_ns = ns.groupModule(this.group.id)
-
+        this.model_type = model_type
         this.permissions = this.createObjectFromArrayValues(this.actionKeys)
     }
 
     /**
      * Creates object of permissions user has in specific chat group
      */
-    createPermissions(){
+    create(){
         this.permission_canAdd()
         this.permission_canRemove()
         this.permission_canChangeRole()
@@ -57,12 +52,12 @@ export class Permissions {
     }
 
     ruleDepth2(level1, action){
-        this.permissions[action] = level1[this.group.model_type] ? true : false
+        this.permissions[action] = level1[this.model_type] ? true : false
     }
 
     ruleDepth3(level1, action){
         for(let targetRole in level1){
-            if(level1[targetRole][this.group.model_type]) this.permissions[action].push(targetRole)
+            if(level1[targetRole][this.model_type]) this.permissions[action].push(targetRole)
         }
     }
 
@@ -71,7 +66,7 @@ export class Permissions {
 
         for(let fromRole in level1){
             for(let toRole in level1[fromRole]){
-                if(level1[fromRole][toRole][this.group.model_type] ){
+                if(level1[fromRole][toRole][this.model_type] ){
                     
                     if(!this.permissions[action][fromRole]){
                         this.permissions[action][fromRole] = []
@@ -92,4 +87,4 @@ export class Permissions {
 
         return object
     }
-}
+};

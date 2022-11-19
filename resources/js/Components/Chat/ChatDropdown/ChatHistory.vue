@@ -34,7 +34,6 @@
 
 <script>
 import { mapGetters } from "vuex"
-import * as ns from '@/Store/module_namespaces.js'
 import GroupCard from "@/Components/Chat/reuseables/GroupCard.vue"
 import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue';
 import SearchIcon from '@/Components/Reuseables/Icons/SearchIcon.vue'

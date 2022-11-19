@@ -12,21 +12,15 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import * as ns from '@/Store/module_namespaces.js'
+import { mapGetters } from 'vuex'
 
 export default {
-    props:[
-        'group_id', 'message', "user_ids"
-    ],
+    inject: ['group_id'],
+
+    props:[ 'message', "user_ids" ],
 
     data(){
-        return{
-            classes: {
-                self: 'shadow-small-img-self',
-                notSelf: 'shadow-small-img-other'
-            },
-
+        return {
             config: {
                 neverShowUserBewlowHisOwnMsg: true,
                 neverShowSelf: true,
@@ -37,17 +31,11 @@ export default {
 
     computed: {
         ...mapGetters({ 
-            user: "user",
+            user_id: "user_id",
         }),
-
     },
 
-    created(){
-        
-    },
-
-    methods: 
-    {
+    methods: {
         hasAnybodySeenThis(){ return this.user_ids.length > 0 ? true : false },
 
         getParticipantThumbnail(id) { return this.$store.getters[ns.groupModule(this.group_id, 'getParticipantThumbnail')](id) },
@@ -58,7 +46,7 @@ export default {
             }
 
             if(this.config.neverShowSelf){
-                if(this.isSelf(participant_id)) return false
+                if(this.user_id == participant_id) return false
             }
 
             this.anybodyDisplayed = true
@@ -69,9 +57,6 @@ export default {
             return this.message.user_id == participant_id
         },
 
-        isSelf(participant_id){
-            return this.user.id == participant_id
-        }
     }
 
 }

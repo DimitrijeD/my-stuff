@@ -25,7 +25,6 @@
 
 <script>
 import TextInput from '@/Components/Reuseables/TextInput.vue'
-import * as ns from '@/Store/module_namespaces.js'
 
 export default {
     components: {

@@ -3,7 +3,7 @@
         <div class="space-y-4">
             <DropDownInput 
                 @selected="selectedTheme"
-                :current="user.user_setting.theme"
+                :current="user?.user_setting?.theme"
                 :items="availableThemes"
                 class="w-48 bg-gray-200 dark:bg-darker-300"
                 :headCls="'p-4 border border-gray-400 dark:border-darker-300 rounded-lg'" 

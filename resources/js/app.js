@@ -7,7 +7,7 @@ import router from '@/Router/router.js';
 import store from "@/Store/index.js";
 
 let app = createApp(App);
-  
+
 app
     .use(store)
     .use(router)

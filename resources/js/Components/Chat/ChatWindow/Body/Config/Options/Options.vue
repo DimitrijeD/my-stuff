@@ -3,7 +3,7 @@
         <div v-if="canChangeName" class="flex place-items-center gap-2" >
             <label class="select-none">Change group name</label>
 
-            <input type="text" class="small-input dark:bg-darker-400 dark:border-darker-500 flex-1" v-model="newGroupName" :placeholder="group.name ? group.name : 'Group name is empty'">
+            <input type="text" class="small-input dark:bg-darker-400 dark:border-darker-500 flex-1" v-model="newName" :placeholder="name ? name : 'Group name is empty'">
 
             <button @click="changeGroupName" :class="[ 'p-2 rounded-xl border border-darker-500', validateChangeName ? 'text-green-600 border-green-600 ' : 'cursor-not-allowed text-gray-600 dark:text-gray-500', ]">
                 Save
@@ -64,7 +64,6 @@
 </template>
 
 <script>
-import * as ns from '@/Store/module_namespaces.js'
 import DeclineIcon from "@/Components/Reuseables/Icons/DeclineIcon.vue"
 import AcceptIcon from "@/Components/Reuseables/Icons/AcceptIcon.vue"
 import AreYouSureLayout from '@/Layouts/AreYouSureLayout.vue'
@@ -72,14 +71,16 @@ import DropDownInput from '@/Components/Reuseables/DropDownInput.vue'
 import * as StringUtil from '@/UtilityFunctions/str.js'
 
 export default {
-    props: [ 'group', 'permissions' ],
+    inject: ['group_id'],
+
+    props: [ 'permissions' ],
 
     components: { DeclineIcon, AcceptIcon, AreYouSureLayout, DropDownInput },
     
     data() {
         return {
             user: this.$store.state.auth.user,
-            newGroupName: this.group.name,
+            newName: '',
 
             pendingGroupTypeChangeAccept: false,
             chosenNewType: '',
@@ -89,7 +90,7 @@ export default {
 
     computed: {
         validateChangeName(){
-            return (this.newGroupName == this.group.name) || (this.group.name === null && this.newGroupName === '') 
+            return (this.newName == this.name) || (this.name === null && this.newName === '') 
                 ? false
                 : true
         },
@@ -103,23 +104,36 @@ export default {
         },
 
         currentModelType(){
-            return StringUtil.forHumans(this.group.model_type)
+            return StringUtil.forHumans(this.model_type)
         },
 
         groupTypes(){
             return this.$store.getters[ ns.chat_rules('StateGroupTypes') ]
         },
+
+        model_type(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'model_type') ] 
+        },
+
+        name(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'name') ] 
+        },
+
+    },
+
+    created(){
+        this.newName = this.name
     },
 
     methods: {
-        leaveGroup() { this.$store.dispatch(ns.groupModule(this.group.id, 'leaveGroup')) },
+        leaveGroup() { this.$store.dispatch(ns.groupModule(this.group_id, 'leaveGroup')) },
 
         changeGroupName(){
             if(!this.validateChangeName) return
 
-            this.$store.dispatch(ns.groupModule(this.group.id, 'changeGroupName'), {
-                group_id: this.group.id,
-                new_name: this.newGroupName
+            this.$store.dispatch(ns.groupModule(this.group_id, 'changeGroupName'), {
+                group_id: this.group_id,
+                new_name: this.newName
             })
         },
 
@@ -130,7 +144,7 @@ export default {
             let types = {}
 
             for(let i in this.groupTypes){
-                if(this.groupTypes[i] != this.group.model_type)
+                if(this.groupTypes[i] != this.model_type)
                     types[this.groupTypes[i]] = StringUtil.forHumans(this.groupTypes[i])
             }
 
@@ -145,8 +159,8 @@ export default {
         },
 
         confirmedChangeType(){
-            this.$store.dispatch(ns.groupModule(this.group.id, 'changeGroupType'), {
-                group_id: this.group.id,
+            this.$store.dispatch(ns.groupModule(this.group_id, 'changeGroupType'), {
+                group_id: this.group_id,
                 model_type: this.chosenNewTypeRaw
             }).then(()=>{
                 this.pendingGroupTypeChangeAccept = false
