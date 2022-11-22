@@ -81,8 +81,7 @@ export default{
         displayTime(){
             clearInterval(this.valueIntervalId)
 
-            if(this.step < 0 || this.step > this.range.length)
-                this.step = this.range.length - 1
+            if(!this.range[this.step]?.in) return ''
 
             switch(this.range[this.step].in){
                 case 'moments':

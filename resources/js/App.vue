@@ -50,23 +50,23 @@ export default {
     created(){
         this.$store.dispatch('getUserIfTokenExists')
         // this.$store.dispatch('getUser').then(()=>{
-        //     let colorScheemas = []
-        //     let allRules = ''
+            // let colorScheemas = []
+            // let allRules = ''
             
-        //     if(this.user?.user_setting?.colorz){
-        //         colorScheemas = this.user.user_setting.colorz
-        //     } else {
-        //         colorScheemas = defaultConfig
-        //     }
+            // if(this.user?.user_setting?.colorz){
+            //     colorScheemas = this.user.user_setting.colorz
+            // } else {
+            //     colorScheemas = defaultConfig
+            // }
 
-        //     for(let i in colorScheemas){
-        //         let cc = new Colorz(colorScheemas[i])
-        //         cc.make() 
+            // for(let i in colorScheemas){
+            //     let cc = new Colorz(colorScheemas[i])
+            //     cc.make() 
 
-        //         allRules += cc.globalRules
-        //     }
+            //     allRules += cc.globalRules
+            // }
 
-        //     Colorz.replaceRules(allRules)
+            // Colorz.replaceRules(allRules)
         // })
     },
 

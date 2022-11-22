@@ -37,8 +37,6 @@ import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue'
 export default {
     inject: ['group_id'],
 
-    props: [ 'permissions' ],
-
     components: { DefaultCardLayout, DoubleUserSelectList, LoadingCyrcle, SearchInput, SmallUser, DoubleScrollContentCardLayout, },
 
     data() {

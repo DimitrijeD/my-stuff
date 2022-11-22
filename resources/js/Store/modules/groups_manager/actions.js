@@ -13,19 +13,16 @@ const actions = {
      */
      init({ dispatch }){
         return axios.get('chat/init').then((res)=>{
-            return dispatch(ns.chat_rules('setupRules'), res.data.chat_rules, root).then(() => {
-                for(let i in res.data.groups){
+            dispatch(ns.chat_rules('setupRules'), res.data.chat_rules, root).then(() => {
+
+                for(let i = 0; i < res.data.groups.length; i++){
                     dispatch('setupGroupModule', res.data.groups[i])
                 }
-            })
-        }).then(()=>{
-            /**
-             * @todo FUCKING PLSEASE FOR THE LOVE OF GOD CAN U NOT DO THIS UNTILL REST OF CODE HAS FINISHED DOING SHIT
-             */
-            setTimeout(() => {
+
+            }).then(()=>{
                 dispatch('sortNewstGroups')
                 dispatch('numGroupsWithUnseen')
-            }, 1000)
+            })
         }).catch(error => {
             // Fatal error, request reload because without this successful request, chatting will not work
         })
@@ -35,14 +32,6 @@ const actions = {
      * Both search approaches work, but should only use one, duh
      */
     filterGroupsBySearchString({ commit, getters }, str){
-        // ------------------------------------------------- Search using RegX --------------------------------------------- //
-        // commit('setFilteredGroupsIds', h.getAllIds(h.sortNewest( getters['getGroupsById'](h.getBySearchString(getters['getAllGroups'], str)) )))
-        //-------------------------------------------------------------------------------------------------------------------//
-
-        // ------------------------------------------------- Search suing Fuzzy Package -------------------------------------//
-        // commit('setFilteredGroupsIds', h.getAllIds(h.sortNewest( 
-        //     fuzzyDeep(str, getters['getAllGroups'], nestedProperties)
-        // )))
         commit('setFilteredGroupsIds', h.getAllIds( 
             fuzzyDeep(str, getters['getAllGroups'], [
                 {
@@ -65,10 +54,10 @@ const actions = {
         let namespace = ns.groupModule(group.id)
         store.registerModule(namespace, group_module)
 
-        return dispatch(ns.groupModule(group.id, 'initGroup'), group, root).then(() => {
-            commit('addGroupsIds', [group.id])
-            commit('addToFilteredGroups', group.id)
-        })
+        commit('addGroupsIds', [group.id])
+        commit('addToFilteredGroups', group.id)
+
+        dispatch(ns.groupModule(group.id, 'initGroup'), group, root)
     },
 
     storeGroup({ commit, dispatch }, data){
@@ -112,7 +101,7 @@ const actions = {
     },
 
     getMissingGroup({ dispatch }, id){
-        return axios.get('chat/group/' + id).then((res)=>{
+        axios.get('chat/group/' + id).then((res)=>{
             dispatch('setupGroupModule', res.data).then(()=>{
                 dispatch('numGroupsWithUnseen').then(()=>{
                     dispatch('sortNewstGroups')

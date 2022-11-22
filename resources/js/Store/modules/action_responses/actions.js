@@ -30,6 +30,7 @@ const actions = {
             commit('response_type', data.response_type)
             commit('id')
         } else {
+            // @todo 
             console.log('ActionResponse Module: invalid object, cannot show info', data)
         }
 

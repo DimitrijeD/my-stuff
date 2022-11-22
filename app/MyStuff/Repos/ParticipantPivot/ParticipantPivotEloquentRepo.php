@@ -20,12 +20,12 @@ class ParticipantPivotEloquentRepo implements ParticipantPivotRepo
     // order matters
     public function roleResolver($user_id, $request_initiator_id, $model_type)
     {
-        if($model_type == ChatGroup::TYPE_PRIVATE){
-            return ChatRole::PARTICIPANT;
-        }
-
         if($user_id == $request_initiator_id){
             return ChatRole::CREATOR;
+        }
+
+        if($model_type == ChatGroup::TYPE_PRIVATE){
+            return ChatRole::PARTICIPANT;
         }
 
         if($model_type == ChatGroup::TYPE_PUBLIC_CLOSED){

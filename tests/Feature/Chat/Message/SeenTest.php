@@ -3,16 +3,12 @@
 namespace Tests\Feature\Chat\Message;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 
 use Database\Seeders\ChatGroupClusterSeeder;
-use App\Models\User;
 use App\Models\ChatGroup;
 use App\Models\ChatMessage;
-use App\Models\ParticipantPivot;
 use App\Models\ChatRole;
 use App\Events\MeSawMessage;
 

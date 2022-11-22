@@ -25,7 +25,11 @@ class RolesSubmitMessageTest extends TestCase
         $this->participant = User::factory()->create();
         $this->group = ChatGroup::factory()->create();
         
-        $this->storeMessageEndpoint = '/api/chat/message/store';
+        $this->messageStructure = [
+            "id", "user_id", "group_id", "text", "updated_at", "created_at", "edited"
+        ];
+
+        $this->endpoint = '/api/chat/message/store';
     }
 
     private function dataSetup($role)
@@ -55,7 +59,7 @@ class RolesSubmitMessageTest extends TestCase
         ]);
 
         $this->userFormData = [
-            'text' => Str::random(10),
+            'text' => Str::random(3),
             'group_id' => $this->group->id,
             'user_id' => $this->user->id
         ];
@@ -65,43 +69,37 @@ class RolesSubmitMessageTest extends TestCase
     {
         $this->dataSetup(ChatRole::PARTICIPANT);
 
-        $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
+        $response = $this->post($this->endpoint, $this->userFormData);
 
-        $response->assertJsonStructure([
-            "user_id", "group_id", "text", "updated_at", "created_at", "id"
-        ]);
+        $response->assertJsonStructure( $this->messageStructure);
     }
 
     public function test_moderator_can_submit_message()
     {
         $this->dataSetup(ChatRole::MODERATOR);
 
-        $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
+        $response = $this->post($this->endpoint, $this->userFormData);
 
-        $response->assertJsonStructure([
-            "user_id", "group_id", "text", "updated_at", "created_at", "id"
-        ]);
+        $response->assertJsonStructure($this->messageStructure);
     }
 
     public function test_creator_can_submit_message()
     {
         $this->dataSetup(ChatRole::CREATOR);
 
-        $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
+        $response = $this->post($this->endpoint, $this->userFormData);
 
-        $response->assertJsonStructure([
-            "user_id", "group_id", "text", "updated_at", "created_at", "id"
-        ]);
+        $response->assertJsonStructure($this->messageStructure);
     }
 
     public function test_listener_cannot_submit_message()
     {
         $this->dataSetup(ChatRole::LISTENER);
 
-        $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
+        $response = $this->post($this->endpoint, $this->userFormData);
 
         $response->assertJson([
-            'error' => __("You cannot chat in this chat group, but you can still see messages"),
+            'error' => __("You cannot chat in this chat group, but you can still see messages"), // @todo
         ]);
     }
 }

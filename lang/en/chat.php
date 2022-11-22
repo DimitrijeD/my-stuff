@@ -43,5 +43,11 @@ return [
     'type' => [
         'success' => 'Chat type has been changed. Users in group now have different authorizations according to their role.',
         'failedUpdating' => 'An error occured while trying to update group type.',
+    ],
+
+    'message' => [
+        'notOwner' => 'This is not your message. You cannot delete it.',
+        'deleted' => 'Message has been deleted.',
+        'updated' => 'Message has been updated.'
     ]
 ];

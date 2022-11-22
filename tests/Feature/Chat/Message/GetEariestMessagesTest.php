@@ -3,15 +3,10 @@
 namespace Tests\Feature\Chat\Message;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 use Tests\Feature\Chat\Participants\Add\InitGroup;
 
-use Database\Seeders\ChatGroupClusterSeeder;
-use App\Models\User;
 use App\Models\ChatMessage;
-use App\Models\ParticipantPivot;
 use App\Models\ChatRole;
 
 class GetEariestMessagesTest extends TestCase

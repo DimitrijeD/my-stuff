@@ -73,13 +73,10 @@ import * as StringUtil from '@/UtilityFunctions/str.js'
 export default {
     inject: ['group_id'],
 
-    props: [ 'permissions' ],
-
     components: { DeclineIcon, AcceptIcon, AreYouSureLayout, DropDownInput },
     
     data() {
         return {
-            user: this.$store.state.auth.user,
             newName: '',
 
             pendingGroupTypeChangeAccept: false,
@@ -96,11 +93,11 @@ export default {
         },
 
         canChangeName(){
-            return this.permissions.change_group_name ? true : false
+            return this.$store.getters[ ns.groupModule(this.group_id, 'canChangeName') ]
         },
 
         canChangeGroupType(){
-            return this.permissions.change_group_type ? true : false
+            return this.$store.getters[ ns.groupModule(this.group_id, 'canChangeGroupType') ]
         },
 
         currentModelType(){
@@ -122,6 +119,7 @@ export default {
     },
 
     created(){
+        // Set current group name to be displayed in input as value
         this.newName = this.name
     },
 

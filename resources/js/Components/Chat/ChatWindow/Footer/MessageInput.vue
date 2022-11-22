@@ -1,7 +1,7 @@
 <template>
     <div class="dark:bg-gradient-to-t dark:bg-transparent dark:from-neutral-800 p-2 flex gap-2">
         <textarea
-            class="flex-grow p-4 resize-none rounded-2xl outline-none bg-white border border-blue-400 text-gray-700 dark:bg-darker-400 dark:text-gray-300 dark:border-none overflow-y-auto scroll2"
+            class="flex-grow p-4 resize-none rounded-2xl outline-none bg-white border border-blue-400 text-gray-700 dark:bg-darker-400 dark:text-gray-300 dark:border-none overflow-x-hidden overflow-y-auto scroll2"
             rows="3"
             @keyup.enter.exact.prevent="sendMessageEvent()"
             @keydown.enter.shift.exact.prevent="message += '\n'"
@@ -62,7 +62,6 @@ export default {
         messagePayload(){
             return {
                 text: this.message,
-                group_id: this.group_id,
                 user_id: this.user.id
             };
         },

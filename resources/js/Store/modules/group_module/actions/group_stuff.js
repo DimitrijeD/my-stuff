@@ -14,10 +14,7 @@ export default {
         commit('updated_at',   group.updated_at)
 
         commit('addParticipants', group.participants)
-        commit('seen', h.evalSeenState(
-            h.getById(group.participants, rootState.auth.user.id), 
-            group?.last_message
-        ))
+        dispatch('evalSeenState')
 
         dispatch('registerEventListeners')
 
@@ -126,5 +123,26 @@ export default {
                     dispatch('whoSawWhat')
                 })
             })
+
+            .listen('.message.update', e => {
+                commit('addMessages', [e.data])
+            })
+
+            .listen('.message.deleted', e => {
+                commit('deleteMessage', e.data.message_id)
+
+                // If server responded with cinfirmation that deleted message is latest, check its content
+                // if empty that means it was last message in group
+                if(e.data.hasOwnProperty('latest_message_after_delete') ){
+                    commit('last_message', e.data.latest_message_after_delete 
+                        ? e.data.latest_message_after_delete 
+                        : {}
+                    )
+                }
+
+                dispatch('evalSeenState')
+                dispatch(ns.groupsManager('numGroupsWithUnseen'), null, root)
+            })
     },
+
 }

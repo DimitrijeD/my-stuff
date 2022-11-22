@@ -20,8 +20,8 @@
                 <GroupCard
                     v-for="group_id in filteredGroupsIds" 
                     :key="group_id"
-                    @click.native="openChatWindow(group_id)"
                     :group_id="group_id"
+                    @click.native="openChatWindow(group_id)"
                 />
             </TransitionGroup>
 

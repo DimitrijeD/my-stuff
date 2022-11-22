@@ -1,11 +1,11 @@
 <template>
-    <GroupCardLayout v-if="group" :seen="seen" :atLeastTwoParticpants="atLeastTwoParticpants" :groupName="group.name">
+    <GroupCardLayout v-if="group_id" :seen="seen" :atLeastTwoParticpants="atLeastTwoParticpants" :groupName="name">
         <template #group-name>
-            {{group.name ? group.name : null}}
+            {{name ? name : null}}
         </template>
 
         <template #participants>
-            <div v-for="p in group.participants">
+            <div v-for="p in participants">
                 <SmallUser 
                     v-if="p.id !== user.id"
                     :user="p" 
@@ -16,7 +16,7 @@
         </template>
 
         <template #last-message>
-            <MessageCard v-if="lastMessage" :message="lastMessage" :seen="seen" />
+            <MessageCard :group_id="group_id" :seen="seen" />
         </template>
         
     </GroupCardLayout>
@@ -34,30 +34,34 @@ export default {
 
     components: { SmallUser, MessageCard, GroupCardLayout, },
 
-    data(){
-        return {
-            txtOneParticipant: "Only you.",
-        }
-    },
-
     computed:{
         ...mapGetters({ 
             user: "user",
         }),
 
-        group(){ return this.$store.getters[ns.groupModule(this.group_id, 'state')] },
+        participants(){
+            return this.$store.getters[ns.groupModule(this.group_id, 'participants')]
+        },
 
-        lastMessage(){ return this.$store.getters[ns.groupModule(this.group_id, 'last_message')] },
+        name(){
+            return this.$store.getters[ns.groupModule(this.group_id, 'name')] 
+        },
 
-        atLeastTwoParticpants(){ return Object.keys(this.group.participants).length >= 2 },
+        lastMessage(){ 
+            return this.$store.getters[ns.groupModule(this.group_id, 'last_message')] 
+        },
 
-        seen(){ return this.$store.getters[ns.groupModule(this.group_id, 'seen')] },
+        atLeastTwoParticpants(){ 
+            return Object.keys(this.participants).length >= 2 
+        },
 
-        numUnseenMsges(){ return this.$store.getters[this.group_id, 'numUnseenMsges'] },
-    },
+        seen(){ 
+            return this.$store.getters[ns.groupModule(this.group_id, 'seen')] 
+        },
 
-
-    created(){
+        numUnseenMsges(){ 
+            return this.$store.getters[this.group_id, 'numUnseenMsges'] 
+        },
 
     },
 

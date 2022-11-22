@@ -7,25 +7,32 @@ export default {
 
         commit('scrolledDownInitialy', false)
 
-        return axios.get(`chat/group/${state.id}/latest-messages`).then(res => {
-            commit('addMessages',  res.data)
+        return new Promise((resolve, reject) => {
+            axios.get(`chat/group/${state.id}/latest-messages`).then(res => {
+                commit('addMessages',  res.data)
 
-            dispatch('shouldLockEarliestMsges', {
-                response_length: res.data.length,
-                rule_length: rootState[ns.chat_rules()].init_num_messages
-            })
+                dispatch('shouldLockEarliestMsges', {
+                    response_length: res.data.length,
+                    rule_length: rootState[ns.chat_rules()].init_num_messages
+                })
 
-            commit('scrolledDownInitialy', true)
-            commit('hasInitMessages', true)
-        }).catch( error => { 
-            dispatch('makeActionResponseMessage', {
-                ...error.response.data,
-                ...{
-                    responseContext:{
-                        moduleName: `groupId_${state.id}`,
-                        important: true
-                    }
-                } 
+                commit('scrolledDownInitialy', true)
+                commit('hasInitMessages', true)
+                dispatch('whoSawWhat')
+                
+                resolve(res)
+            }).catch( error => { 
+                dispatch('makeActionResponseMessage', {
+                    ...error.response.data,
+                    ...{
+                        responseContext:{
+                            moduleName: `groupId_${state.id}`,
+                            important: true
+                        }
+                    } 
+                })
+                
+                reject(error)
             })
         })
     },
@@ -40,6 +47,8 @@ export default {
     },
 
     storeMessage({ commit, dispatch, state }, message){
+        message.group_id = state.id
+
         return new Promise((resolve, reject) => {
             axios.post('chat/message/store', message).then(res => {
                 commit('updatePivot', {
@@ -109,20 +118,17 @@ export default {
 
     },
 
-    newMessageEvent({ rootState, commit, dispatch }, msg){
-        commit('last_message', msg)
-        commit('addMessages', [msg])
+    newMessageEvent({ rootState, getters, commit, dispatch }, message){
+
+        commit('last_message', message)
+        commit('addMessages', [message])
         commit('updated_at', h.nowISO())
 
-        const selfId = rootState.auth.user.id
-
-        // if message is "mine" set seen to true, 
-        // else set to false
-        commit('seen', selfId == msg.user_id)
+        dispatch('evalSeenState')
 
         commit('updatePivot', {
-            last_message_seen_id: msg.id,
-            participant_id: msg.user_id,
+            last_message_seen_id: message.id,
+            participant_id: message.user_id,
             now: h.nowISO()
         })
 
@@ -152,5 +158,68 @@ export default {
         
         commit('whoSawWhat', whoSawWhat)
     },
+
+    deleteMessage({ commit, dispatch, state }, payload){
+        payload.group_id = state.id
+
+        if(payload.message_id == state.messages_tracker.last_message.id)
+            payload.isLastMessage = true
+
+        axios.post(`chat/message/delete`, payload).then(res => {
+            //
+        }).catch( error => { 
+            dispatch('makeActionResponseMessage', {
+                ...error.response.data,
+                ...{
+                    responseContext:{
+                        moduleName: `groupId_${state.id}`,
+                        important: true
+                    }
+                } 
+            })
+        })
+    },
+
+    evalSeenState({getters, state, commit, rootState}){
+        let last_message = state.messages_tracker.last_message
+
+        // By doing this all burden of determining is user saw all messages in group is pushed to 'last_message'
+        // meaning if code is dog by not managing last message propertly, this will always return true on chat init
+        if(!last_message) {
+            commit('seen', true)
+            return
+        }
+
+        // if self is owner of last message
+        if(rootState.auth.user.id == last_message.user_id) {
+            commit('seen', true)
+            return
+        }
+        
+        // has user already acknowledged last message 
+        commit('seen', getters.myLastMessageSeenId >= last_message.id)
+    },
+
+    updateMessage({dispatch, state}, payload){
+        payload.group_id = state.id
+
+        return new Promise((resolve, reject) => {
+            axios.patch(`chat/message/update`, payload).then(res => {
+                resolve(res)
+            }).catch( error => { 
+                dispatch('makeActionResponseMessage', {
+                    ...error.response.data,
+                    ...{
+                        responseContext:{
+                            moduleName: `groupId_${state.id}`,
+                            important: true
+                        }
+                    } 
+                })
+
+                reject(error)
+            })
+        })
+    }
 
 }

@@ -92,7 +92,7 @@
 
 @layer components {
     /*------------Defaults------------*/
-    .def-trans { @apply transition ease-linear ; }
+    .def-trans { @apply transition ease-in; }
     .def-resize-trans { transition: all .2s linear; }
 
     .def-input { @apply def-trans placeholder:italic w-full outline-none rounded-xl; }
@@ -200,6 +200,7 @@
 
     /*------------Chat Window classes------------*/
     .cw-head-text { @apply font-semibold ml-2 text-white dark:text-gray-300; }
+    .message-icon { @apply w-6 h-6 opacity-50 hover:opacity-70; }
     /*-------------------------------------------*/
 
     /*------------Settings------------*/

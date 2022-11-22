@@ -1,5 +1,5 @@
 <template>
-    <div :class="['rounded-2xl p-1.5', isSelf 
+    <div :class="['rounded-2xl p-1.5 space-y-1', isSelf 
         ? 'self-shadow bg-blue-200 dark:bg-darker-600/20' 
         : 'notself-shadow bg-gray-200 dark:bg-darker-200']"
     >
@@ -10,7 +10,7 @@
             class="py-1"
         /> 
 
-        <TransitionGroup tag="div" name="list" class=" space-y-2 relative">
+        <TransitionGroup tag="div" name="list" class=" space-y-3 relative">
             <Message 
                 v-for="(message_id, index) in block.messages" 
                 :key="index" 
@@ -26,7 +26,7 @@
 import { mapGetters } from "vuex";
 
 import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
-import Message from '@/Components/Chat/ChatWindow/Body/MessagesBlock/Message.vue'
+import Message from '@/Components/Chat/ChatWindow/Body/MessagesBlock/Message/Message.vue'
 
 export default {
     inject: ['group_id'],
@@ -59,28 +59,31 @@ export default {
 </script>
 
 <style scoped>
-    .list-move,
-    .list-enter-active,
-    .list-leave-active{
-        transition: all 0.3s ease-out;
-    }
-    
-    .list-enter-from,
-    .list-leave-to{
-        opacity: 0;
-        transform: scaleY(0.01) translate(20px, -10px);
-    }
-    
-    .list-leave-active {
-        position: absolute;
-        width: 100%;
-    }
+.list-move,
+.list-enter-active,
+.list-leave-active{
+    transition: all .2s ease-in;
+}
 
-    .self-shadow {
-        box-shadow: -3px 2px 2px 1px rgba(0, 0, 0, 0.1), 0 -1px 1px 1px rgba(0, 0, 0, 0.05);
-    }
-    .notself-shadow {
-        box-shadow: -1px 1px 1px 1px rgba(0, 0, 0, 0.4), 2px -2px 2px 0 rgba(0, 0, 0, 0.2); 
-    }
+.list-leave-to{
+    opacity: 0;
+    transform: translate(20px, 0);
+}
+.list-enter-from{
+    opacity: 0;
+    transform: scaleY(0.01) translate(20px, -10px);
+}
+
+.list-leave-active {
+    position: absolute;
+    width: 100%;
+}
+
+.self-shadow {
+    box-shadow: -3px 2px 2px 1px rgba(0, 0, 0, 0.1), 0 -1px 1px 1px rgba(0, 0, 0, 0.05);
+}
+.notself-shadow {
+    box-shadow: -1px 1px 1px 1px rgba(0, 0, 0, 0.4), 2px -2px 2px 0 rgba(0, 0, 0, 0.2); 
+}
 
 </style>

@@ -1,4 +1,5 @@
 import * as h from '@/Store/functions/helpers.js';
+import { fuzzyImmidiate } from '@/UtilityFunctions/fuzzyImmidiate.js'
 
 const actions = {
     searchForAddUsersInApi({ commit, dispatch, getters }, data){
@@ -31,7 +32,12 @@ const actions = {
 
     searchForAddUsersInStore({ state, commit }, data){
         commit('setFilterForAddUsers', h.excludeByIds( 
-            h.findUsersByStr(state.users, data.search_str), data.exclude)
+            h.getAllIds(fuzzyImmidiate(
+                data.search_str, 
+                state.users, 
+                ['first_name', 'last_name']
+            )),
+            data.exclude)
         )
     },
 

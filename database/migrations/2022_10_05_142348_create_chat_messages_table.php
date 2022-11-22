@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->integer('group_id');
             $table->integer('user_id');
+            $table->boolean('edited')->default('0');
             $table->longText('text');
             $table->timestamps();
         });

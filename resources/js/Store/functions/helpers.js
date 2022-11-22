@@ -8,41 +8,6 @@ export function getById(collection, id){
     return null
 }
 
-export function getBySearchString(groups, str){   
-    let groupsIdsMatchSearch = []
-    if(!groups) return []
-    
-    if(!str){
-        for (let grI in groups){
-            groupsIdsMatchSearch.push( groups[grI].id )
-        }
-        return groupsIdsMatchSearch
-    }
-
-    for (let grI in groups){
-        let group = groups[grI]
-
-        for (let usI in groups[grI].participants){
-            let participant = group.participants[usI]
-
-            // search criteria
-            const text = [
-                participant.first_name, 
-                participant.last_name, 
-                // participant.email, 
-                group.name
-            ].join(' ') 
-
-            if(regExpressionMatch(str, text)){
-                groupsIdsMatchSearch.push( groups[grI].id )
-                // do not push same group multiple times, break
-                break
-            }
-        }
-    }
-    return groupsIdsMatchSearch
-}
-
 export function regExpressionMatch(find, text){
     let regex = new RegExp(find, 'i');
     return text.match(regex)
@@ -109,42 +74,10 @@ export function prepareParticipantsForStoreRequest(data){
     return request
 }
 
-export function evalSeenState(self, last_msg){
-    // if group doesnt have a single message
-    if(!last_msg) return true
-
-    // if self is owner of last message
-    if(self.id == last_msg.user_id) return true
-
-    // has user already acknowledged last message 
-    return self.pivot.last_message_seen_id == last_msg.id 
-}
-
 export function sortNewest(collection){
     return collection.sort(function(a,b){
-        // Turn your strings into dates, and then subtract them
-        // to get a value that is either negative, positive, or zero.
         return new Date(b.updated_at) - new Date(a.updated_at);
     })
-    // .reverse();
-}
-
-export function findUsersByStr(users, str){
-    let usersIdsMatchSearch = []
-
-    for(let i in users){
-        let user = users[i] 
-
-        const text = [
-            user.first_name, 
-            user.last_name, 
-            // user.email, 
-        ].join(' ') 
-
-        if( text.match(new RegExp(str, 'i')) ) usersIdsMatchSearch.push( user.id )
-    }
-
-    return usersIdsMatchSearch
 }
 
 /**
@@ -154,16 +87,17 @@ export function findUsersByStr(users, str){
  * @param array excludeIds 
  * @returns 
  */
-export function excludeByIds(ids, excludeIds){
+export function excludeByIds(ids, excludeIds = []){
+    excludeIds = arrStringsToInt(excludeIds)
+
     return ids.filter((el) => !excludeIds.includes(el))
 }
 
 export function prepareUsersSearchRequest(data, possesedIds){
     data.i_have_ids = possesedIds
 
-    if('exclude' in data && data.exclude.length){
+    if('exclude' in data && data.exclude.length)
         data.i_have_ids = possesedIds.concat(data.exclude.filter((item) => possesedIds.indexOf(item) < 0)); // merge Ids without duplicates
-    }
 
     return data
 }

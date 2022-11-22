@@ -23,15 +23,11 @@ export default {
             blocks: [], 
             block: {},
 
-            fourMinsMS: 4000
+            fiveMinsMS: 5 * 60 * 1000
         }
     },
 
     computed: {
-        seen(){ 
-            return this.$store.getters[ ns.groupModule(this.group_id, 'seen') ]
-        },
-
         messages(){ 
             return this.$store.getters[ ns.groupModule(this.group_id, 'messages') ]
         },
@@ -51,10 +47,20 @@ export default {
     }, 
 
     methods: {
+        /**
+         * @todo There is no need to recreate blocks on every new message pull/delete
+         * 
+         * Tryed to refactor this to be statefull but I failed. 
+         * This must be implemented because rest of code will fail at some point, one way or the other.
+         * 
+         * for example animations on get older messages is executed for all blocks even tho they are already in DOM...
+         * not to mention MomentsAgo nonsece and its timeouts. 
+         */
         createOrUpdateBlocks(){
+            // Reset all blocks before updating
+            this.blocks = []
             if(this.isObjEmpty(this.messages)) return 
 
-            this.blocks = []
             let ids = this.getAllIds()
 
             for(let i = 0; i < ids.length; i++){
@@ -148,13 +154,18 @@ export default {
             }
         },
 
+        /**
+         * For each block, add "showTime" property which determines if message should dispaly MomentsAgo
+         * 
+         * It will always give true to first or last last message in block. So if there is only one message, it will show time ago
+         */
         makeTimeline(){
             for(let i = 0; i < this.blocks.length; i++){
                 let block = this.blocks[i]
 
                 let j = 0
 
-                while(block.messages.length > j){
+                for(let j = 0; j < block.messages.length; j++){
                     if(block.messages[j + 1] != undefined){
                         if(
                             this.showTimeForCurrentRelativeToNextMessage(
@@ -168,7 +179,6 @@ export default {
                         this.blocks[i].showTime.push( this.messages[block.messages[j]].id )
                     }
 
-                    j++
                 }
             }
         },
@@ -189,7 +199,7 @@ export default {
 
             let msDifference = nextMS - currentMS
 
-            return msDifference > this.fourMinsMS
+            return msDifference > this.fiveMinsMS
         },
 
     },

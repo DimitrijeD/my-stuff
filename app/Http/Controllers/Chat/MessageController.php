@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Events\MeSawMessage;
 use App\Events\MessageNotification;
 use App\Events\NewChatMessage;
+use App\Events\DeletedMessageEvent;
+use App\Events\UpdateChatMessage;
 
 use App\MyStuff\Repos\User\UserEloquentRepo;
 use App\MyStuff\Repos\ChatGroup\ChatGroupEloquentRepo;
@@ -14,7 +16,12 @@ use App\MyStuff\Repos\ParticipantPivot\ParticipantPivotEloquentRepo;
 
 use App\Http\Requests\ChatMessage\StoreChatMessageRequest;
 use App\Http\Requests\ChatMessage\SeenChatMessageRequest;
+use App\Http\Requests\ChatMessage\DeleteMessageRequest;
+use App\Http\Requests\ChatMessage\UpdateMessageRequest;
 
+use App\Http\Response\ApiResponse;
+
+use App\Exceptions\InternalServerErrorException;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
@@ -42,8 +49,10 @@ class MessageController extends Controller
             'user_id' => $sender->id,
             'group_id' => $request->group_id,
             'text' => $request->text,
+            'edited' => false // @todo why doesnt ->default() in migration files not appply def value to collumn. Also why doesnt select query return that collumn if i do not define column on create
         ]);
 
+        // @todo can be just update query
         $pivot = $this->participantPivot->first([
             'user_id' => $sender->id,
             'group_id' => $request->group_id
@@ -51,18 +60,21 @@ class MessageController extends Controller
 
         $this->participantPivot->update($pivot, [
             'last_message_seen_id' => $message->id,
-            'updated_at' => date('Y-m-d H:i:s')
+            'updated_at' => now()
         ]);
+        // ---
 
         // update groups field 'updated_at' to NOW in order to be able to sort users groups by 'time of last message'
         $this->chatGroupRepo->update(
             $this->chatGroupRepo->find($request->group_id), 
-            ['updated_at' => date('Y-m-d H:i:s'), 'last_msg_id' => $message->id]
+            [
+                'updated_at' => now(), 
+                'last_msg_id' => $message->id
+            ]
         );
 
-        $message->user;
-
         broadcast(new NewChatMessage($message));
+
         $this->newChatMessageNotification($request->group_id, $sender, $message);
 
         return response()->json($message, 201);
@@ -84,7 +96,7 @@ class MessageController extends Controller
                 'created_at' => $newMessage->created_at,
                 'forUserId' => $participant->id ,
             ];
-            broadcast(new MessageNotification($messageNotification))->toOthers();
+            broadcast(new MessageNotification($messageNotification))->toOthers(); // @todo why is this in loop?
         }
     }
 
@@ -119,4 +131,43 @@ class MessageController extends Controller
     {
         return $this->chatMessageRepo->getBeforeMessage($group_id, $earliest_msg_id);
     }
+
+    public function delete(DeleteMessageRequest $request)
+    {
+        if(! $this->chatMessageRepo->delete($this->chatMessageRepo->find($request->message_id)))
+            throw new InternalServerErrorException(__("model.genericGone")); 
+
+        $eventPayload = [
+            'message_id' => $request->message_id,
+            'group_id' => $request->group_id
+        ];
+
+        if($request?->isLastMessage){
+            $eventPayload['latest_message_after_delete'] = $request->group->lastMessage; 
+        }
+
+        broadcast(new DeletedMessageEvent($eventPayload));
+
+        return response()->json( ApiResponse::success([
+            [[ __('chat.message.deleted') ]],
+        ]) );
+
+    } 
+
+    public function update(UpdateMessageRequest $request)
+    {
+        if(! $updatedMessage = $this->chatMessageRepo->update(
+            $this->chatMessageRepo->find($request->message_id), 
+            [
+                'text' => $request->text,
+                'edited' => true
+            ]
+        )) throw new InternalServerErrorException(__("serverError.failed")); 
+
+        broadcast(new UpdateChatMessage($updatedMessage));
+
+        return response()->json( ApiResponse::success([
+            [[ __('chat.message.updated') ]],
+        ]) );
+    } 
 }

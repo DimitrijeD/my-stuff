@@ -29,12 +29,8 @@
 </template>
 
 <script>
-import DeleteIcon from "@/Components/Reuseables/Icons/DeleteIcon.vue"
 import SearchIcon from '@/Components/Reuseables/Icons/SearchIcon.vue'
 
-import SmallUser from '@/Components/Reuseables/SmallUser.vue';
-import ChangeUserRole from '@/Components/Chat/ChatWindow/Body/Config/Participants/ChangeUserRole.vue'
-import RoleBlock from '@/Components/Chat/ChatWindow/Body/Config/Participants/RoleBlock.vue'
 import ParticipantInList from '@/Components/Chat/ChatWindow/Body/Config/Participants/ParticipantInList.vue'
 import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue';
 
@@ -46,9 +42,7 @@ import { RoleCan } from '@/Components/Chat/policies/RoleCan.js'
 export default {
     inject: ['group_id'],
 
-    props: ['permissions'],
-
-    components: { SmallUser, ChangeUserRole, DefaultCardLayout, DeleteIcon, RoleBlock, SearchIcon, ParticipantInList },
+    components: { DefaultCardLayout, SearchIcon, ParticipantInList },
 
     data() {
         return {
@@ -68,12 +62,12 @@ export default {
             return this.roleCan.removeAnybody()
         },
 
-        chatRole(){ 
-            return this.$store.getters[ ns.groupModule(this.group_id, 'getUserRole') ](this.user.id) 
-        },
-
         participants(){ 
             return this.$store.getters[ ns.groupModule(this.group_id, 'participants') ]
+        },
+
+        permissions(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'permissions') ]
         },
     },
 
@@ -119,58 +113,6 @@ export default {
                 this.roles
             )
         },
-
-        /**
-         * -------------------------------------------------------------------------------------------------------------
-         *                                  Alternative methods for searching participants                             -
-         * -------------------------------------------------------------------------------------------------------------
-         */
-
-        /**
-        searchParticipants(){
-            this.listedParticipants = []
-
-            for(let i in this.participants){
-                if(this.regExpressionMatch(this.searchStr, this.participants[i].first_name) || this.regExpressionMatch(this.searchStr, this.participants[i].last_name)){
-                    this.listedParticipants.push(this.participants[i])
-                }
-            }
-
-            this.listedParticipants = this.sortParticipantsByRoleHierarchy(this.listedParticipants)
-        },
-
-        regExpressionMatch(find, text){
-            let regex = new RegExp(find, 'i');
-            return text.match(regex)
-        }
-
-
-        sortParticipantsByRoleHierarchy(participants){
-            let groupedByRole = {}
-            let sortedByRole = []
-
-            for(let i in this.roles){
-                groupedByRole[this.roles[i]] = []
-            }
-
-            for(let i in participants){
-                groupedByRole[participants[i].pivot.participant_role].push(participants[i]) 
-            }
-
-            for(let i in groupedByRole){
-                sortedByRole = sortedByRole.concat(groupedByRole[i]);
-            }
-
-            return sortedByRole
-        },
-
-        */
-        /**
-         * -------------------------------------------------------------------------------------------------------------
-         *                                                                                                             -
-         * -------------------------------------------------------------------------------------------------------------
-         */
-
     }
 }
 </script>

@@ -7,7 +7,7 @@ export default {
         commit('permissions', (new Permissions(
             rootState[ns.chat_rules()].keys, 
             rootState[ns.chat_rules()].rules, 
-            getters.getUserRole(rootState.auth.user.id), 
+            getters.getMyRole, 
             state.model_type
         )).create() )
     },

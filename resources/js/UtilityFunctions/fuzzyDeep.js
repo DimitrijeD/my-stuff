@@ -45,8 +45,7 @@ function buildStringOfModel(model, nestedProperties){
             } else if(primitives.isObject(nestedModel)) {
                 fullStr += delimiter() + makeStringFromDictionary(nestedModel, props)
             } else {
-                // ??
-                console.log('not obj, and not array...')
+                // @todo ??
             }
 
         } else {
