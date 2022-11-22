@@ -19,7 +19,7 @@
                 />
 
                 <KeepAlive>
-                    <component :is="openedComponent" :permissions="permissions" />
+                    <component :is="openedComponent" />
                 </KeepAlive>
             </div>
         </template>

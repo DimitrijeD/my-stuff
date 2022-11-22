@@ -15,33 +15,19 @@ const getters = {
     isGroupOpened: (state) => (group_id) => state.openedGroupsIds.includes(group_id),
 
     getAllGroups: (state) => {
-        let allGroups = []
-        let modules = store._modules.root._children;
+        let groups = []
 
-        // array of all module names
-        modules = Object.keys(modules);
+        state.groupsIds.forEach(id => groups.push( store.getters[ns.groupModule(id, 'state')] ) )
 
-        for (let i in modules){
-            if(h.regExpressionMatch(ns.groupModule(), modules[i] )){
-                allGroups.push(store._modules.root._children[modules[i]].state) // add current state object of 'ns.groupModule(id)' to arr
-            } 
-        }
-
-        return allGroups
+        return groups
     },
 
-    // doesnt check if group module accualy exist
-    getGroupById: (state) => (id) => {
-        return store._modules.root._children[ns.groupModule(id)].state
-    },
+    getGroupById: (state) => (id) => store.getters[ns.groupModule(id, 'state')],
 
-    // doesnt check if group module accualy exist
     getGroupsById: (state) => (ids) => {
         let groups = []
 
-        for(let i in ids){
-            groups.push(store._modules.root._children[ns.groupModule(ids[i])].state)
-        }
+        ids.forEach(id => groups.push( store.getters[ns.groupModule(id, 'state')]) )
 
         return groups
     },

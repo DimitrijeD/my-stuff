@@ -1,6 +1,12 @@
 <template>
     <div class="relative" ref="wrap" >
-        <MailIcon @click="toggleClickListener" :class="[ 'h-full p-1 opacity-90 stroke-transparent', iconCls ]" />
+        <div class="flex h-full relative">
+            <MailIcon @click="toggleClickListener" :class="[ 'h-full p-1 opacity-90 stroke-transparent', iconCls ]" />
+            <span v-if="numGroupsWithUnseen" 
+                :class="['absolute top-0 -right-1', 
+                numGroupsWithUnseen ? 'text-green-600 font-bold' : 'text-blue-500/90 dark:text-gray-300/80']"
+            >{{ numGroupsWithUnseen }}</span>
+        </div>
 
         <div ref="dropdown" v-show="showDrop" class="def-dropdown">
             <div class="flex">

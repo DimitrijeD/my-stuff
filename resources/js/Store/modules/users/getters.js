@@ -6,7 +6,9 @@ const getters =
 
     getFilterForAddUsers: (state) => state.filterForAddUsers,
 
-    getById: (state) => (id) => state.users[id]
+    getById: (state) => (id) => state.users[id],
+
+    defaultUser: (state) => state.defaultUser,
 }
 
 export default getters

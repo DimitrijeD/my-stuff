@@ -53,8 +53,19 @@ const getters =
 
     messages_tracker: (state) => state.messages_tracker,
 
-    getUserRole:             (state) => (participant_id) => state.participants[participant_id].pivot.participant_role,
-    getParticipant:          (state) => (participant_id) => state.participants[participant_id],
+    getUserRole: (state) => (participant_id) => state.participants[participant_id].pivot.participant_role,
+
+    /**
+     * Get role of this.user in this.group
+     */
+    getMyRole: (state, getters, rootState) => state.participants[rootState.auth.user.id].pivot.participant_role,
+
+    getParticipant: (state, getters, rootState, rootGetters) => (participant_id) => {
+        if(state.participants.hasOwnProperty(participant_id)) return state.participants[participant_id]
+
+        return rootGetters[ns.users('defaultUser')]
+    },
+
     getParticipantThumbnail: (state) => (participant_id) => state.participants[participant_id].thumbnail,
 
     /**
@@ -73,6 +84,11 @@ const getters =
     last_message_seen_id: (state) => (participant_id) => state.participants[participant_id].pivot.last_message_seen_id,
 
     /**
+     * Get id of message this.user has seen last
+     */
+    myLastMessageSeenId: (state, getters, rootState) => state.participants[rootState.auth.user.id].pivot.last_message_seen_id,
+
+    /**
      * Array of users ids who are currently typing
      */
     usersTyping: (state) => state.typing.user_ids,
@@ -89,6 +105,8 @@ const getters =
 
     permissions: (state) => state.permissions,
     canSendMessage: (state) => state.permissions.send_message,
+    canChangeName: (state) => state.permissions.change_group_name,
+    canChangeGroupType: (state) => state.permissions.change_group_type,
 }
 
 export default getters 

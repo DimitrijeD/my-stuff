@@ -30,7 +30,7 @@ class ChatGroupAccess
     public function handle(Request $request, Closure $next)
     {
         if(!$request->group_id)
-            throw new InternalServerErrorException(__('chat.participants.add.failOnCreate'));
+            throw new InternalServerErrorException(__('serverError.failed'));
 
         if(!$user = auth()->user())
             throw new UnAuthenticatedException();

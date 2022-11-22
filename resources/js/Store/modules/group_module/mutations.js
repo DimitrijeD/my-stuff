@@ -2,16 +2,16 @@ import * as h from '@/Store/functions/helpers.js';
 
 const mutations = 
 {
-    id:         (state, val) => state.id         = val,
-    model_type: (state, val) => state.model_type = val,
-    name:       (state, val) => state.name       = val,
+    id:         (state, int) => state.id = int,
+    model_type: (state, string) => state.model_type = string,
+    name:       (state, string) => state.name = string,
     created_at: (state, val) => state.created_at = val,
-    updated_at: (state, val) => state.updated_at = val,
-    whoSawWhat: (state, val) => state.whoSawWhat = Object.assign({}, val),
+    updated_at: (state, date) => state.updated_at = date,
+    whoSawWhat: (state, object) => state.whoSawWhat = object,
 
-    gotEarliestMsg: (state, val) => state.messages_tracker.gotEarliestMsg = val,
-    last_message:   (state, val) => state.messages_tracker.last_message   = Object.assign({}, val),
-    seen:           (state, val) => state.messages_tracker.seen           = val,
+    gotEarliestMsg: (state, bool) => state.messages_tracker.gotEarliestMsg = bool,
+    last_message:   (state, message) => state.messages_tracker.last_message = message,
+    seen:           (state, bool) => state.messages_tracker.seen = bool,
     
     addMessages:     (state, messages    ) => state.messages     = { ...state.messages,     ...h.createDict(messages,     'id') },
     addParticipants: (state, participants) => state.participants = { ...state.participants, ...h.createDict(participants, 'id') },
@@ -56,6 +56,13 @@ const mutations =
 
     permissions: (state, permissions) => state.permissions = permissions,
 
+    deleteMessage: (state, message_id) => {
+        if(state.messages[message_id]) delete state.messages[message_id]
+    },
+
+    deleteLastMessage: (state) => {
+        state.messages_tracker.last_message = {}
+    }
 }
 
 export default mutations 

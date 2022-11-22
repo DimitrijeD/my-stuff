@@ -25,8 +25,6 @@
 export default {
     inject: ['group_id'],
 
-    props: [ 'permissions' ],
-
     computed: {
         name(){ 
             return this.$store.getters[ ns.groupModule(this.group_id, 'name') ] 

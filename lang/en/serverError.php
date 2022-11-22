@@ -1,7 +1,7 @@
 <?php 
 
 return [
-    'failed' => 'Something went wrong. Please try again later',
+    'failed' => 'Something went wrong. Please try again later.',
 
     'chat' => [
         'delete' => [

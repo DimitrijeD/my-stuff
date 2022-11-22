@@ -13,7 +13,7 @@ class ChatMessage extends Model
     const EARLIEST_NUM_MESSAGES = 20;
 
     protected $fillable = [
-        'group_id', 'user_id', 'text', 'updated_at'
+        'group_id', 'user_id', 'text', 'updated_at', 'edited'
     ];
 
     protected $casts = [

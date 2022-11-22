@@ -3,12 +3,12 @@
 namespace App\Http\Requests\ChatMessage;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\ChatMessage\UserIsOwnerOfMessageRule;
 
-class StoreChatMessageRequest extends FormRequest
+class DeleteMessageRequest extends FormRequest
 {
-    const MESSAGE_TEXT_RULES = ['required', 'string', 'max:1000'];
     /**
-     * If user belongs to chat group
+     * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
@@ -20,14 +20,13 @@ class StoreChatMessageRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function rules()
     {
         return [
-            'text' => self::MESSAGE_TEXT_RULES,
-            'user_id' => ['required', 'integer'],
-            'group_id' => ['required', 'integer'],
+            'message_id' => ['required', new UserIsOwnerOfMessageRule($this->message_id)],
+            'isLastMessage' => ['sometimes', 'boolean']
         ];
     }
 }

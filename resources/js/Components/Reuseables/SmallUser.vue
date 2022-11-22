@@ -24,6 +24,8 @@ export default {
 
         // expects "first_name", "last_name" or ""
         getFullName(){ 
+            if(this.user?.defaultUser) return this.user.name
+            
             if(!this.showOnly) return `${this.user?.first_name} ${this.user?.last_name}`
 
             return this.user[this.showOnly]
