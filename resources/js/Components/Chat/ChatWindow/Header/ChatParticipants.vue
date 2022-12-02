@@ -33,7 +33,7 @@ export default {
         },
 
         participants(){
-            return this.$store.getters[ ns.groupModule(this.group_id, 'participants') ]
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participantsM/participants') ]
         },
 
         group_name(){

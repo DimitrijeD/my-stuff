@@ -3,9 +3,9 @@
 namespace Tests\Unit\Chat\Participants;
 
 use PHPUnit\Framework\TestCase;
-use App\Models\ChatGroup;
-use App\Models\ParticipantPivot;
-use App\Models\ChatRole;
+use App\Models\Chat\ChatGroup;
+use App\Models\Chat\ParticipantPivot;
+use App\Models\Chat\ChatRole;
 
 class CanRoleSendMessageInGroupTypeTest extends TestCase
 {

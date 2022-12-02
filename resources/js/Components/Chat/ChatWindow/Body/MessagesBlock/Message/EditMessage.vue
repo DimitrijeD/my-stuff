@@ -69,7 +69,7 @@ export default {
         update(){
             if(!this.validateNewText) return
 
-            this.$store.dispatch(ns.groupModule(this.group_id, 'updateMessage'), {
+            this.$store.dispatch(ns.groupModule(this.group_id, 'messagesM/updateMessage'), {
                 text: this.newText,
                 message_id: this.message_id,
             }).then(() => {

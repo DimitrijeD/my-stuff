@@ -105,7 +105,7 @@ export default {
         },
 
         groupTypes(){
-            return this.$store.getters[ ns.chat_rules('StateGroupTypes') ]
+            return this.$store.getters[ ns.chatRules('groupTypes') ]
         },
 
         model_type(){ 

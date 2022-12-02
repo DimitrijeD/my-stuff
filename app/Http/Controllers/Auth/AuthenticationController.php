@@ -11,7 +11,7 @@ use App\MyStuff\Repos\AccountVerification\AccountVerificationEloquentRepo;
 use App\MyStuff\Repos\AccountVerification\EmailVerification;
 use App\Http\Response\ApiResponse;
 use Illuminate\Validation\ValidationException;
-use App\Models\AccountVerification;
+use App\Models\Auth\AccountVerification;
 
 class AuthenticationController extends Controller
 {

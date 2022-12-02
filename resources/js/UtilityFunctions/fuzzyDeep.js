@@ -39,7 +39,7 @@ function buildStringOfModel(model, nestedProperties){
 
         if(path){
             let nestedModel = _.get(model, path)
-
+            
             if( primitives.isArray(nestedModel)){
                 fullStr += delimiter() + makeStringFromCollection(nestedModel, props)
             } else if(primitives.isObject(nestedModel)) {
@@ -52,7 +52,7 @@ function buildStringOfModel(model, nestedProperties){
             fullStr += delimiter() + primitives.mergeStrings(model, props)
         }
     }
-
+    
     return fullStr
 }
 

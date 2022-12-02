@@ -1,6 +1,7 @@
 import * as h from '@/Store/functions/helpers.js'
 import * as collection from '@/UtilityFunctions/collection.js'
 import { fuzzyDeep } from '@/UtilityFunctions/fuzzyDeep.js'
+import * as ev from '@/Store/modules/group_module/group_events_namespaces.js'
 
 import store from '@/Store/index.js'
 import group_module from '@/Store/modules/group_module/group_module.js'
@@ -12,8 +13,10 @@ const actions = {
      * Entry point for chat data.
      */
      init({ dispatch }){
+        dispatch('registerChatListeners')
+
         return axios.get('chat/init').then((res)=>{
-            dispatch(ns.chat_rules('setupRules'), res.data.chat_rules, root).then(() => {
+            dispatch(ns.chatRules('setupRules'), res.data.chat_rules, root).then(() => {
 
                 for(let i = 0; i < res.data.groups.length; i++){
                     dispatch('setupGroupModule', res.data.groups[i])
@@ -28,9 +31,6 @@ const actions = {
         })
     },
 
-    /**
-     * Both search approaches work, but should only use one, duh
-     */
     filterGroupsBySearchString({ commit, getters }, str){
         commit('setFilteredGroupsIds', h.getAllIds( 
             fuzzyDeep(str, getters['getAllGroups'], [
@@ -39,7 +39,7 @@ const actions = {
                     props: ['name']
                 },
                 {
-                    path: 'participants',
+                    path: 'participantsM[participants]',
                     props: ['first_name', 'last_name']
                 },
             ])
@@ -56,18 +56,22 @@ const actions = {
 
         commit('addGroupsIds', [group.id])
         commit('addToFilteredGroups', group.id)
-
-        dispatch(ns.groupModule(group.id, 'initGroup'), group, root)
+        
+        return dispatch(ns.groupModule(group.id, 'initGroup'), group, root).then(() => {
+            dispatch('sortNewstGroups')
+        })
     },
 
     storeGroup({ commit, dispatch }, data){
         return new Promise((resolve, reject) => {
             axios.post('chat/group/store', data).then( res => {
-
                 dispatch('setupGroupModule', res.data).then(() => {
                     dispatch('sortNewstGroups')
                     commit('openWindow', res.data.id)
-                    commit(ns.groupModule(res.data.id, 'gotEarliestMsg'), true, root)
+
+                    commit(ns.groupModule(res.data.id, 'messagesM/gotEarliestMsg'), true, root)
+                    commit(ns.groupModule(res.data.id, 'messagesM/hasInitMessages'), true, root)
+                    commit(ns.groupModule(res.data.id, 'messagesM/seen'), true, root)
                 })
                 resolve(res)
             }).catch((error) =>{
@@ -79,30 +83,27 @@ const actions = {
 
     openGroup({ commit, dispatch, getters, rootState }, { group_id, initiatedBy }){
         if(getters['isGroupModuleRegistered'](group_id)){
-            if(getters['isGroupOpened'](group_id)){
-                return
-            }
+            if(getters['isGroupOpened'](group_id)) return
 
             if(initiatedBy == 'user'){
                 commit('openWindow', group_id)
                 return
             }
 
-            if(rootState.auth.user.user_setting.open_all_chats_on_new_message) {
+            if(rootState.auth.user.user_setting.open_all_chats_on_new_message)
                 commit('openWindow', group_id)  
-            }
+            
         } else {
             dispatch('getMissingGroup', group_id).then(() =>{
-                if(rootState.auth.user.user_setting.open_all_chats_on_new_message){
-                    commit('openWindow', group_id)
-                }
+                if(rootState.auth.user.user_setting.open_all_chats_on_new_message) commit('openWindow', group_id)
             })
         }
     },
 
     getMissingGroup({ dispatch }, id){
-        axios.get('chat/group/' + id).then((res)=>{
+        return axios.get('chat/group/' + id).then((res)=>{
             dispatch('setupGroupModule', res.data).then(()=>{
+
                 dispatch('numGroupsWithUnseen').then(()=>{
                     dispatch('sortNewstGroups')
                 })
@@ -114,25 +115,18 @@ const actions = {
 
     closeGroup({ commit, getters, dispatch }, group_id){
         if(getters['isGroupOpened'](group_id)) commit('closeWindow', group_id)
-        // dispatch(ns.groupModule(group_id, 'scrolledDownInitialy'), true, root)
+
         dispatch(ns.groupModule(group_id, 'closed'), null, root)
-        // * Disconnect irelevant listeners here
+        dispatch(ns.groupModule(group_id, 'participantsM/toggleTypingEventListeners'), false, root)
     },
 
     numGroupsWithUnseen({ state, commit, rootGetters }){
         let num = 0
-        const seenGetter = '/seen'
 
         for(let i in state.groupsIds){
-            let namespace = ns.groupModule(state.groupsIds[i]) 
+            let namespace = ns.groupModule(state.groupsIds[i], 'messagesM/seen') 
 
-            if(store.hasModule(namespace)){
-                if(!rootGetters[namespace + seenGetter]) num += 1 // if group is not seen, inc value   
-            } else {
-                // @todo group with `id` is inside 'store.groups.groupsIds' but module doesn't exist. FATAL`
-                // 'solution flow, do get groupById from api, then if ok, init that group, else, remove it from store'
-                return
-            }
+            if(!rootGetters[namespace]) num += 1 // if group is not seen, inc value   
         }
 
         commit('numGroupsWithUnseen', num)
@@ -145,7 +139,7 @@ const actions = {
             let group_id = state.groupsIds[i]
 
             store.unregisterModule(ns.groupModule(group_id))
-            Echo.leave('group.' + group_id)
+            Echo.leave(ev.groupChannel(group_id))
         }
         
         // then reset state
@@ -159,6 +153,15 @@ const actions = {
     removeFilteredGroupsId({ commit }, id){
         commit('removeFilteredGroupsId', id)
     },
+
+    registerChatListeners({dispatch, commit, store, rootState}){
+        Echo.private(`App.Models.User.${rootState.auth.user.id}`)
+            .listen('.group.new', e => {
+                dispatch('setupGroupModule', e.data).then(() => {
+                    dispatch('numGroupsWithUnseen')
+                })
+            })
+    }
 
 }
 

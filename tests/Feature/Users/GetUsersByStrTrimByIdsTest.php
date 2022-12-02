@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\ChatGroup;
+use App\Models\Chat\ChatGroup;
 use Illuminate\Support\Str;
 
 class GetUsersByStrTrimByIdsTest extends TestCase

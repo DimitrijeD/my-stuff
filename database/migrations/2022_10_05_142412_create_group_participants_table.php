@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\ChatRole;
+use App\Models\Chat\ChatRole;
 
 return new class extends Migration
 {
@@ -17,7 +17,9 @@ return new class extends Migration
         Schema::create('group_participants', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
+            $table->integer('invited_by_user_id');
             $table->integer('group_id');
+            $table->boolean('accepted')->default(0);
             $table->integer('last_message_seen_id')->nullable();
             $table->string('participant_role')->default(ChatRole::PARTICIPANT);
             $table->timestamps();

@@ -2,40 +2,28 @@
 
 namespace Tests\Feature\Chat\Participants\ChangeGroupName;
 
-use App\Models\ChatGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Models\ChatRole;
-use Database\Seeders\ChatGroupClusterSeeder;
-use Illuminate\Support\Facades\Auth;
+use Tests\Feature\Chat\GroupBuilderTrait;
 
 class ChangeGroupNameTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, GroupBuilderTrait;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->chatGroupSeeder = (resolve(ChatGroupClusterSeeder::class));
+        $this->makeGroup();
 
-        $this->changeNameEndpoint = '/api/chat/group/change-group-name';
+        $this->endpoint = '/api/chat/group/change-group-name';
     }
 
     public function test_creator_can_change_public_closed_group_name()
     {
-        $this->chatGroupSeeder->massSetter([
-            'model_type' => ChatGroup::TYPE_PUBLIC_CLOSED,
-        ]);
-        
-        $this->allChatData = $this->chatGroupSeeder->run();
-
-        $this->withHeader('Authorization', "Bearer {$this->allChatData['group_creator']->createToken('app')->plainTextToken}");
-
-        $response = $this->post($this->changeNameEndpoint, [
+        $response = $this->post($this->endpoint, [
             'new_name' => "New Group Name",
-            'group_id' => $this->allChatData['group']->id,
+            'group_id' => $this->group->id,
         ]);
 
         $response->assertJson([

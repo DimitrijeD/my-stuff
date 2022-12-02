@@ -1,12 +1,12 @@
 <template>
-    <TransitionGroup tag="div" name="list" class="space-y-3 mx-2 relative">
+    <div class="space-y-3 mx-2 relative overflow-x-hidden">
         <SameUserMessageBlock 
             v-for="(block, index) in blocks" 
             :key="index"
             :block="block"
         />
         <ParticipantsTyping :key="'typing'" />
-    </TransitionGroup>
+    </div>
 </template>
 
 <script>
@@ -29,7 +29,11 @@ export default {
 
     computed: {
         messages(){ 
-            return this.$store.getters[ ns.groupModule(this.group_id, 'messages') ]
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messagesM/messages') ]
+        },
+
+        whoSawWhat(){ 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messagesM/whoSawWhat') ]
         },
     },
 
@@ -39,6 +43,13 @@ export default {
 
     watch: {
         messages: {
+            handler: function () {
+                this.createOrUpdateBlocks()
+            },
+            deep: true,
+        },
+
+        whoSawWhat: {
             handler: function () {
                 this.createOrUpdateBlocks()
             },

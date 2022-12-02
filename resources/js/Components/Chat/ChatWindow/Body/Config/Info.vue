@@ -39,7 +39,7 @@ export default {
         },
 
         numberOfParticipants(){ 
-            return this.$store.getters[ ns.groupModule(this.group_id, 'numberOfParticipants') ] 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participantsM/numberOfParticipants') ] 
         },
 
     },

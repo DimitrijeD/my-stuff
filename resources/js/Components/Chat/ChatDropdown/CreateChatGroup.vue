@@ -63,7 +63,7 @@ export default {
             newChatGroup: {
                 name: '',
                 users_ids: [],
-                model_type: "PRIVATE",
+                model_type: "",
             },
 
             actions: {
@@ -77,22 +77,8 @@ export default {
     },
 
     computed: {
-        ...mapGetters({ 
-            user: "user",
-            groupTypes: ns.chat_rules('StateGroupTypes'),
-        }),
-
-        getHumanReadableGroupTypes(){
-            let groupTypes = []
-
-            for(let i in this.groupTypes){
-                groupTypes.push({
-                    text: this.capitalizeFirstLetter(this.groupTypes[i].replace("_", " ").toLowerCase()),
-                    value: this.groupTypes[i]
-                })
-            }
-
-            return groupTypes
+        default_type(){
+            return this.$store.getters[ns.chatRules('default_type')] 
         },
 
         users(){ 
@@ -105,19 +91,15 @@ export default {
     },
 
     methods:{        
-        capitalizeFirstLetter(string) {
-           return string.charAt(0).toUpperCase() + string.slice(1);
-        },
-
         createNewChatGroup(){
             if(this.newChatGroup.users_ids.length === 0) return
 
-            this.newChatGroup.users_ids.push(this.user.id)
+            this.newChatGroup.model_type = this.default_type
 
             this.$store.dispatch(ns.groupsManager('storeGroup'), this.newChatGroup).then(() => {
                 this.resetComponentVars()
 
-                this.$emit('closeDropdown')
+                this.$store.dispatch(ns.chatDropdown('toggle'))
             }).catch((error) => {
                 this.stopLoadingIconOnFail++
             })
@@ -127,7 +109,7 @@ export default {
             this.newChatGroup = {
                 name: '',
                 users_ids: [],
-                model_type: "PRIVATE",
+                model_type: this.default_type,
             }
             this.triggerClearSelectedUsersList()
         },

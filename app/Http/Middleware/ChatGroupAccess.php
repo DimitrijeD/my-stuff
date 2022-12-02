@@ -10,7 +10,6 @@ use App\Exceptions\ModelDoesntExistException;
 use App\Exceptions\InternalServerErrorException;
 use App\Exceptions\UnAuthenticatedException;
 
-
 class ChatGroupAccess
 {
     protected $chatGroupRepo;
@@ -39,13 +38,13 @@ class ChatGroupAccess
             ['id' => $request->group_id], 
             ['participants']
         )) throw new ModelDoesntExistException(__('model.groupNotFound'));
-
+        
         if($group->participants->contains($user)){
             $request->merge([
                 "user" => $user,
                 "group" => $group,
             ]);
-    
+
             return $next($request);
         }
 

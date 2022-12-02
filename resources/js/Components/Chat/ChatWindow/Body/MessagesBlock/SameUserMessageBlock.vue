@@ -41,7 +41,7 @@ export default {
         }),
 
         blockOwner(){ 
-            return this.$store.getters[ns.groupModule(this.group_id, 'getParticipant')](this.block.blockOwnerId) 
+            return this.$store.getters[ns.groupModule(this.group_id, 'participantsM/getParticipant')](this.block.blockOwnerId) 
         },
         
         isSelf(){ 
@@ -51,7 +51,7 @@ export default {
 
     methods: {
         getUser(id) { 
-            const user = this.$store.getters[ns.groupModule(this.group_id, 'getParticipant')](id) 
+            const user = this.$store.getters[ns.groupModule(this.group_id, 'participantsM/getParticipant')](id) 
             return user ? user : null
         },
     }
@@ -65,13 +65,10 @@ export default {
     transition: all .2s ease-in;
 }
 
-.list-leave-to{
-    opacity: 0;
-    transform: translate(20px, 0);
-}
+.list-leave-to,
 .list-enter-from{
     opacity: 0;
-    transform: scaleY(0.01) translate(20px, -10px);
+    transform: scaleY(0.01) translateX(20px);
 }
 
 .list-leave-active {

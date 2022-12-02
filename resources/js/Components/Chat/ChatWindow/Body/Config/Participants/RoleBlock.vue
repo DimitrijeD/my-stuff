@@ -1,13 +1,16 @@
 <template>
-    <div v-if="canPromoteDemote" class="grow h-full my-auto ">
+    <div v-if="canPromoteDemote && participant.pivot.accepted" class="grow h-full my-auto ">
         <ChangeUserRole
             :participant="participant"
             :changeableRoles="changeableRoles"
             @roleCard="roleCard"
         />
     </div>
+    <div v-else-if="!participant.pivot.accepted" class="px-4 py-1.5 my-auto text-yellow-500">
+        pending
+    </div>
     <div v-else class="px-4 py-1.5 my-auto">
-        {{ getParticipantRoleForHumans(participant) }} 
+        {{ getParticipantRoleForHumans() }} 
     </div>
 </template>
 
@@ -20,8 +23,8 @@ export default {
     components: { ChangeUserRole, },
 
     methods: {
-        getParticipantRoleForHumans(participant){
-            return participant.pivot.participant_role.toLowerCase()
+        getParticipantRoleForHumans(){
+            return this.participant.pivot.participant_role.toLowerCase()
         },
 
         roleCard(data){

@@ -2,10 +2,6 @@
 
 namespace App\MyStuff\Repos\ParticipantPivot;
 
-use App\Models\ParticipantPivot;
-use App\Models\ChatGroup;
-use Illuminate\Support\Collection;
-
 class ParticipantPivotFormatter 
 {
     public function prepareManyToInsert(array $users, $group_id)
@@ -16,7 +12,9 @@ class ParticipantPivotFormatter
             $data[] = [
                 'user_id' => $user['user_id'],
                 'participant_role' => $user['target_role'],
-                'group_id' => $group_id
+                'group_id' => $group_id,
+                'accepted' => false,
+                'invited_by_user_id' => auth()->user()->id,
             ];
         }
 

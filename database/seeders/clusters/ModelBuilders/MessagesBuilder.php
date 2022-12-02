@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\clusters\ModelBuilders;
 
-use App\Models\ChatMessage;
+use App\Models\Chat\ChatMessage;
 
 class MessagesBuilder 
 {

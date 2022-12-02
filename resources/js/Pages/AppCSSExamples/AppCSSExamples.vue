@@ -33,7 +33,6 @@ import AreYouSureLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/AreYo
 import DoubleScrollContentCardLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/DoubleScrollContentCardLayoutExample.vue'
 import FillRemainingSpaceLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/FillRemainingSpaceLayoutExample.vue'
 import DefaultCardLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/DefaultCardLayoutExample.vue'
-import GroupCardLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/GroupCardLayoutExample.vue'
 import ScrollLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/ScrollLayoutExample.vue'
 import TilesAsBackgroundLayoutExample from '@/Pages/AppCSSExamples/LayoutExamples/TilesAsBackgroundLayoutExample.vue'
 
@@ -56,7 +55,6 @@ export default {
         DefaultCardLayoutExample,
         CustomColorsPaletesExample,
         ColorCalculatorExample,
-        GroupCardLayoutExample,
         ScrollLayoutExample,
         ScrollEventsExample,
         MomentsAgoExample,
@@ -75,7 +73,6 @@ export default {
                 'IconsExample',
                 'DefaultCardLayoutExample',
                 'CustomColorsPaletesExample',
-                'GroupCardLayoutExample',
                 'ScrollLayoutExample',
                 'ScrollEventsExample',
                 'MomentsAgoExample',

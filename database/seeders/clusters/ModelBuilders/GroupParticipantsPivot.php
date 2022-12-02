@@ -3,10 +3,10 @@
 namespace Database\Seeders\clusters\ModelBuilders;
 
 use Database\Seeders\clusters\Contracts\Cluster;
-use App\Models\ChatGroup;
-use App\Models\ParticipantPivot;
+use App\Models\Chat\ChatGroup;
+use App\Models\Chat\ParticipantPivot;
 use App\MyStuff\Repos\ParticipantPivot\ParticipantPivotEloquentRepo;
-use App\Models\ChatRole;
+use App\Models\Chat\ChatRole;
 use App\Models\User;
 
 class GroupParticipantsPivot implements Cluster
@@ -37,6 +37,8 @@ class GroupParticipantsPivot implements Cluster
                     'user_id'              => $user->id,
                     'group_id'             => $this->group->id,
                     'last_message_seen_id' => null,
+                    'accepted'             => true,
+                    'invited_by_user_id'   => $this->getGroupCreator()->id,
                     'participant_role'     => isset($user->participant_role) ? $user->participant_role : ChatRole::PARTICIPANT,
                     'updated_at'           => $this->group->created_at, 
                     'created_at'           => $this->group->created_at

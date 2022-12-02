@@ -1,16 +1,16 @@
 <template>
-    <nav :class="['flex justify-between', headerHeight, anyDropsOpened() ? 'z-50 bg-white dark:bg-black relative' : '']">
+    <nav :class="['border-b border-gray-300 dark:border-darker-400 flex justify-between', headerHeight, ]">
         <!-- Left side of navigation bar -->
         <div class="flex justify-start relative">
             <router-link class="nav-btn" to="/">Home</router-link>
             <router-link  v-if="user" class="nav-btn" to="app-css-examples">Examples</router-link>
-            <ChatDropdown v-if="user?.email_verified_at" class="px-2" @dropdownToggled="dropdownToggled" />
+            <ChatDropdown v-if="user?.email_verified_at" class="px-2"  />
         </div>
         <!-- / -->
 
         <!-- Right side of navigation bar -->
         <div class="flex justify-end">
-            <ProfileDropdown v-if="user" @dropdownToggled="dropdownToggled" />
+            <ProfileDropdown v-if="user"/>
             <button v-if="!user" class="nav-btn" @click="isDark = !isDark">{{isDark ? 'Light' : 'Dark'}}</button>
             <router-link v-if="!user" class="nav-btn" to="login"   >Login   </router-link>
             <router-link v-if="!user" class="nav-btn" to="register">Register</router-link>
@@ -45,19 +45,6 @@ export default {
         ...mapGetters({ user: "user" }),
     },
 
-    methods: {
-        dropdownToggled(data){
-            this.openedDrops[data.name] = data.opened
-        },
-
-        anyDropsOpened(){
-            for(let i in this.openedDrops){
-                if(this.openedDrops[i]) return true
-            }
-
-            return false
-        }
-    },
 }
 
 </script>

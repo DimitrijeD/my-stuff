@@ -12,10 +12,11 @@ class ProfileController extends Controller
 {
     public function updateProfile(UpdateUserSettingsRequest $request, UserEloquentRepo $userRepo, UserSettingsEloquentRepo $settingsRepo)
     {
-        $user = auth()->user();
+        if(! $user = auth()->user())
+            throw new InternalServerErrorException(__('serverError.failed'));
 
         if($request->userFields){
-            if(!$userRepo->update($user, $request->userFields))
+            if(! $userRepo->update($user, $request->userFields))
                 throw new InternalServerErrorException(__('serverError.failed'));
         }
 
@@ -41,9 +42,12 @@ class ProfileController extends Controller
         return $user;
     }
 
+    /**
+     * Deletes user account
+     */
     public function delete(UserEloquentRepo $userRepo)
     {
-        if(!$userRepo->delete(auth()->user()))
+        if(! $userRepo->delete(auth()->user()))
             throw new InternalServerErrorException(__('serverError.failed'));
 
         return ApiResponse::success([

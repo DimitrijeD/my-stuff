@@ -8,7 +8,7 @@ use App\Cache\ChatRoleRulesCache;
 class ChatRoleRulesSeeder extends Seeder
 {
     /**
-     * Run this seeder every time you change values in \App\Models\ChatRole rule arrays.
+     * Run this seeder every time you change values in \App\Models\Chat\ChatRole rule arrays.
      *
      * @return void
      */

@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Chat\Participants;
 
-use App\Models\ChatGroup;
+use App\Models\Chat\ChatGroup;
 
 trait RoleTestingTraits
 {

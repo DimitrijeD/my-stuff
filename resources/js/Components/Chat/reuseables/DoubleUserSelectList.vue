@@ -12,7 +12,7 @@
         </template>
 
         <template #content-left>
-            <LoadingCyrcle :show="isAwaitingApi" :iconCls="'w-10 h-10 stroke-blue-500'" />
+            <!-- <LoadingCyrcle :show="isAwaitingApi" :iconCls="'w-10 h-10 stroke-blue-500'" /> -->
 
             <TransitionGroup tag="div" name="list" class="relative">
                 <template v-for="(id, index) in users" :key="`list-left_${index}`" >

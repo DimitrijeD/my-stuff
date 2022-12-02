@@ -3,8 +3,8 @@
 namespace Tests\Unit\Chat\Participants;
 
 use PHPUnit\Framework\TestCase;
-use App\Models\ChatGroup;
-use App\Models\ChatRole;
+use App\Models\Chat\ChatGroup;
+use App\Models\Chat\ChatRole;
 
 /**
  * Every test asserts that 

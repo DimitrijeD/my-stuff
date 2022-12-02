@@ -4,27 +4,19 @@ namespace Tests\Feature\Chat\Message;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use App\Models\ChatMessage;
+use App\Models\Chat\ChatMessage;
 use Illuminate\Support\Str;
-use Database\Seeders\ChatGroupClusterSeeder;
+use Tests\Feature\Chat\GroupBuilderTrait;
 
 class UpdateMessageTest extends TestCase
 {
-    use RefreshDatabase;
-
-    // @todo only 1 test case covered
+    use RefreshDatabase, GroupBuilderTrait;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->chatGroupSeeder = (resolve(ChatGroupClusterSeeder::class));
-        
-        $this->allChatData = $this->chatGroupSeeder->run();
-
-        $this->user = $this->allChatData['users'][0];
-        
-        $this->group = $this->allChatData['group'];
+        $this->makeGroup();  
 
         $this->targetMessage = ChatMessage::factory()->create([
             'group_id' => $this->group->id,
@@ -36,10 +28,6 @@ class UpdateMessageTest extends TestCase
             'message_id' => $this->targetMessage->id,
             'text' => Str::random(5),
         ];
-
-        $this->withHeaders([
-            'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
-        ]);
 
         $this->messageStructure = [
             "id", "user_id", "group_id", "text", "updated_at", "created_at", "edited"

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders\clusters\ModelBuilders;
 
-use App\Models\ChatMessages;
 use Faker\Factory as Faker;
 
 use Database\Seeders\clusters\Contracts\Cluster;

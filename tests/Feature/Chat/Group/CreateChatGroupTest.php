@@ -3,11 +3,9 @@
 namespace Tests\Feature\Chat\Group;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Models\ChatGroup;
+use App\Models\Chat\ChatGroup;
 use Illuminate\Support\Str;
 
 class CreateChatGroupTest extends TestCase
@@ -21,14 +19,12 @@ class CreateChatGroupTest extends TestCase
         $this->user = User::factory()->create();
         $chatParticipant = User::factory()->create();
 
-        $this->withHeaders([
-            'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
-        ]);
+        $this->withHeader( 'Authorization', "Bearer {$this->user->createToken('app')->plainTextToken}" );
 
-        $this->userFormData = [
-            'name' => 'some',
+        $this->newGroup = [
+            'name' => 'some1111111111111', // for purpose of finding group use some unique name..
             'model_type' => ChatGroup::TYPE_PUBLIC_OPEN,
-            'users_ids' => [$this->user->id, $chatParticipant->id],
+            'users_ids' => [$chatParticipant->id],
         ];
 
         $this->storeGroupEndpoint = '/api/chat/group/store';
@@ -36,26 +32,23 @@ class CreateChatGroupTest extends TestCase
 
     public function test_create_group_successfully()
     {
-        $response = $this->post($this->storeGroupEndpoint, $this->userFormData);
+        $response = $this->post($this->storeGroupEndpoint, $this->newGroup);
 
         $response->assertStatus(201);
     }
 
-    public function test_name_too_long()
+    public function test_create_group_returns_group_data_with_participants()
     {
-        $this->userFormData['name'] = Str::random(270);
+        $response = $this->post($this->storeGroupEndpoint, $this->newGroup);
 
-        $response = $this->post($this->storeGroupEndpoint, $this->userFormData);
+        $newlyCreatedGroup = ChatGroup::where([
+            'name' => $this->newGroup['name'],
+            'model_type' => $this->newGroup['model_type'],
+        ])->first();
 
-        $response->assertStatus(422);
-    }
+        // fetch with participants by relationship as well
+        $newlyCreatedGroup->participants;
 
-    public function test_name_model_type_invalid()
-    {
-        $this->userFormData['model_type'] = Str::random(10);
-
-        $response = $this->post($this->storeGroupEndpoint, $this->userFormData);
-
-        $response->assertStatus(422);
+        $response->assertJson($newlyCreatedGroup->jsonSerialize());
     }
 }

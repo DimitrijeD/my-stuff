@@ -1,5 +1,5 @@
 <template>
-    <GroupCardLayout v-if="group_id" :seen="seen" :atLeastTwoParticpants="atLeastTwoParticpants" :groupName="name">
+    <GroupCardLayout v-if="getMyAccepted" :seen="seen" :atLeastTwoParticpants="atLeastTwoParticpants" :groupName="name" @click.native="openChatWindow()">
         <template #group-name>
             {{name ? name : null}}
         </template>
@@ -20,6 +20,11 @@
         </template>
         
     </GroupCardLayout>
+
+    <PendingAcceptGroupCard
+        v-else 
+        :group_id="group_id"
+    />
 </template>
 
 <script>
@@ -28,11 +33,12 @@ import { mapGetters } from "vuex"
 import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
 import MessageCard from "@/Components/Chat/reuseables/MessageCard.vue"
 import GroupCardLayout from '@/Layouts/GroupCardLayout.vue'
+import PendingAcceptGroupCard from "@/Components/Chat/reuseables/PendingAcceptGroupCard.vue"
 
 export default {
     props: [ 'group_id', ],
 
-    components: { SmallUser, MessageCard, GroupCardLayout, },
+    components: { SmallUser, MessageCard, GroupCardLayout, PendingAcceptGroupCard, },
 
     computed:{
         ...mapGetters({ 
@@ -40,15 +46,11 @@ export default {
         }),
 
         participants(){
-            return this.$store.getters[ns.groupModule(this.group_id, 'participants')]
+            return this.$store.getters[ns.groupModule(this.group_id, 'participantsM/participants')]
         },
 
         name(){
             return this.$store.getters[ns.groupModule(this.group_id, 'name')] 
-        },
-
-        lastMessage(){ 
-            return this.$store.getters[ns.groupModule(this.group_id, 'last_message')] 
         },
 
         atLeastTwoParticpants(){ 
@@ -56,17 +58,20 @@ export default {
         },
 
         seen(){ 
-            return this.$store.getters[ns.groupModule(this.group_id, 'seen')] 
+            return this.$store.getters[ns.groupModule(this.group_id, 'messagesM/seen')] 
         },
 
-        numUnseenMsges(){ 
-            return this.$store.getters[this.group_id, 'numUnseenMsges'] 
+        getMyAccepted(){
+            return this.$store.getters[ns.groupModule(this.group_id, 'participantsM/getMyAccepted')] 
         },
-
     },
 
     methods: {
-        hasLastMessage(msg){ return msg.hasOwnProperty('id') ? true : false },
+        openChatWindow(){
+            this.$store.dispatch(ns.groupsManager('openGroup'), {group_id: this.group_id, initiatedBy: 'user'}).then(() =>{
+                this.$store.dispatch(ns.chatDropdown('toggle'))
+            })
+        },
     },
 }
 </script>
