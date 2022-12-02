@@ -3,11 +3,12 @@ import * as actionMessageFormater from  '@/Store/modules/group_module/actionMess
 
 export default {
 
-    createPermissions({commit, state, rootState, getters}){
+    createPermissions({commit, state, rootState, rootGetters, getters}){
+        console.log()
         commit('permissions', (new Permissions(
-            rootState[ns.chat_rules()].keys, 
-            rootState[ns.chat_rules()].rules, 
-            getters.getMyRole, 
+            rootGetters[ns.chatRules('keys')], 
+            rootGetters[ns.chatRules('rules')], 
+            getters['participantsM/getMyRole'], 
             state.model_type
         )).create() )
     },

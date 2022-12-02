@@ -29,7 +29,7 @@ const actions = {
         
         dispatch(ns.groupsManager('purgeAllChatData'), null, {root:true}).then(() => {
             dispatch(ns.users('resetState'), null, {root:true})
-            dispatch(ns.chat_rules('resetState'), null, {root:true})
+            dispatch(ns.chatRules('resetState'), null, {root:true})
         })
     },
 
@@ -177,7 +177,7 @@ const actions = {
                     ...{ 
                         responseContext:{
                             moduleName: 'main',
-                            important: true
+                            important: false
                         }
                     }
                 } , {root:true} )

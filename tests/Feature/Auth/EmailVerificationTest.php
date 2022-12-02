@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Illuminate\Support\Str;
 use App\Models\User;
-use App\Models\AccountVerification;
+use App\Models\Auth\AccountVerification;
 use Illuminate\Support\Facades\Hash;
 use Database\Factories\UserFactory;
 
@@ -46,7 +46,7 @@ class EmailVerificationTest extends TestCase
     public function test_loggedin_user_requests_another_email()
     {
         $response = $this->post($this->requestEmailToVerifyAccount, []);
-        
+
         $response->assertOk();
     }
 

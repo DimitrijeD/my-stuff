@@ -18,5 +18,6 @@ interface CRUDInterface
     public function getManyUnique(array $data, array $with = []); 
     public function first(array $data, array $with = []);
     public function updateOrCreate(array $identifiableData, array $data);
+    public function createMany(array $data);
 
 }

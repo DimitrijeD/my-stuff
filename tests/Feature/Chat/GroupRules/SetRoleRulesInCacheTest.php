@@ -3,9 +3,7 @@
 namespace Tests\Feature\Chat\GroupRules;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class SetRoleRulesInCacheTest extends TestCase
@@ -18,9 +16,7 @@ class SetRoleRulesInCacheTest extends TestCase
 
         $this->user = User::factory()->create();
         
-        $this->withHeaders([
-            'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
-        ]);
+        $this->withHeader( 'Authorization', "Bearer {$this->user->createToken('app')->plainTextToken}" );
     }
 
     public function test_set_all_rules()

@@ -4,80 +4,27 @@ namespace Tests\Feature\Chat\Group;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-use Database\Seeders\ChatGroupClusterSeeder;
-
-use App\Models\User;
-use Database\Factories\UserFactory;
+use Tests\Feature\Chat\GroupBuilderTrait;
 
 class GetInitialGroupsWithLatestMessageTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, GroupBuilderTrait;
     
     protected function setUp(): void
     {
         parent::setUp();
 
-        $chatGroupSeeder = resolve(ChatGroupClusterSeeder::class);
-        $this->groups = [];
-
         for($i = 0; $i < 3; $i++){
-            $this->groups[] = $chatGroupSeeder->run();
+            $this->makeGroup(); 
         }
 
-        if(!$this->user = User::where(['email' => UserFactory::getDefUser()['email']])->first())
-            $this->markTestIncomplete("Cannot finish this test because target user doesn't exist");
-
-        $this->withHeaders([
-            'Authorization' => "Bearer {$this->user->createToken('app')->plainTextToken}"
-        ]);
-
-        $this->getManyGroupsEndpoint = "/api/chat/user/groups";
+        $this->endpoint = "/api/chat/user/groups";
     }
 
     public function test_gets_groups_with_latest_message()
     {
-        $response = $this->get($this->getManyGroupsEndpoint);
+        $response = $this->get($this->endpoint);
 
-        $response->assertJsonStructure([[
-            'id', 
-            'name', 
-            'created_at', 
-            'updated_at',
-
-            'participants' => [[
-                    'id', 
-                    'first_name', 
-                    'last_name', 
-                    'email',
-                    'image',
-                    'thumbnail',
-                    'pivot' => [
-                        'group_id', 
-                        'user_id', 
-                        'last_message_seen_id', 
-                        'participant_role', 
-                        'updated_at'
-                    ]
-                ],
-                // ...
-            ],
-
-            'last_message' => [
-                'id',
-                'group_id',
-                'user_id',
-                'text',
-                'created_at',
-                'updated_at',
-                'user' => [
-                    'id', 
-                    'first_name', 
-                    'last_name', 
-                    'email',
-                    'image',
-                    'thumbnail',
-                ]
-            ]
-        ]]);
+        $response->assertJson( $this->user->groups->jsonSerialize() );
     }
 }

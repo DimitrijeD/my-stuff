@@ -4,7 +4,7 @@ namespace App\MyStuff\Repos\AccountVerification;
 
 use App\MyStuff\Repos\User\UserEloquentRepo;
 use App\MyStuff\Repos\AccountVerification\AccountVerificationEloquentRepo;
-use App\Models\AccountVerification;
+use App\Models\Auth\AccountVerification;
 use App\Jobs\EmailVerificationJob;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;

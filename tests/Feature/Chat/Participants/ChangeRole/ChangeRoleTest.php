@@ -2,51 +2,33 @@
 
 namespace Tests\Feature\Chat\Participants\ChangeRole;
 
-use App\Models\ChatGroup;
+use App\Models\Chat\ChatGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Models\ChatRole;
-use Database\Seeders\ChatGroupClusterSeeder;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Chat\ChatRole;
+use Tests\Feature\Chat\GroupBuilderTrait;
 
 class ChangeRoleTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, GroupBuilderTrait;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->chatGroupSeeder = (resolve(ChatGroupClusterSeeder::class));
-
-        $this->changeRoleEndpoint = '/api/chat/group/change-user-role';
+        $this->endpoint = 'api/chat/group/change-user-role';
     }
 
     public function test_creator_can_change_participant_to_moderator_in_public_open()
     {
-        $this->chatGroupSeeder->massSetter([
+        $this->makeGroupWith([
             'model_type' => ChatGroup::TYPE_PUBLIC_OPEN,
-            'participants' => [
-                [
-                    'first_name' => 'Asd',
-                    'last_name' => 'Asd',
-                    'email' => 'asd@asd', 
-                    'participant_role' => ChatRole::PARTICIPANT
-                ],
-            ],
+
         ]);
-        
-        $this->allChatData = $this->chatGroupSeeder->run();
 
-        $this->withHeader('Authorization', "Bearer {$this->allChatData['group_creator']->createToken('app')->plainTextToken}");
-
-        if(!$targetUserId = $this->allChatData['pivots']->where('participant_role', ChatRole::PARTICIPANT)->first()?->user_id)
-            $this->markTestIncomplete("Cannot finish this test because target user for role change doesn't exist");
-
-        $response = $this->post($this->changeRoleEndpoint, [
-            'target_user_id' => $targetUserId,
-            'group_id' => $this->allChatData['group']->id,
+        $response = $this->post($this->endpoint, [
+            'target_user_id' => $this->otherUser->id,
+            'group_id' => $this->group->id,
             'to_role' => ChatRole::MODERATOR,
         ]);
 

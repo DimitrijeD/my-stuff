@@ -21,6 +21,7 @@ import SendMessageIcon from "@/Components/Reuseables/Icons/SendMessageIcon.vue"
 
 /**
  * @todo while typing normal text into input all good, but if user clicks non text buttons, @keydown still registeres it as typing and dispatches event 
+ * @todo throttle on typing if its not already implemented
  */
 
 export default {
@@ -47,7 +48,7 @@ export default {
         sendMessage(){
             if(this.message === '' || this.message.trim() == '') return
 
-            this.$store.dispatch(ns.groupModule(this.group_id, 'storeMessage'), this.messagePayload()).then(()=> {
+            this.$store.dispatch(ns.groupModule(this.group_id, 'messagesM/storeMessage'), this.messagePayload()).then(()=> {
                 this.message = ''
             })
         },

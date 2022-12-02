@@ -78,7 +78,7 @@ export default {
     computed: {
         ...mapGetters({ 
             user: "user",
-            roles: ns.chat_rules('StateRoles'),
+            roles: ns.chatRules('roles'),
         }),
 
         openedComponent(){

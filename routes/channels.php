@@ -17,7 +17,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('group.{chatGroup}', function ($user, \App\Models\ChatGroup $chatGroup) {
+Broadcast::channel('group.{chatGroup}', function ($user, \App\Models\Chat\ChatGroup $chatGroup) {
     if ($chatGroup->participants->contains($user)) {
         return ['id' => $user->id];
     }

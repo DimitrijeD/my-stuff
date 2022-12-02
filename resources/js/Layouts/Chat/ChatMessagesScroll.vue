@@ -1,5 +1,5 @@
 <template>
-    <div :ref="scrollName" class="h-full overflow-x-hidden absolute top-0 left-0 right-0 bottom-0 mb-2 rounded-xl scroll1 space-y-2" @scroll="handleScroll($event)" >
+    <div :ref="scrollName" class="h-full absolute top-0 left-0 right-0 bottom-0 mb-2 rounded-xl scroll1 space-y-2" @scroll="handleScroll($event)" >
         <slot name="messages"></slot>
     </div>
 </template>
@@ -38,24 +38,20 @@ export default {
             user_id: "user_id",
         }),
 
-        messages_tracker(){
-            return this.$store.getters[ ns.groupModule(this.group_id, 'messages_tracker') ]
-        },
-
         window(){
             return this.$store.getters[ ns.groupModule(this.group_id, 'window') ]
         },
 
         numberOfMessages(){
-            return this.$store.getters[ ns.groupModule(this.group_id, 'numberOfMessages') ]
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messagesM/numberOfMessages') ]
         },
 
         whoSawWhat(){
-            return this.$store.getters[ ns.groupModule(this.group_id, 'whoSawWhat') ]
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messagesM/whoSawWhat') ]
         },
 
         usersTyping(){
-            return this.$store.getters[ ns.groupModule(this.group_id, 'usersTyping') ]
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participantsM/usersTyping') ]
         },
     },
 
@@ -167,7 +163,8 @@ export default {
          */
         getOlderMessages(){
             this.awaitingOldMessages = true
-            this.$store.dispatch(ns.groupModule(this.group_id, 'getOlderMessages')).then(() => {
+
+            this.$store.dispatch(ns.groupModule(this.group_id, 'messagesM/getOlderMessages')).then(() => {
                 this.awaitingOldMessages = false
                 this.maintainScrollInCurrentViewport()
             })

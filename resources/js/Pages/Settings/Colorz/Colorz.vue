@@ -23,44 +23,40 @@
         </div> -->
 
         <div class="setting-block">
-            <p>@todo Determine if there is anything to save</p>
             <button class="setting-btn-do " @click="updateColorz">Save Colorz Config</button>
-            <button v-if="!isUsingDefault" class="setting-btn-do " @click="usesDefaultColorz">Default Colorz</button>
-            <button class="setting-btn-do " @click="showOnlyBG=!showOnlyBG">Show only background-color</button>
+            <button class="setting-btn-do " @click="usesDefaultColorz">Default Colorz</button>
+            <button class="setting-btn-do " @click="showOnlyBG=!showOnlyBG">
+                {{ showOnlyBG ? "Show all colors " : "Show only background" }}
+            </button>
         </div>
 
         <div class="space-y-36"> 
             <div class="space-y-10" v-for="(scheeme, index) in colorz" :key="`${index}${scheeme.name}`">
                 <h2 class="">{{ scheeme.scheemeName }}</h2>
-                <div class="space-y-2">
 
-                    <div class="flex flex-col space-y-4">
+                <div class="sliderGridWrapper">
+                    <ColorElement 
+                        class="sliderRowWrapper"
+                        :scheeme="colorScheemas[index].hue"
+                        :index="index"
+                        :key="`${index}hue`"
+                        @changeSlider="changeSlider"
+                    />
+                    <ColorElement 
+                        class="sliderRowWrapper"
+                        :scheeme="colorScheemas[index].saturation"
+                        :index="index"
+                        :key="`${index}saturation`"
+                        @changeSlider="changeSlider"
+                    />
 
-                        <div class="sliderGridWrapper">
-                            <ColorElement 
-                                class="sliderRowWrapper"
-                                :scheeme="colorScheemas[index].hue"
-                                :index="index"
-                                :key="`${index}hue`"
-                                @changeSlider="changeSlider"
-                            />
-                            <ColorElement 
-                                class="sliderRowWrapper"
-                                :scheeme="colorScheemas[index].saturation"
-                                :index="index"
-                                :key="`${index}saturation`"
-                                @changeSlider="changeSlider"
-                            />
-
-                            <ColorElement 
-                                class="sliderRowWrapper"
-                                :scheeme="colorScheemas[index].lightness"
-                                :index="index"
-                                :key="`${index}lightness`"
-                                @changeSlider="changeSlider"
-                            />
-                        </div>
-                    </div>
+                    <ColorElement 
+                        class="sliderRowWrapper"
+                        :scheeme="colorScheemas[index].lightness"
+                        :index="index"
+                        :key="`${index}lightness`"
+                        @changeSlider="changeSlider"
+                    />
                 </div>
 
                 <div :class="[showOnlyBG ? 'flex' : 'grid grid-cols-4 gap-4 ', ] ">
@@ -147,6 +143,8 @@ import AcceptIcon from '@/Components/Reuseables/Icons/AcceptIcon.vue'
 
 import defaultConfig from '@/Pages/Settings/Colorz/types/defaultConfig.js'
 
+// @todo Determine if there is anything to save
+
 export default {
     props: ['user'],
 
@@ -155,7 +153,6 @@ export default {
     data(){
         return {
             colorScheemas: defaultConfig,
-            isUsingDefault: true,
             showOnlyBG: true,
         }
     },
@@ -192,13 +189,13 @@ export default {
         usesUsersColorz(){
             this.colorScheemas = this.user.user_setting.colorz 
 
-            this.isUsingDefault = false
+            // this.isUsingDefault = false
         },
 
         usesDefaultColorz(){
             this.colorScheemas = defaultConfig
             
-            this.isUsingDefault = true
+            // this.isUsingDefault = true
         },
 
         // setNumColors($event){

@@ -5,7 +5,7 @@ namespace Database\Seeders\clusters\ModelBuilders;
 use App\Models\User;
 use App\Models\UserSettings;
 use Database\Factories\UserFactory;
-use App\Models\ChatRole;
+use App\Models\Chat\ChatRole;
 
 class BuildUsers
 {

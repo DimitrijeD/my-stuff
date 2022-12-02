@@ -1,5 +1,5 @@
 <template>
-    <div :class="[ 'def-resize-trans self-end visible flex-none bg-white dark:bg-darker-300 text-gray-600 dark:text-gray-300']" :style="[dims]"> 
+    <div :class="[ 'def-resize-trans self-end visible flex-none bg-white dark:bg-darker-300 text-gray-600 dark:text-gray-300 ']" :style="[dims]"> 
         <div class="flex flex-col h-full">
             <div class="bg-blue-400 dark:bg-gradient-to-b dark:from-darker-500 dark:via-darker-500 dark:bg-transparent flex flex-nowrap gap-2 h-16"> 
                 <slot name="header"></slot>

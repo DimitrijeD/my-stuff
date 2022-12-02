@@ -4,7 +4,7 @@
         
         <Transition name="slide" class="z-10 absolute w-full h-full flex items-center gap-1.5 px-4 bg-gray-200 dark:bg-darker-200/70 rounded-xl">
             <div v-if="pendingConfirm" >
-                <p class="grow text-center">Delete this message? </p>
+                <p class="grow text-center select-none">Delete this message? </p>
                 <AcceptIcon class="w-10 h-10 fill-gray-600 hover:fill-red-500 stroke-transparent" @click="deleteMessage()" />
                 <DeclineIcon class="w-10 h-10 stroke-transparent fill-gray-600" @click="show(false)" />
             </div>
@@ -32,7 +32,7 @@ export default {
 
     methods: {
         deleteMessage(){
-            this.$store.dispatch(ns.groupModule(this.group_id, 'deleteMessage'), {
+            this.$store.dispatch(ns.groupModule(this.group_id, 'messagesM/deleteMessage'), {
                 message_id: this.message_id
             })
 
@@ -51,22 +51,19 @@ export default {
 
 <style scoped>
 
+.slide-leave-active,
 .slide-enter-active{
     transition: all 0.2s ease-out;
-}
-
-.slide-leave-active {
-    transition: opacity 0.1s linear;
     left: 0px;
     top: 0px;
 }
 
+
+
+.slide-leave-to,
 .slide-enter-from {
     opacity: 0;
     transform: translateX(30px);
 }
 
-.slide-leave-to {
-    opacity: 0;
-}
 </style>

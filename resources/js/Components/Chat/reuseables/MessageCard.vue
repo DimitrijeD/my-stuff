@@ -15,7 +15,7 @@
     </div>
 
     <div v-else class="h-full flex flex-col">
-        <p class="m-auto italic">{{ noMessageText }}</p>
+        <p class="m-auto italic opacity-70">{{ noMessageText }}</p>
     </div>                
 </template>
 
@@ -39,11 +39,11 @@ export default {
 
     computed: {
         lastMessageSender(){
-            return this.$store.getters[ ns.groupModule(this.group_id, 'getParticipant') ](this.lastMessage?.user_id)
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participantsM/getParticipant') ](this.lastMessage?.user_id)
         },
 
         lastMessage(){ 
-            return this.$store.getters[ns.groupModule(this.group_id, 'last_message')] 
+            return this.$store.getters[ns.groupModule(this.group_id, 'messagesM/last_message')] 
         },
     },
 

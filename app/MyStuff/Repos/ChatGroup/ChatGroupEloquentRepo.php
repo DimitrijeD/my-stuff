@@ -4,7 +4,7 @@ namespace App\MyStuff\Repos\ChatGroup;
 
 use App\MyStuff\Repos\ChatGroup\Contracts\ChatGroupRepo;
 use App\MyStuff\General\Traits\CRUDTrait;
-use App\Models\ChatGroup;
+use App\Models\Chat\ChatGroup;
 
 class ChatGroupEloquentRepo implements ChatGroupRepo
 {

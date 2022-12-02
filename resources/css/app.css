@@ -99,7 +99,7 @@
 
     .def-btn { @apply def-trans w-full text-center select-none rounded cursor-pointer text-lg ; }
 
-    .def-nav-btn { @apply def-trans font-normal text-lg select-none cursor-pointer; }
+    .def-nav-btn { @apply def-trans font-normal sm:text-lg select-none cursor-pointer; }
 
     .def-error-text { @apply def-trans text-red-500; }
 
@@ -118,8 +118,8 @@
 
     
     /*------------Containers------------*/
-    .container-narrow { @apply w-[95%] md:w-[80%] lg:w-[70%] mx-auto;}
-    .container-wide { @apply sm:w-[90%] py-4 mx-auto;}
+    .container-narrow { @apply w-[95%] md:w-[80%] lg:w-[70%] mx-auto ;}
+    .container-wide { @apply sm:w-[90%] py-4 mx-2 sm:mx-auto ;}
     .container-focus-center { @apply h-full flex justify-center items-center my-auto
         w-[80%] sm:w-[80%] md:w-[80%] lg:w-[60%] xl:w-[50%] mx-auto;}
     .page-space-top { @apply mt-2 sm:mt-6; }
@@ -226,17 +226,47 @@
     @keyframes green-glow {
         from {
             box-shadow: 0 0px 1px rgba(2, 115, 32, 0.1), 
-                        0 4px 4px rgba(2, 115, 32, 0.1), 
-                        0 6px 6px rgba(2, 115, 32, 0.1);
+                        0 4px 2px rgba(2, 115, 32, 0.1), 
+                        0 6px 3px rgba(2, 115, 32, 0.1),
+
+                        inset 1px 0px 1px rgba(2, 115, 32, 0.1), 
+                        inset 1px 4px 2px rgba(2, 115, 32, 0.1);
         }
         to {
-            box-shadow: 0 1px  2px rgba(24, 158, 60, 0.3), 
-                        0 4px  8px rgba(24, 158, 60, 0.3), 
-                        0 6px 12px rgba(24, 158, 60, 0.3);
+            box-shadow: 0 1px 2px rgba(24, 158, 60, 0.3), 
+                        0 4px 4px rgba(24, 158, 60, 0.3), 
+                        0 6px 6px rgba(24, 158, 60, 0.1),
+
+                        inset 2px 1px 2px rgba(24, 158, 60, 0.2), 
+                        inset 2px 4px 4px rgba(24, 158, 60, 0.2);
+        }   
+    }
+
+    .blue-glow {
+        animation: blue-glow 2s infinite alternate;
+    }
+    
+    @keyframes blue-glow {
+        from {
+            box-shadow: 0 0px 1px rgba(59, 130, 246, 0.1), 
+                        0 4px 4px rgba(59, 130, 246, 0.1), 
+
+                        inset 0 1px 1px rgba(59, 130, 246, 0.1), 
+                        inset 0 2px 2px rgba(59, 130, 246, 0.1); 
+        }
+        to {
+            box-shadow: 1px 1px 2px rgba(59, 130, 246, 0.2), 
+                        1px 4px 6px rgba(59, 130, 246, 0.2), 
+
+                        inset 2px 1px 2px rgba(59, 96, 246, 0.2), 
+                        inset 2px 2px 4px rgba(59, 96, 246, 0.2); 
         }   
     }
     /*--------------------------------*/
-
+    .default-group-card{ @apply shadow p-1 mr-1.5 cursor-pointer border overflow-hidden h-[200px] flex flex-col rounded-xl font-light
+        bg-blue-200 border-blue-400 
+        dark:bg-darker-200 dark:border-darker-400; }
+        
     .pop-card-color{ @apply bg-gradient-to-b  
             from-gray-400 to-gray-200 
             dark:from-darker-400 dark:to-darker-200;

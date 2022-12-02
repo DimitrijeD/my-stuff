@@ -1,25 +1,23 @@
 <template>
-    <div class="relative" ref="wrap" >
+    <div class="relative" ref="wrap" v-click-away="clickAway">
         <div class="flex h-full relative">
-            <MailIcon @click="toggleClickListener" :class="[ 'h-full p-1 opacity-90 stroke-transparent', iconCls ]" />
-            <span v-if="numGroupsWithUnseen" 
+            <MailIcon @click="toggle" :class="[ 'h-full w-[3rem] p-1 opacity-90 stroke-transparent', iconCls ]" />
+            <!-- <span v-if="numGroupsWithUnseen" 
                 :class="['absolute top-0 -right-1', 
                 numGroupsWithUnseen ? 'text-green-600 font-bold' : 'text-blue-500/90 dark:text-gray-300/80']"
-            >{{ numGroupsWithUnseen }}</span>
+            >{{ numGroupsWithUnseen }}</span> -->
         </div>
 
-        <div ref="dropdown" v-show="showDrop" class="def-dropdown">
+        <div ref="dropdown" v-show="show" class="def-dropdown">
             <div class="flex">
-                <CardNavBtn :isActive="showNav.ChatHistory" @click="chatNav('ChatHistory')">
-                    Chat history
-                </CardNavBtn>
-                <CardNavBtn :isActive="showNav.CreateChatGroup" @click="chatNav('CreateChatGroup')">
-                    Create new chat
+                <CardNavBtn v-for="(comp, name ) in navComponents" :isActive="comp.show" @click="chatNav(name)">
+                    {{ comp.text }} 
                 </CardNavBtn>
             </div>
-            <div class="grow flex flex-col pt-2 ">
-                <ChatHistory     class="grow" v-show="showNav.ChatHistory"     @closeDropdown="removeClickListener" /> 
-                <CreateChatGroup class="grow" v-show="showNav.CreateChatGroup" @closeDropdown="removeClickListener" /> 
+            <div class="grow flex flex-col pt-2">
+                <KeepAlive>
+                    <component :is="showComp" class="grow" />
+                </KeepAlive>
             </div>
         </div>
     </div>
@@ -31,40 +29,53 @@ import CreateChatGroup from "@/Components/Chat/ChatDropdown/CreateChatGroup.vue"
 import ChatHistory from '@/Components/Chat/ChatDropdown/ChatHistory.vue'
 import MailIcon from "@/Components/Reuseables/Icons/MailIcon.vue"
 import CardNavBtn from '@/Components/Reuseables/Buttons/CardNavBtn.vue'
+import { Resizer } from '@/UtilityFunctions/Resizer/Resizer.js' 
 
 export default {
+    inject: ['headerHeight'],
+
     components: { CreateChatGroup, ChatHistory, MailIcon, CardNavBtn },
 
     data(){
         return {
-            height: null,
-            width: null,
-            positionLeft: null,
-            debounceResize: null,
-            minWidth: 400,
-            minHeight: 530,
-            widthGrowthBy: {
-                height: 6/100,
-                width: 6/100,
+            navComponents: {
+                ChatHistory: {
+                    text: 'Chat history',
+                    show: true,
+                },
+                CreateChatGroup: {
+                    text: 'Create chat',
+                    show: false,
+                },
             },
-            heightGrowthBy: {
-                height: 8/100,
-                width: 6/100,
-            },
-            headerHeight: 3*16,
 
-            showDrop: false,
-
-            showNav: {
-                CreateChatGroup: false,
-                ChatHistory: true
-            },
+            resizer: new Resizer({
+                maintainOffsetTop: this.headerHeight,
+                heightGrowthBy: {
+                    height: 8/100,
+                    width: 6/100,
+                },
+                widthGrowthBy: {
+                    height: 6/100,
+                    width: 6/100,
+                },
+                minWidth: 400,
+                minHeight: 530,
+                onResize: {
+                    left: 'auto',
+                },
+                onFullScreen: {
+                    width: '100%',
+                    left: 0,
+                }
+            }),
         }
     },
 
     computed: {
         ...mapGetters({ 
             numGroupsWithUnseen: ns.groupsManager('numGroupsWithUnseen'),
+            show: ns.chatDropdown('show'),
         }),
 
         iconCls(){
@@ -76,8 +87,8 @@ export default {
         },
 
         showComp(){
-            for(let i in this.showNav){
-                if(this.showNav[i]) return i
+            for(let i in this.navComponents){
+                if(this.navComponents[i].show) return i
             }
 
             return ''
@@ -85,112 +96,39 @@ export default {
     },
 
     mounted(){
-        this.calcSize()
+        this.resizer.setElement(this.$refs.dropdown)
+        this.resize()
     },
 
     watch: {
-        showDrop(){
-            if(this.showDrop){
-                this.calcSize()
-                window.addEventListener("resize", this.calcSize)
+        show(){
+            if(this.show){
+                this.resize()
+                window.addEventListener("resize", this.resize)
             } else {
-                window.removeEventListener("resize", this.calcSize)
+                window.removeEventListener("resize", this.resize)
             }
-            
-            this.$emit('dropdownToggled', {
-                name: 'chat',
-                opened: this.showDrop
-            })
         }
     },
 
     methods: {
-        calcSize(){
-            if(this.debounceResize) return
-
-            this.debounceResize = setTimeout(() => {
-                if( this.isWidthOverflowing(this.minWidth) || this.isHeightOverflowing(this.minHeight) || this.isHeightOverflowing(this.minHeight + this.headerHeight)){
-                    this.makeFullScreen()
-                    this.debounceResize = null
-                    return 
-                }
-
-                const widthGrowth  = window.innerWidth * this.widthGrowthBy.width   +  window.innerHeight * this.widthGrowthBy.height
-                const heightGrowth = window.innerWidth * this.heightGrowthBy.width  +  window.innerHeight * this.heightGrowthBy.height
-
-                const wVal = Math.round( this.minWidth  + widthGrowth )
-                const hVal = Math.round( this.minHeight + heightGrowth )
-
-                if( this.isWidthOverflowing(wVal) || this.isHeightOverflowing(hVal) || this.isHeightOverflowing(hVal + this.headerHeight)){
-                    this.makeFullScreen()
-                    this.debounceResize = null
-                    return 
-                }
-
-                this.updateDimensionStyle(
-                    `${hVal}px`, 
-                    `${wVal}px`, 
-                    'auto'
-                )
-
-                if(window.innerWidth < 700){
-                    this.makeFullScreen()
-                    this.debounceResize = null
-                    return 
-                }
-
-                this.debounceResize = null
-            }, 100)
-        },
-        
-        isWidthOverflowing(width){
-            return window.innerWidth < width
+        clickAway(){
+            if(this.show) this.$store.dispatch(ns.chatDropdown('toggle'))
         },
 
-        isHeightOverflowing(height){
-            return window.innerHeight < height
-        },
-
-        updateDimensionStyle(height, width, left){
-            this.$refs.dropdown.style.height = height
-            this.$refs.dropdown.style.width = width
-            this.$refs.dropdown.style.left = left
-        },
-
-        makeFullScreen(){
-            this.$refs.dropdown.style.height = `${window.innerHeight - 3*16}px`
-            this.$refs.dropdown.style.width = '100%'
-            this.$refs.dropdown.style.left = 0
+        resize(){
+            this.resizer.setTryOffsetLeft(this.$refs.wrap.getBoundingClientRect().left)
+            this.resizer.run()
         },
 
         chatNav(componentName){
-            for(let i in this.showNav){
-                this.showNav[i] = componentName == i
+            for(let i in this.navComponents){
+                this.navComponents[i].show = componentName == i
             }
         },
 
-        clickOutside(e){
-            if(!this.isDeepChild(this.$refs.wrap, e.target)){
-                this.removeClickListener()
-            }
-        },
-
-        isDeepChild(p, c){while((c=c.parentNode)&&c!==p);return !!c},
-
-        addClickListener(){
-            document.addEventListener('click', this.clickOutside)
-            this.showDrop = true
-        },
-
-        removeClickListener(){
-            document.removeEventListener('click', this.clickOutside)
-            this.showDrop = false
-        },
-
-        toggleClickListener(){
-            this.showDrop
-                ? this.removeClickListener()
-                : this.addClickListener()
+        toggle(){
+            this.$store.dispatch(ns.chatDropdown('toggle'))
         },
 
     },

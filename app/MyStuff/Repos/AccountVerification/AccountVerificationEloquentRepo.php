@@ -4,7 +4,7 @@ namespace App\MyStuff\Repos\AccountVerification;
 
 use App\MyStuff\Repos\AccountVerification\Contracts\AccountVerificationRepo;
 use App\MyStuff\General\Traits\CRUDTrait;
-use App\Models\AccountVerification;
+use App\Models\Auth\AccountVerification;
 
 class AccountVerificationEloquentRepo implements AccountVerificationRepo
 {

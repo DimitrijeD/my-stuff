@@ -17,7 +17,8 @@
 
         <template #body>
             <ParticipantInList 
-                v-for="participant in listedParticipants" :key="participant.id" 
+                v-for="participant in listedParticipants" 
+                :key="participant.id" 
                 :participant="participant"
                 :canRemoveAnybody="canRemoveAnybody"
                 :canPromoteDemote="canPromoteDemote(participant)" 
@@ -36,7 +37,7 @@ import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue';
 
 import * as collection from '@/UtilityFunctions/collection.js'
 import { mapGetters } from 'vuex'
-import { fuzzyImmidiate }  from  '@/UtilityFunctions/fuzzyImmidiate.js'
+import { fuzzyImmidiate } from '@/UtilityFunctions/fuzzyImmidiate.js'
 import { RoleCan } from '@/Components/Chat/policies/RoleCan.js'
 
 export default {
@@ -55,7 +56,7 @@ export default {
     computed: {
         ...mapGetters({ 
             user: "user",
-            roles: ns.chat_rules('StateRoles'),
+            roles: ns.chatRules('roles'),
         }),
 
         canRemoveAnybody(){
@@ -63,7 +64,7 @@ export default {
         },
 
         participants(){ 
-            return this.$store.getters[ ns.groupModule(this.group_id, 'participants') ]
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participantsM/participants') ]
         },
 
         permissions(){ 

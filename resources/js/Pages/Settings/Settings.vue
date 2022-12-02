@@ -6,7 +6,7 @@
             <p class=" text-lg pb-3 pl-2 pr-3">Settings</p>
             <button 
                 v-for="(component, index) in components" 
-                @click="show(index)"
+                @click="openSetting({raw: component.name})"
                 class="p-2 block rounded w-full text-left" 
                 :class="component.show ? 'text-blue-500 dark:text-blue-400' : ''"
             >{{ component.name }}</button>
@@ -78,19 +78,11 @@ export default {
     },
 
     methods: {
-        show(com){
-            for(let i in this.components){
-                this.components[i].show = false
-            }
-
-            this.components[com].show = true
-        },
-
         formatList(){
-            let list = []
+            let list = {}
 
             for(let i in this.components){
-                list.push(this.components[i].name) 
+                list[this.components[i].name] = this.components[i].name 
             }
 
             return list
@@ -98,7 +90,7 @@ export default {
 
         openSetting(name){
             for(let i in this.components){
-                this.components[i].show = this.components[i].name == name 
+                this.components[i].show = this.components[i].name == name.raw
                     ? true
                     : false
             }

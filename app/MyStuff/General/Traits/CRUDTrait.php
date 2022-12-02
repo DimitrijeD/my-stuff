@@ -4,6 +4,7 @@ namespace App\MyStuff\General\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Exceptions\InternalServerErrorException;
 
 trait CRUDTrait
 {
@@ -20,9 +21,8 @@ trait CRUDTrait
             $instance->$attribute = $value;
         }
 
-        if (! $instance->save()) {
-            throw new \Exception(__('Model not created'));
-        }
+        if(! $instance->save()) 
+            throw new InternalServerErrorException(__("serverError.failed")); 
 
         return $instance;
     }
@@ -146,4 +146,8 @@ trait CRUDTrait
         return $result->count() ? $result : false;
     }
     
+    public function createMany(array $data)
+    {
+        return app()->make($this->getModel())->insert($data);
+    }
 }

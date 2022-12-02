@@ -3,8 +3,9 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\ChatGroup;
-use App\Models\ChatMessage;
+use App\Models\Chat\ChatGroup;
+use App\Models\Chat\ChatMessage;
+use App\Models\Chat\ChatRole;
 
 use Database\Seeders\clusters\ConfigResolvers\TimeConfigResolver;
 use Database\Seeders\clusters\ConfigResolvers\MessageConfigResolver;
@@ -62,8 +63,8 @@ class ChatGroupClusterSeeder extends Seeder
         $this->timeType = self::DISTRIBUTION_DEFAULT;
         $this->seenType = self::DISTRIBUTION_MAX_ACTIVITY;
 
-        $this->numUsers = 20;
-        // $this->numUsers = null;
+        // $this->numUsers = 20;
+        $this->numUsers = null;
 
         $this->users = (new BuildUsers([], $this->numUsers))
             ->resolve()
@@ -73,14 +74,14 @@ class ChatGroupClusterSeeder extends Seeder
 
         $this->timeInterval = (new TimeInterval(null, null, true))->createTimeInterval();
 
-        $this->chatGroup = (new ChatGroupBuilder([
+        $this->group = (new ChatGroupBuilder([
             'name' => "Cluster seeded | {$this->msgType} msg type | {$this->timeType} time type | {$this->seenType} seen type ",
             'model_type' => ChatGroup::TYPE_PUBLIC_OPEN,
             'updated_at' => $this->timeInterval['minTime'],
             'created_at' => $this->timeInterval['minTime'],
         ]))->makeModel();
-        $this->messages = new MessagesBuilder($this->chatGroup->id);
-        $this->pivot = (new GroupParticipantsPivot($this->users, $this->chatGroup, $this->creator_id))->build();
+        $this->messages = new MessagesBuilder($this->group->id);
+        $this->pivot = (new GroupParticipantsPivot($this->users, $this->group, $this->creator_id))->build();
     }
 
     public function run()
@@ -88,7 +89,7 @@ class ChatGroupClusterSeeder extends Seeder
         if(!isset($this->massSetterCalled)){
             $this->defaultSeederConfig();
         } 
-        $this->clusteredMessages = ( new MessageConfigResolver($this->users, $this->chatGroup->id, $this->msgType, $this->numMessages) )
+        $this->clusteredMessages = ( new MessageConfigResolver($this->users, $this->group->id, $this->msgType, $this->numMessages) )
             ->resolve()
             ->build();
 
@@ -98,29 +99,48 @@ class ChatGroupClusterSeeder extends Seeder
             ->resolve()
             ->build();
 
-        $this->messages->fillAssembledMessageModels($timeClusteredMessages, ['created_at', 'updated_at']);
-        $this->messages->fillAssembledMessageModels( (new ChatMessageTextGenerator($this->numMessages, $this->minTextLen, $this->maxTextLen, self::USE_INC_INT_AS_TXT))->build(), ['text'] );
+        $this->messages->fillAssembledMessageModels(
+            $timeClusteredMessages, 
+            ['created_at', 'updated_at']
+        );
+
+        $this->messages->fillAssembledMessageModels( 
+            (new ChatMessageTextGenerator(
+                $this->numMessages, 
+                $this->minTextLen, 
+                $this->maxTextLen, 
+                self::USE_INC_INT_AS_TXT
+            ))->build(), 
+            ['text'] 
+        );
+
         $this->messages->bulkCreateModels();
 
         $this->createdMessages = $this->messages->getChatGroupMessages();
 
-        $lastMessageSeenUpdateData = (new LastMessageSeenConfigResolver($this->users, $this->chatGroup->id, $this->seenType, $this->createdMessages))
+        $lastMessageSeenUpdateData = (new LastMessageSeenConfigResolver($this->users, $this->group->id, $this->seenType, $this->createdMessages))
             ->resolve()
             ->build();
 
         $this->pivot->addLastMessageSeenId($lastMessageSeenUpdateData);
 
-        $this->chatGroup->last_msg_id = (ChatMessage::where('group_id', $this->chatGroup->id)->latest()->first())->id;
-        $this->chatGroup->save();
+        // $this->group->last_msg_id = (ChatMessage::where('group_id', $this->group->id)->latest()->first())->id;
+        $this->group->save();
 
-        return [
-            'group' => $this->chatGroup,
-            'messages' => $this->createdMessages,
-            'users' => $this->users,
-            'pivots' => $this->pivot->getAllGroupPivots(),
-            'creator_id' => $this->creator_id,
-            'group_creator' => $this->pivot->getGroupCreator()
-        ];
+        $this->group = ChatGroup::where('id', $this->group->id)
+            ->with(['messages', 'participants', 'lastMessage'])
+            ->first();
+
+        return $this;
+        // return [
+        //     'group' => $this->group,
+        //     'messages' => $this->createdMessages,
+        //     'users' => $this->users,
+        //     'pivots' => $this->pivot->getAllGroupPivots(),
+        //     'creator_id' => $this->creator_id,
+        //     'group_creator' => $this->pivot->getGroupCreator(),
+        //     'groupX' => $this->groupX 
+        // ];
     }
 
     public function massSetter($init) 
@@ -166,15 +186,22 @@ class ChatGroupClusterSeeder extends Seeder
 
         $model_type = isset($init['model_type']) ? $init['model_type'] : ChatGroup::TYPE_DEFAULT;
         
-        $this->chatGroup = (new ChatGroupBuilder([
+        $this->group = (new ChatGroupBuilder([
             'name' => "Cluster seeded | {$this->msgType} msg type | {$this->timeType} time type | {$this->seenType} seen type ",
             'model_type' => $model_type,
             'updated_at' => $this->timeInterval['minTime'],
             'created_at' => $this->timeInterval['minTime'],
         ]))->makeModel();
         
-        $this->messages  =  new MessagesBuilder($this->chatGroup->id);
-        $this->pivot     = (new GroupParticipantsPivot($this->users, $this->chatGroup, $this->creator_id))->build();
+        $this->messages  =  new MessagesBuilder($this->group->id);
+        $this->pivot     = (new GroupParticipantsPivot($this->users, $this->group, $this->creator_id))->build();
     }
 
+    public function getCreator(){
+        return $this->group->participants->where('pivot.participant_role', ChatRole::CREATOR)->first(); 
+    }
+
+    public function getOtherUser(){
+        return $this->group->participants->where('pivot.participant_role', '!=', ChatRole::CREATOR)->first(); 
+    }
 }

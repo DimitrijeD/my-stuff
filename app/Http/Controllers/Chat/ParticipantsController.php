@@ -4,25 +4,25 @@ namespace App\Http\Controllers\Chat;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-use App\Models\User;
 use App\MyStuff\Repos\ParticipantPivot\ParticipantPivotFormatter;
 use App\MyStuff\Repos\ChatGroup\ChatGroupEloquentRepo;
 use App\MyStuff\Repos\ParticipantPivot\ParticipantPivotEloquentRepo;
 
-use App\Http\Requests\Participant\AddParticipantRequest;
-use App\Http\Requests\Participant\ChangeRoleRequest;
-use App\Http\Requests\Participant\RemoveParticipantRequest;
+use App\Http\Requests\Chat\Participant\AddParticipantRequest;
+use App\Http\Requests\Chat\Participant\ChangeRoleRequest;
+use App\Http\Requests\Chat\Participant\RemoveParticipantRequest;
+use App\Http\Requests\Chat\Group\UsersResponseToInvitationRequest;
 
-use App\Events\UserRoleInGroupChangedEvent;
-use App\Events\UserRemovedFromGroupEvent;
-use App\Events\UserAddedToGroupEvent;
-use App\Events\UserLeftGroupEvent;
+use App\Events\ChatEvents\ParticipantEvents\UserRoleInGroupChangedEvent;
+use App\Events\ChatEvents\ParticipantEvents\UserRemovedFromGroupEvent;
+use App\Events\ChatEvents\ParticipantEvents\UserAddedToGroupEvent;
+use App\Events\ChatEvents\ParticipantEvents\UserLeftGroupEvent;
+use App\Events\ChatEvents\GroupEvents\NewChatGroupEvent;
+use App\Events\ChatEvents\ParticipantEvents\ParticipantInvitationResponseEvent;
 
 use App\Http\Response\ApiResponse;
 use Illuminate\Validation\ValidationException;
-use App\Exceptions\ModelDoesntExistException;
 use App\Exceptions\InternalServerErrorException;
 use App\Exceptions\ModelGoneException;
 
@@ -45,15 +45,25 @@ class ParticipantsController extends Controller
         if(!$this->pivotRepo->createMany($pivotFormatter->prepareManyToInsert($request->usersToAdd, $request->group_id)))
             throw new InternalServerErrorException(__('chat.participants.add.failOnCreate'));
             
+        $freshGroup = $chatGroupRepo->get(
+            ['id' => $request->group_id], 
+            ['participants']
+        );
+
         broadcast(new UserAddedToGroupEvent([
-            'group_id' => $request->group->id,
-            'participants' => $chatGroupRepo->get(
-                ['id' => $request->group_id], 
-                ['participants']
-            )->participants,
+            'group_id' => $freshGroup->id,
+            'participants' => $freshGroup->participants,
             'addedUsers' => $request->usersToAdd
         ]));
-        
+                    
+        $addedUsers = [];
+
+        foreach($request->usersToAdd as $user){
+            $addedUsers[] = $user['user_id'];
+        }
+
+        broadcast(new NewChatGroupEvent($freshGroup, $addedUsers));
+
         return response()->json( ApiResponse::success([
             'messages' => [[ trans_choice('chat.participants.add.success', count($request->usersToAdd)) ]],
         ]) );
@@ -138,4 +148,26 @@ class ParticipantsController extends Controller
 
     }
 
+    /**
+     * If user accepted invitation to chat, update his pivot and dispatch event
+     * if user declined invitation, delete his pivot and dispatch event
+     */
+    public function usersResponseToInvitation(UsersResponseToInvitationRequest $request, ParticipantPivotEloquentRepo $participantPivotRepo)
+    {
+        $myPivot = $request->group->participants->where('id', auth()->user()->id)->first()->pivot;
+
+        if($request->responseToInvitation){
+            if(! $participantPivotRepo->update($myPivot, ['accepted' => true]) ) throw new InternalServerErrorException(__("serverError.failed"));
+        } else {
+            if(! $participantPivotRepo->delete($myPivot)) throw new InternalServerErrorException(__("serverError.failed"));
+        }
+
+        broadcast(new ParticipantInvitationResponseEvent([
+            'accepted' => $request->responseToInvitation,
+            'group_id' => $request->group->id,
+            'user_id'  => auth()->user()->id
+        ]));
+
+        return response()->json(null, 201);
+    }
 }

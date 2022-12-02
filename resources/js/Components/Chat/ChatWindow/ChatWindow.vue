@@ -10,8 +10,8 @@
 
         <template #action-response>
             <ActionResponseList 
-                :moduleId="`groupId_${group_id}`" 
                 :dieAfter="15" 
+                :moduleId="`groupId_${group_id}`"
                 :cardCls="'w-[90%] h-32 mx-auto'"
                 class="mt-8 mx-auto w-full" 
             />
@@ -58,11 +58,11 @@ export default {
         },
 
         last_message(){ 
-            return this.$store.getters[ ns.groupModule(this.group_id, 'last_message') ] 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messagesM/last_message') ] 
         },
 
         seen(){ 
-            return this.$store.getters[ ns.groupModule(this.group_id, 'seen') ]
+            return this.$store.getters[ ns.groupModule(this.group_id, 'messagesM/seen') ]
         },
 
         canSendMessage(){ 
@@ -71,16 +71,23 @@ export default {
     },
 
     created(){
-        this.$store.dispatch(ns.groupModule(this.group_id, 'getInitMessages'))
+        this.$store.dispatch(ns.groupModule(this.group_id, 'participantsM/toggleTypingEventListeners'), true)
+        this.$store.dispatch(ns.groupModule(this.group_id, 'messagesM/getInitMessages'))
     },
 
     methods: {   
         selfAcknowledged(){
-            if(this.seen) return
+            // if user already saw messages, return
+            if(this.seen) return 
 
-            if(this.last_message.user_id == this.user_id) return
+            // if last message doesnt exist, return
+            if(this.last_message == undefined || this.last_message == {} || typeof this.last_message?.id != 'number') return
 
-            this.$store.dispatch(  ns.groupModule(this.group_id, 'allMessagesSeen') , this.last_message.id)
+            // if user is owner of last message, return
+            if(this.last_message?.user_id == this.user_id) return
+
+            // ok
+            this.$store.dispatch(ns.groupModule(this.group_id, 'messagesM/allMessagesSeen') , this.last_message.id)
         },
     }
 }

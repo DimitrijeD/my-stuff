@@ -59,7 +59,7 @@ export default{
         },
 
         confirmedChangeRole(){
-            this.$store.dispatch(ns.groupModule(this.group_id, 'changeParticipantRole'), {
+            this.$store.dispatch(ns.groupModule(this.group_id, 'participantsM/changeParticipantRole'), {
                 target_user_id: this.participant.id,
                 to_role: this.chosenNewRole,
             })

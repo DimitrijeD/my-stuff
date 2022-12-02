@@ -27,7 +27,7 @@ export function users(action = '')
         : ns
 }
 
-export function chat_rules(action = null)
+export function chatRules(action = null)
 {
     let ns = 'chat_rules'
 
@@ -41,9 +41,17 @@ export function actionResponse(id = '', action = '')
     let ns = `actionResponse`
     if(!id) return ns
 
-    if(!action) return `${ns}${id}`
+    if(!action) return `${ns}_${id}`
 
-    return `${ns}${id}/${action}`
+    return `${ns}_${id}/${action}`
+}
+
+export function actionResponseGroup(id = '')
+{
+    let prefix = `groupId_`
+    if(!id) return prefix
+
+    return `${prefix}_${id}`
 }
 
 export function actionResponseManager(action = '')
@@ -53,4 +61,11 @@ export function actionResponseManager(action = '')
     return action 
         ? `${ns}/${action}`
         : `${ns}`
+}
+
+export function chatDropdown(action = ''){
+    let ns = 'chat_dropdown'
+    if(!action) return ns
+
+    return `${ns}/${action}`
 }

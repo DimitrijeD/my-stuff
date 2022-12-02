@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Auth\PasswordReset;
+use App\Models\Auth\AccountVerification;
+use App\Models\Chat\ChatGroup;
 
 class User extends Authenticatable 
 {
@@ -73,7 +75,9 @@ class User extends Authenticatable
     public function groups()
     {
         return $this->belongsToMany(ChatGroup::class, 'group_participants', 'user_id', 'group_id')
-            ->withPivot(['last_message_seen_id', 'group_id', 'updated_at']);
+            ->withPivot(['last_message_seen_id', 'group_id', 'updated_at', 'accepted'])
+            ->with(['participants', 'lastMessage.user'])
+            ->orderBy('updated_at', 'desc');
     }
 
     public function password_resets()

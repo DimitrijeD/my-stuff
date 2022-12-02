@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="">
         <div class="firstRowWrapper">
             <span class="rowName">
                 {{ scheeme.name }}
@@ -9,7 +9,7 @@
             </button>
         </div>
 
-        <div :class="['slidersWrapper']"  >
+        <div class="slidersWrapper">
             <label>Start</label>
             <div class="sliderInputWrapper">
                 <input 
@@ -151,6 +151,36 @@ export default {
 </script>
 
 <style scoped>
+
+.firstRowWrapper {
+    @apply flex flex-row gap-2;
+}
+
+.slidersWrapper {
+    @apply w-[22%] px-1 rounded flex justify-start gap-2 place-items-center cursor-pointer bg-darker-100;
+}
+
+.overflowBtnActive {
+    @apply text-blue-300  rounded;
+}
+.overflowBtnInActive {
+    @apply text-gray-300 opacity-30 rounded;
+}
+
+.slidersInactive {
+    @apply opacity-30 bg-transparent; 
+}
+
+.sliderInputWrapper {
+    @apply w-full cursor-col-resize;
+}
+
+.rowName {
+    @apply my-auto w-[70px];
+}
+
+
+
 input[type=text] {
   height: 50px;
 }

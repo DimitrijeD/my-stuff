@@ -5,8 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use App\MyStuff\Repos\ChatGroup\ChatGroupEloquentRepo;
-use App\Models\ParticipantPivot;
-use App\Models\ChatRole;
+use App\Models\Chat\ParticipantPivot;
+use App\Models\Chat\ChatRole;
 
 class CanSubmitMessage
 {

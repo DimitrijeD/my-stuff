@@ -28,7 +28,7 @@
 
 <script>
 import SearchInput from '@/Components/Chat/reuseables/SearchInput.vue'
-import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
+import SmallUser from '@/Components/Reuseables/SmallUser.vue';
 import DoubleScrollContentCardLayout from '@/Layouts/DoubleScrollContentCardLayout.vue'
 import LoadingCyrcle from '@/Components/Reuseables/LoadingCyrcle.vue'
 import DoubleUserSelectList from '@/Components/Chat/reuseables/DoubleUserSelectList.vue'
@@ -44,7 +44,8 @@ export default {
             addedUsersIds: [],
             actions: {
                 api: ns.users('searchForAddUsersInApi'),
-                store: ns.users('searchForAddUsersInStore')
+                store: ns.users('searchForAddUsersInStore'),
+                responseModuleName: `config.groupId_${this.group_id}`
             },
 
             flushSelected: 0,
@@ -70,7 +71,7 @@ export default {
         },
 
         excludeUsersFromSearch(){ 
-            return this.$store.getters[ ns.groupModule(this.group_id, 'participantsIds') ] 
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participantsM/participantsIds') ] 
         },
 
         model_type(){ 
@@ -91,7 +92,7 @@ export default {
         addParticipants(){
             if(!this.addedUsersIds.length) return
 
-            this.$store.dispatch(ns.groupModule(this.group_id, 'addParticipants'), {
+            this.$store.dispatch(ns.groupModule(this.group_id, 'participantsM/addParticipants'), {
                 addedUsersIds: this.addedUsersIds,
                 massAssignRolesTo: this.model_type == "PUBLIC_CLOSED" ? "LISTENER" : "PARTICIPANT" // @todo do not hard code this shit
             }).then(() =>{

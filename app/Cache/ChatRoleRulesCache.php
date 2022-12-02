@@ -3,8 +3,8 @@
 namespace App\Cache;
 
 use Illuminate\Support\Facades\Redis;
-use App\Models\ChatRole;
-use App\Models\ChatGroup;
+use App\Models\Chat\ChatRole;
+use App\Models\Chat\ChatGroup;
 
 class ChatRoleRulesCache 
 {

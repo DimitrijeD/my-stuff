@@ -1,18 +1,16 @@
 <template>
-    <div ref="wrap">
-        <ThreeHorisontalParalelLinesIcon @click="toggleClickListener" class="nav-btn-svg" />
+    <div ref="wrap" v-click-away="clickAway">
+        <ThreeHorisontalParalelLinesIcon @click="toggle" class="nav-btn-svg" />
         
         <div v-if="showDrop" class="relative">
-            <div class="def-dropdown right-0 sm:right-1 w-full sm:w-[300px]">
-                <div class="flex flex-col space-y-1">
-                    <router-link to="profile" @click="toggleClickListener" class="pt-2">
-                        <SmallUser :userNameCls="'text-blue-500'" :user="user" />
-                    </router-link>
+            <div class="def-dropdown right-0 w-full h-full sm:h-max sm:w-[300px] flex flex-col space-y-2 ">
+                <router-link to="profile" @click="toggle" class="pt-2">
+                    <SmallUser :userNameCls="'text-blue-500'" :user="user" />
+                </router-link>
 
-                    <router-link to="settings" class="profile-dropdown-list-item" @click="toggleClickListener" >Settings</router-link>
+                <router-link to="settings" class="profile-dropdown-list-item" @click="toggle">Settings</router-link>
 
-                    <Logout @click="toggleClickListener"  />
-                </div>
+                <Logout @click="toggle" />
             </div>
         </div>
     </div>
@@ -37,38 +35,15 @@ export default {
         ...mapGetters({ user: "user" }),
     },
 
-    watch: {
-        showDrop(){
-            this.$emit('dropdownToggled', {
-                name: 'profile',
-                opened: this.showDrop
-            })
-        }
-    },
-
     methods: {
-
-        clickOutside(e){
-            if (this.$refs.wrap !==undefined && this.$refs.wrap.contains(e.target)===false) {
-                this.removeClickListener()
-            }
-        },
-
-        addClickListener(){
-            document.addEventListener('click', this.clickOutside)
-            this.showDrop = true
-        },
-
-        removeClickListener(){
-            document.removeEventListener('click', this.clickOutside)
+        clickAway(){
             this.showDrop = false
         },
 
-        toggleClickListener(){
-            this.showDrop
-                ? this.removeClickListener()
-                : this.addClickListener()
+        toggle(){
+            this.showDrop = !this.showDrop
         },
+
     },
 
 }

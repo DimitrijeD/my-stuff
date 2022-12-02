@@ -1,5 +1,5 @@
 <template>
-    <DefaultCardLayout class="space-y-3" :contentGapCls="'space-y-3'">
+    <DefaultCardLayout class="space-y-1.5">
         <template #header >
             <div class="w-full relative">
                 <input
@@ -16,18 +16,20 @@
         </template>
 
         <template #body>
-            <TransitionGroup tag="div" name="list" class="space-y-3 py-1 relative">
-                <GroupCard
-                    v-for="group_id in filteredGroupsIds" 
-                    :key="group_id"
-                    :group_id="group_id"
-                    @click.native="openChatWindow(group_id)"
-                />
-            </TransitionGroup>
+            <div v-if="allGroupsIds.length" class="h-full">
+                <TransitionGroup tag="div" name="list" class="space-y-3 pb-1 relative">
+                    <GroupCard v-for="group_id in filteredGroupsIds" :key="group_id" :group_id="group_id" />
+                </TransitionGroup>
 
-            <p v-if="nothingFound" class="h-full grid place-items-center text-center font-light text-xl">
-                {{ nothingFound }} 
-            </p>
+                <p v-if="nothingFound" class="h-full grid place-items-center text-center font-light text-xl">
+                    {{ nothingFoundText }} 
+                </p>
+            </div>
+            <div v-else class="h-full">
+                <p class="h-full grid place-items-center text-center font-light text-xl">
+                    {{ noChatsText }}
+                </p>
+            </div>
         </template>
     </DefaultCardLayout>
 </template>
@@ -35,38 +37,41 @@
 <script>
 import { mapGetters } from "vuex"
 import GroupCard from "@/Components/Chat/reuseables/GroupCard.vue"
+import PendingAcceptGroupCard from "@/Components/Chat/reuseables/PendingAcceptGroupCard.vue"
+
 import DefaultCardLayout from '@/Layouts/DefaultCardLayout.vue';
 import SearchIcon from '@/Components/Reuseables/Icons/SearchIcon.vue'
 
 export default {
     
-    components: { DefaultCardLayout, GroupCard, SearchIcon, },
+    components: { DefaultCardLayout, GroupCard, SearchIcon, PendingAcceptGroupCard, },
 
     data(){
         return {
             searchStr: '',
-            nothingFound: '',
+            nothingFound: false,
+            nothingFoundText: 'Nothing found :/',
+            noChatsText: 'Chat history is empty',
+            layouts: {
+                activatedGroupLayout: 'GroupCardLayout',
+                pendingAcceptGroupLayout: 'PendingAcceptGroupCardLayout',
+            },
         }
     },
 
     computed: {
         ...mapGetters({ 
             filteredGroupsIds: ns.groupsManager('filteredGroupsIds'),
+            allGroupsIds: ns.groupsManager('groupsIds'),
         }),
     },
 
     methods: {
-        openChatWindow(group_id){
-            this.$store.dispatch(ns.groupsManager('openGroup'), {group_id: group_id, initiatedBy: 'user'}).then(() =>{
-                this.$emit('closeDropdown')
-            })
-        },
-
         searchInput(){
-            this.nothingFound = '';
+            this.nothingFound = false;
             this.$store.dispatch(ns.groupsManager('filterGroupsBySearchString'), this.searchStr)
 
-            if(!this.filteredGroupsIds.length) this.nothingFound = 'Nothing found :/';
+            if(this.filteredGroupsIds.length == 0) this.nothingFound = true;
         },
     }
 }

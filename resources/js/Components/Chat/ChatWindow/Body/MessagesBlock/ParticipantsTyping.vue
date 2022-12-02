@@ -18,7 +18,7 @@ export default {
 
     computed: {
         someoneTyping(){
-            let typers = this.$store.getters[ ns.groupModule(this.group_id, 'usersTyping') ]
+            let typers = this.$store.getters[ ns.groupModule(this.group_id, 'participantsM/usersTyping') ]
             let num = typers.length
 
             if(num == 0) return []
@@ -36,7 +36,7 @@ export default {
         },
 
         participants(){ 
-            return this.$store.getters[ ns.groupModule(this.group_id, 'participants') ]
+            return this.$store.getters[ ns.groupModule(this.group_id, 'participantsM/participants') ]
         },
     },
 

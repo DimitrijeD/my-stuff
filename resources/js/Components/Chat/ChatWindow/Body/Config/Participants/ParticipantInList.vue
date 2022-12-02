@@ -62,7 +62,7 @@ export default{
 
     methods: {
         removeParticipant(id){
-            this.$store.dispatch(ns.groupModule(this.group_id, 'removeParticipant'), id)
+            this.$store.dispatch(ns.groupModule(this.group_id, 'participantsM/removeParticipant'), id)
         },
 
         /**

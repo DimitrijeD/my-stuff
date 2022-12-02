@@ -4,7 +4,7 @@ namespace App\MyStuff\Repos\ChatMessage;
 
 use App\MyStuff\Repos\ChatMessage\Contracts\ChatMessageRepo;
 use App\MyStuff\General\Traits\CRUDTrait;
-use App\Models\ChatMessage;
+use App\Models\Chat\ChatMessage;
 
 class ChatMessageEloquentRepo implements ChatMessageRepo
 {

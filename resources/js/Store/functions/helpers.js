@@ -35,6 +35,21 @@ export function getMinObjKey(x){
     return Math.min(...x.filter(x => typeof x === 'string'))
 }
 
+export function getMinAndMax(array = []){
+    if(array.length == 0) return []
+
+    return [
+        Math.min(...array.filter(x => typeof x === 'string')),
+        Math.max(...array.filter(x => typeof x === 'string'))
+    ]
+}
+
+export function getClosestMin(array = [], num){
+    if(array.length == 0) return []
+
+    return Math.max(...array.map(x => parseInt(x)).filter(x => x < num))
+}
+
 export function getAllIds(collection){
     var ids = []
 
@@ -108,4 +123,10 @@ export function arrStringsToInt(arr){
             ? parseInt(val)
             : val
     })
+}
+
+export function logMSitTookToExecStoreMsg(end = false){
+    end
+       ? console.log(Date.now() - localStorage.getItem('msgSent') )
+       : localStorage.setItem('msgSent', Date.now())
 }

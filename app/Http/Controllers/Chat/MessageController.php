@@ -3,21 +3,23 @@
 namespace App\Http\Controllers\Chat;
 
 use App\Http\Controllers\Controller;
-use App\Events\MeSawMessage;
-use App\Events\MessageNotification;
-use App\Events\NewChatMessage;
-use App\Events\DeletedMessageEvent;
-use App\Events\UpdateChatMessage;
+use App\Events\ChatEvents\MessageEvents\MeSawMessage;
+use App\Events\ChatEvents\MessageEvents\NewChatMessage;
+use App\Events\ChatEvents\MessageEvents\DeletedMessageEvent;
+use App\Events\ChatEvents\MessageEvents\UpdateChatMessage;
 
 use App\MyStuff\Repos\User\UserEloquentRepo;
 use App\MyStuff\Repos\ChatGroup\ChatGroupEloquentRepo;
 use App\MyStuff\Repos\ChatMessage\ChatMessageEloquentRepo;
 use App\MyStuff\Repos\ParticipantPivot\ParticipantPivotEloquentRepo;
 
-use App\Http\Requests\ChatMessage\StoreChatMessageRequest;
-use App\Http\Requests\ChatMessage\SeenChatMessageRequest;
-use App\Http\Requests\ChatMessage\DeleteMessageRequest;
-use App\Http\Requests\ChatMessage\UpdateMessageRequest;
+use App\Http\Requests\Chat\Message\StoreChatMessageRequest;
+use App\Http\Requests\Chat\Message\SeenChatMessageRequest;
+use App\Http\Requests\Chat\Message\DeleteMessageRequest;
+use App\Http\Requests\Chat\Message\UpdateMessageRequest;
+use App\Http\Requests\Chat\Message\GetEarlyerMessagesRequest;
+use App\Http\Requests\Chat\Message\GetMissingMessagesRequest;
+use App\Http\Requests\Chat\Message\GetLatestMessagesRequest;
 
 use App\Http\Response\ApiResponse;
 
@@ -36,10 +38,6 @@ class MessageController extends Controller
         $this->participantPivot = $participantPivot;
     }
 
-    public function getMissingMessages($group_id, $latest_msg_id)
-    {
-        return $this->chatMessageRepo->getMissingMessages($group_id, $latest_msg_id);
-    }
 
     public function store(StoreChatMessageRequest $request)
     {
@@ -52,22 +50,8 @@ class MessageController extends Controller
             'edited' => false // @todo why doesnt ->default() in migration files not appply def value to collumn. Also why doesnt select query return that collumn if i do not define column on create
         ]);
 
-        // @todo can be just update query
-        $pivot = $this->participantPivot->first([
-            'user_id' => $sender->id,
-            'group_id' => $request->group_id
-        ]);
-
-        $this->participantPivot->update($pivot, [
-            'last_message_seen_id' => $message->id,
-            'updated_at' => now()
-        ]);
-        // ---
-
-        // update groups field 'updated_at' to NOW in order to be able to sort users groups by 'time of last message'
         $this->chatGroupRepo->update(
-            $this->chatGroupRepo->find($request->group_id), 
-            [
+            $request->group, [
                 'updated_at' => now(), 
                 'last_msg_id' => $message->id
             ]
@@ -75,61 +59,39 @@ class MessageController extends Controller
 
         broadcast(new NewChatMessage($message));
 
-        $this->newChatMessageNotification($request->group_id, $sender, $message);
-
-        return response()->json($message, 201);
-    }
-
-    /**
-     * THIS REQUIRES COMPLETE REFACTOR
-     * -- when user unlocks chat, he should auto listen for new messages in all chats.
-     */
-    private function newChatMessageNotification($group_id, $sender, $newMessage)
-    {
-        $group = $this->chatGroupRepo->find($group_id);
-        $participants = $group->participants->where('id', '!=' , $sender->id);
-
-        foreach ($participants as $participant){
-            $messageNotification = [
-                'group_id' => $group_id,
-                'sender' => $sender,
-                'created_at' => $newMessage->created_at,
-                'forUserId' => $participant->id ,
-            ];
-            broadcast(new MessageNotification($messageNotification))->toOthers(); // @todo why is this in loop?
-        }
+        return response()->json([], 201);
     }
 
     public function messageIsSeen(SeenChatMessageRequest $request)
     {
-        $user_id = auth()->user()->id;
+        if(!$updatedPivot = $this->participantPivot->update(
+            $this->participantPivot->first([
+                'user_id' => auth()->user()->id,
+                'group_id' => $request->group_id
+            ]), [
+                'last_message_seen_id' => $request->message_id_saw,
+                'updated_at' => date('Y-m-d H:i:s')
+            ]
+        )) throw new InternalServerErrorException(__("serverError.failed")); 
 
-        $pivot = $this->participantPivot->first([
-            'user_id' => $user_id,
-            'group_id' => $request->group_id
-        ]);
+        broadcast(new MeSawMessage($updatedPivot));
 
-        $updatedPivot = $this->participantPivot->update($pivot, [
-            'last_message_seen_id' => $request->lastMessageId,
-            'updated_at' => date('Y-m-d H:i:s')
-        ]);
-
-        if($updatedPivot){
-            broadcast(new MeSawMessage($updatedPivot));
-            return response()->json('success', 200);
-        }
-        
-        return response()->json('error', 400);
+        return response()->json([], 200);
     }
 
-    public function getLatestMessages(Request $request)
+    public function getLatestMessages(GetLatestMessagesRequest $request)
     {
-        return $this->chatMessageRepo->getLatestMessages($request->group_id);
+        return response()->json($this->chatMessageRepo->getLatestMessages($request->group_id), 200);
     }
 
-    public function getBeforeMessage($group_id, $earliest_msg_id)
+    public function getBeforeMessage(GetEarlyerMessagesRequest $request)
     {
-        return $this->chatMessageRepo->getBeforeMessage($group_id, $earliest_msg_id);
+        return response()->json($this->chatMessageRepo->getBeforeMessage($request->group_id, $request->earliest_msg_id), 200);
+    }
+
+    public function getMissingMessages(GetMissingMessagesRequest $request)
+    {
+        return response()->json($this->chatMessageRepo->getMissingMessages($request->group_id, $request->latest_msg_id), 200);
     }
 
     public function delete(DeleteMessageRequest $request)

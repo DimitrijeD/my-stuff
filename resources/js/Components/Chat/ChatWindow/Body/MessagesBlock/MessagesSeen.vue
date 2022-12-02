@@ -38,7 +38,7 @@ export default {
     methods: {
         hasAnybodySeenThis(){ return this.user_ids.length > 0 ? true : false },
 
-        getParticipantThumbnail(id) { return this.$store.getters[ns.groupModule(this.group_id, 'getParticipantThumbnail')](id) },
+        getParticipantThumbnail(id) { return this.$store.getters[ns.groupModule(this.group_id, 'participantsM/getParticipantThumbnail')](id) },
 
         toShow(participant_id){
             if(this.config.neverShowUserBewlowHisOwnMsg){
@@ -66,7 +66,10 @@ export default {
 .list-move,
 .list-enter-active,
 .list-leave-active{
-    transition: all 0.3s ease-out;
+    /* transition: all 0.3s ease-out; */
+    transition-timing-function: linear;
+    transition-property: opacity, transform;
+    transition-duration: 0.2s;
 }
 
 .list-enter-from,
