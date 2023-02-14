@@ -1,5 +1,5 @@
 <template>
-    <TransitionGroup tag="div" name="list" class="py-1 space-y-0.5 relative">
+    <TransitionGroup tag="div" name="list" class="py-1 space-y-0.5 relative overflow-hidden" v-show="someoneTyping.length">
         <p v-for="(someone, index) in someoneTyping" :key="index" class="italic text-sm text-gray-500 dark:text-gray-400 ml-2 select-none">
             {{ someone }} 
         </p>
@@ -32,6 +32,7 @@ export default {
             if(num < this.showNtypers) return this.prepareMultipleTyping(typers, num)
             
             typers = typers.slice(0, this.showNtypers)
+
             return this.prepareMultipleTyping(typers, typers.length, num - this.showNtypers)
         },
 

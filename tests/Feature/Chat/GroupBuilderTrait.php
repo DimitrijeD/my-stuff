@@ -9,12 +9,7 @@ trait GroupBuilderTrait
     {
         $this->chatSeeder = (resolve(ChatGroupClusterSeeder::class))->run();
 
-        $this->user      = $this->chatSeeder->getCreator();
-        $this->otherUser = $this->chatSeeder->getOtherUser();
-        $this->group     = $this->chatSeeder->group;
-        $this->group_id  = $this->chatSeeder->group->id;
-
-        $this->withHeader('Authorization', "Bearer {$this->user->createToken('app')->plainTextToken}");
+        $this->setGroup();        
     }
 
     public function makeGroupWith($config)
@@ -23,6 +18,11 @@ trait GroupBuilderTrait
         $this->chatSeeder->massSetter($config);
         $this->chatSeeder = $this->chatSeeder->run();
 
+        $this->setGroup();
+    }
+
+    private function setGroup()
+    {
         $this->user      = $this->chatSeeder->getCreator();
         $this->otherUser = $this->chatSeeder->getOtherUser();
         $this->group     = $this->chatSeeder->group;

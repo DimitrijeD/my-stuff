@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Response;
-use \Illuminate\Validation\ValidationException;
 
 class ApiResponse
 {

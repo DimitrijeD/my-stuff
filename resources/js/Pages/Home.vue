@@ -3,16 +3,22 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default{
+    components: {
+    },
+
     data(){
         return {
-           
+            
         }
     },
 
     computed:{
-
+        ...mapGetters({ 
+            user: "user",
+        }),
     },
 
     created(){
@@ -20,10 +26,7 @@ export default{
     },
 
     mounted(){
-        // window.onresize = () => {
-        //     // console.log(window.innerWidth)
-        //     // console.log(window.innerHeight)
-        // }
+        
     },
 
     methods: {

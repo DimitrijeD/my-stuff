@@ -42,7 +42,8 @@ import InfoIcon from "@/Components/Reuseables/Icons/InfoIcon.vue"
 import LoadingIcon from "@/Components/Reuseables/Icons/LoadingIcon.vue"
 import LockOpenIcon from "@/Components/Reuseables/Icons/LockOpenIcon.vue"
 import LockClosedIcon from "@/Components/Reuseables/Icons/LockClosedIcon.vue"
-
+import AttachmentIcon from "@/Components/Reuseables/Icons/AttachmentIcon.vue"
+import CallIcon from "@/Components/Reuseables/Icons/CallIcon.vue"
 
 export default {
     components:{
@@ -77,6 +78,8 @@ export default {
         LoadingIcon,
         LockOpenIcon,
         LockClosedIcon,
+        AttachmentIcon,
+        CallIcon,
     },
 
     data(){
@@ -113,6 +116,8 @@ export default {
                 'LoadingIcon',
                 'LockOpenIcon',
                 'LockClosedIcon',
+                'AttachmentIcon',
+                'CallIcon',
             ]
         }
     }

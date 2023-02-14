@@ -73,6 +73,8 @@ const getters = {
     whoSawWhat: (state) => state.whoSawWhat,
 
     numberOfMessages: (state) => Object.keys(state.messages).length,
+
+    messageFiles: (state) => (id) => state.messages[id]?.files ?? [],
 }
 
 export default getters 

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\MyStuff\Storage\ImageStorage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -15,11 +15,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'email',
         'password',
@@ -31,11 +26,6 @@ class User extends Authenticatable
         'userSetting'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -43,11 +33,6 @@ class User extends Authenticatable
         'password_reset'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -57,6 +42,28 @@ class User extends Authenticatable
     public function fullName()
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function makeProfileImages($image)
+    {
+        $this->image = (new ImageStorage(config('images.user.image')))
+            ->file($image)
+            ->create()
+            ->url();
+
+        $this->thumbnail = (new ImageStorage(config('images.user.thumbnail')))
+            ->file($image)
+            ->create()
+            ->url();
+    }
+
+    /**
+     * Deletes image and thumbnail
+     */
+    public function deleteProfileImages()
+    {
+        (new ImageStorage(config('images.user.image'))    )->delete($this->image);
+        (new ImageStorage(config('images.user.thumbnail')))->delete($this->thumbnail);
     }
     
     public function account_verification()

@@ -272,5 +272,19 @@
             dark:from-darker-400 dark:to-darker-200;
     }
 
+    /*--------------------------------*/
+    .action-icon{
+        @apply h-8 hover:scale-105 opacity-70 hover:opacity-80;
+    }
+
+    .action-icon-with-fill{
+        @apply fill-blue-500 stroke-transparent;
+    }
+
+    .action-icon-with-stroke{
+        @apply fill-transparent stroke-blue-500;
+    }
+    /*--------------------------------*/
+
 }
   

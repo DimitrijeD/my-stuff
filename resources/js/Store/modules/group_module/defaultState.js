@@ -18,6 +18,7 @@ export default () => {
             change_role: {},
             remove: [],
             send_message: null,
-        }
+        },
+        test: null,
     }
 }

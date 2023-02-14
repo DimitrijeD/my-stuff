@@ -30,6 +30,7 @@ const getters =
     canSendMessage: (state) => state.permissions.send_message,
     canChangeName: (state) => state.permissions.change_group_name,
     canChangeGroupType: (state) => state.permissions.change_group_type,
+    
 }
 
 export default getters 

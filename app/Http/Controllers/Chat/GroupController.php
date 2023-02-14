@@ -21,11 +21,9 @@ use Illuminate\Http\Request;
 
 class GroupController extends Controller
 {
-    protected $chatGroupRepo;
-
-    public function __construct(ChatGroupEloquentRepo $chatGroupRepo)
+    public function __construct(protected ChatGroupEloquentRepo $chatGroupRepo)
     {
-        $this->chatGroupRepo = $chatGroupRepo;
+        
     }
 
     public function store(StoreGroupRequest $request, ParticipantPivotEloquentRepo $participantPivotRepo)

@@ -1,5 +1,7 @@
 import './bootstrap';
 
+// const token = localStorage.getItem('token');
+
 import { createApp } from 'vue';
 
 import App from "@/App.vue";

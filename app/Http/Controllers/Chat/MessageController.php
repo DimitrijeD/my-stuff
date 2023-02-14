@@ -12,6 +12,7 @@ use App\MyStuff\Repos\User\UserEloquentRepo;
 use App\MyStuff\Repos\ChatGroup\ChatGroupEloquentRepo;
 use App\MyStuff\Repos\ChatMessage\ChatMessageEloquentRepo;
 use App\MyStuff\Repos\ParticipantPivot\ParticipantPivotEloquentRepo;
+use App\MyStuff\Repos\File\FileEloquentRepo;
 
 use App\Http\Requests\Chat\Message\StoreChatMessageRequest;
 use App\Http\Requests\Chat\Message\SeenChatMessageRequest;
@@ -21,47 +22,48 @@ use App\Http\Requests\Chat\Message\GetEarlyerMessagesRequest;
 use App\Http\Requests\Chat\Message\GetMissingMessagesRequest;
 use App\Http\Requests\Chat\Message\GetLatestMessagesRequest;
 
+use App\MyStuff\Storage\FileStorage;
 use App\Http\Response\ApiResponse;
-
 use App\Exceptions\InternalServerErrorException;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class MessageController extends Controller
 {
-    protected $chatGroupRepo, $userRepo, $chatMessageRepo, $participantPivot;
-
-    public function __construct(ChatGroupEloquentRepo $chatGroupRepo, UserEloquentRepo $userRepo, ChatMessageEloquentRepo $chatMessageRepo, ParticipantPivotEloquentRepo $participantPivot)
-    {
-        $this->chatGroupRepo = $chatGroupRepo;
-        $this->userRepo = $userRepo;
-        $this->chatMessageRepo = $chatMessageRepo;
-        $this->participantPivot = $participantPivot;
+    public function __construct(
+        protected ChatGroupEloquentRepo $chatGroupRepo, 
+        protected UserEloquentRepo $userRepo, 
+        protected ChatMessageEloquentRepo $chatMessageRepo, 
+        protected ParticipantPivotEloquentRepo $participantPivot,
+        protected FileEloquentRepo $fileRepo
+    ){
+        
     }
-
 
     public function store(StoreChatMessageRequest $request)
     {
-        $sender = auth()->user();
-
         $message = $this->chatMessageRepo->create([
-            'user_id' => $sender->id,
+            'user_id' => auth()->user()->id,
             'group_id' => $request->group_id,
-            'text' => $request->text,
+            'text' => $request?->text,
             'edited' => false // @todo why doesnt ->default() in migration files not appply def value to collumn. Also why doesnt select query return that collumn if i do not define column on create
         ]);
 
+        $message = $this->fileRepo->setMessageFiles($message, $request->all()['files'] ?? []);
+
         $this->chatGroupRepo->update(
             $request->group, [
-                'updated_at' => now(), 
+                'updated_at' => date('Y-m-d H:i:s'), 
                 'last_msg_id' => $message->id
             ]
         );
-
+       
         broadcast(new NewChatMessage($message));
 
         return response()->json([], 201);
     }
 
+    // @todo No need to fetch pivot because it is already in request
     public function messageIsSeen(SeenChatMessageRequest $request)
     {
         if(!$updatedPivot = $this->participantPivot->update(
@@ -70,7 +72,7 @@ class MessageController extends Controller
                 'group_id' => $request->group_id
             ]), [
                 'last_message_seen_id' => $request->message_id_saw,
-                'updated_at' => date('Y-m-d H:i:s')
+                'updated_at' => now()
             ]
         )) throw new InternalServerErrorException(__("serverError.failed")); 
 
@@ -119,7 +121,7 @@ class MessageController extends Controller
     public function update(UpdateMessageRequest $request)
     {
         if(! $updatedMessage = $this->chatMessageRepo->update(
-            $this->chatMessageRepo->find($request->message_id), 
+            $this->chatMessageRepo->first(['id' => $request->message_id], ['files']), 
             [
                 'text' => $request->text,
                 'edited' => true

@@ -43,12 +43,16 @@ class ProfileController extends Controller
     }
 
     /**
-     * Deletes user account
+     * Deletes user account, profile image and thumbnail
      */
     public function delete(UserEloquentRepo $userRepo)
     {
-        if(! $userRepo->delete(auth()->user()))
+        $user = auth()->user();
+
+        if(! $userRepo->delete($user))
             throw new InternalServerErrorException(__('serverError.failed'));
+
+        $user->deleteProfileImages();
 
         return ApiResponse::success([
             'messages' => [[ __('profile.youDeletedAcc') ]],

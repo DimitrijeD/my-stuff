@@ -21,7 +21,7 @@
                 <span class="my-auto ">{{ shareableConfig.numColors }}</span>
             </div>
         </div> -->
-
+      
         <div class="setting-block">
             <button class="setting-btn-do " @click="updateColorz">Save Colorz Config</button>
             <button class="setting-btn-do " @click="usesDefaultColorz">Default Colorz</button>

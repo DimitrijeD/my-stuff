@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+
 // Route::get('email-verification', function (){
 //     return view('emails.verifyEmail', [
 //         'url' => "http://localhost/email-verification/uid/32/c/EGG3kLbdTdytX5GzZekvhDlt3Z0bL43l0LBgN8DC698Nggse0Ei1hqhCzvo7uPhH",
@@ -22,4 +23,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/{any}', function () {
     return view('welcome');
-})->where('any', '.*');
+})->name('home')->where('any', '.*');
