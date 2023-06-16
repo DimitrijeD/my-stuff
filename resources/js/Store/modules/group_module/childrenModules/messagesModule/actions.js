@@ -228,7 +228,9 @@ const actions = {
                     participant_id: e.data.user_id,
                     now: h.nowISO()
                 }, root)
-                
+
+                // console.log(e.data.files)
+
                 dispatch('newMessageEvent', e.data).then(()=>{
                     if(rootGetters[ns.groupModule(state.group_id, 'participantsM/getMyAccepted')]){
                         dispatch(ns.groupsManager('openGroup'), {

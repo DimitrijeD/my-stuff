@@ -5,7 +5,7 @@ export class Colorz {
         this.DEC         = 'dec'; 
 
         this.numColors = parseInt(params.numColors)
-        
+        this.hueMassOffset = parseInt(params.hueMassOffset)
         this.colors = [] 
         this.classes = []
 
@@ -118,6 +118,8 @@ export class Colorz {
         let saturationSum = this.saturation.start
         let lightnessSum  = this.lightness.start
 
+        hueSum = this.addHueMassOffset(hueSum)
+
         // first color is set to what ever was provided by user, while rest is calculated
         this.colors.push([hueSum, saturationSum, lightnessSum]) 
 
@@ -174,6 +176,11 @@ export class Colorz {
             if(start == end )
                 return Math.round( (max / (numElements - 1)) * 100 ) / 100
         }
+    }
+
+    addHueMassOffset(saturationSum)
+    {
+        return saturationSum + this.hueMassOffset
     }
 
     addOffset(color, offset, max, canOverflow){

@@ -14,6 +14,7 @@ import AppCSSExamples from '@/Pages/AppCSSExamples/AppCSSExamples.vue';
 import Home from '@/Pages/Home.vue';
 import NotFound from '@/Pages/NotFound.vue';
 import Settings from '@/Pages/Settings/Settings.vue';
+import ColorzTest from '@/Pages/ColorzTest.vue';
 
 /* ----------------------------------------------------------- */
 
@@ -35,6 +36,11 @@ export default [
         path: '/',
         name: "Home",
         component: Home,
+    },
+    {
+        path: '/colorz-test',
+        name: "ColorzTest",
+        component: ColorzTest,
     },
     {
         path: '/register',

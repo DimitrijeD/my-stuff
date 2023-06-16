@@ -44,7 +44,7 @@ class ChatGroupClusterSeeder extends Seeder
     const MIN_NUM_MESSAGES = 10;
     const MAX_NUM_MESSAGES = 100;
 
-    const USE_INC_INT_AS_TXT = false;
+    const USE_INC_INT_AS_TXT = 1;
     
     /**
      * Define seeder's behaviour and type
@@ -59,12 +59,12 @@ class ChatGroupClusterSeeder extends Seeder
         $this->minTextLen = self::MIN_TEXT_LEN;
         $this->maxTextLen = self::MAX_TEXT_LEN;
 
-        $this->msgType = self::DISTRIBUTION_DEFAULT;
-        $this->timeType = self::DISTRIBUTION_DEFAULT;
+        $this->msgType = self::DISTRIBUTION_MAX_ACTIVITY;
+        $this->timeType = self::DISTRIBUTION_MAX_ACTIVITY;
         $this->seenType = self::DISTRIBUTION_MAX_ACTIVITY;
 
-        // $this->numUsers = 20;
-        $this->numUsers = null;
+        $this->numUsers = 20;
+        // $this->numUsers = null;
 
         $this->users = (new BuildUsers([], $this->numUsers))
             ->resolve()

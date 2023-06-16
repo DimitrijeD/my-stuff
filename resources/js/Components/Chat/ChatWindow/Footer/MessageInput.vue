@@ -1,5 +1,5 @@
 <template>
-    <div class="dark:bg-gradient-to-t dark:bg-transparent dark:from-neutral-800 p-2 flex gap-2">
+    <div class="relative dark:bg-gradient-to-t dark:bg-transparent dark:from-neutral-800 flex gap-2">
         <textarea
             class="flex-grow p-4 resize-none rounded-2xl outline-none bg-white border border-blue-400 text-gray-700 dark:bg-darker-400 dark:text-gray-300 dark:border-none overflow-x-hidden overflow-y-auto scroll2"
             rows="3"
@@ -32,7 +32,15 @@ export default {
     data(){
         return{
             message: '',
+            changeTextAction: ns.groupModule(this.group_id, 'newMessageM/text'),
+            sendAction: ns.groupModule(this.group_id, 'newMessageM/send'),
         }
+    },
+
+    watch: {
+        message(){
+            this.$store.dispatch(this.changeTextAction, this.message)
+        },
     },
 
     computed: {
@@ -46,17 +54,20 @@ export default {
         },
 
         sendMessage(){
-            if(this.message === '' || this.message.trim() == '') return
-
-            this.$store.dispatch(ns.groupModule(this.group_id, 'messagesM/storeMessage'), this.messagePayload()).then(()=> {
+            this.$store.dispatch(this.sendAction).then(()=>{
                 this.message = ''
             })
+            // if(this.message === '' || this.message.trim() == '') return
+
+            // this.$store.dispatch(ns.groupModule(this.group_id, 'messagesM/storeMessage'), this.messagePayload()).then(()=> {
+            //     this.message = ''
+            // })
         },
 
-        typingWhisper(isTyping){
-            Echo.private("group." + this.group_id).whisper("typing", {
+        typingWhisper(bool){
+            this.$store.dispatch(ns.groupModule(this.group_id, 'imTyping'), {
                 id: this.user.id,
-                isTyping: isTyping
+                isTyping: bool
             })
         },
 
@@ -66,6 +77,7 @@ export default {
                 user_id: this.user.id
             };
         },
+
     }
 }
 </script>

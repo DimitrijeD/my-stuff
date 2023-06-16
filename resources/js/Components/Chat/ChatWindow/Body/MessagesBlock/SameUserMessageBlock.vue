@@ -8,8 +8,9 @@
             :imgCls="'w-12 h-12 img-shadow'"
             :layoutCls="'gap-1'"
             class="py-1"
+            :key="this.block.blockOwnerId" 
         /> 
-
+        
         <TransitionGroup tag="div" name="list" class=" space-y-3 relative">
             <Message 
                 v-for="(message_id, index) in block.messages" 
@@ -25,8 +26,8 @@
 <script>
 import { mapGetters } from "vuex";
 
-import SmallUser from   '@/Components/Reuseables/SmallUser.vue';
-import Message from '@/Components/Chat/ChatWindow/Body/MessagesBlock/Message/Message.vue'
+import SmallUser from '@/Components/Reuseables/SmallUser.vue';
+import Message from '@/Components/Chat/ChatWindow/Body/MessagesBlock/Message/Message.vue';
 
 export default {
     inject: ['group_id'],
@@ -51,8 +52,8 @@ export default {
 
     methods: {
         getUser(id) { 
-            const user = this.$store.getters[ns.groupModule(this.group_id, 'participantsM/getParticipant')](id) 
-            return user ? user : null
+            const user = this.$store.getters[ns.groupModule(this.group_id, 'participantsM/getParticipant')](id);
+            return user ? user : null;
         },
     }
 }

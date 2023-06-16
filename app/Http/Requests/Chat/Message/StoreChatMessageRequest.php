@@ -3,10 +3,11 @@
 namespace App\Http\Requests\Chat\Message;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\File;
 
 class StoreChatMessageRequest extends FormRequest
 {
-    const MESSAGE_TEXT_RULES = ['required', 'string', 'max:1000'];
+    const MESSAGE_TEXT_RULES = ['sometimes', 'string', 'max:1000', 'nullable'];
     /**
      * If user belongs to chat group
      *
@@ -26,8 +27,8 @@ class StoreChatMessageRequest extends FormRequest
     {
         return [
             'text' => self::MESSAGE_TEXT_RULES,
-            'user_id' => ['required', 'integer'],
             'group_id' => ['required', 'integer'],
+            'files' => ['sometimes', 'array'],
         ];
     }
 }

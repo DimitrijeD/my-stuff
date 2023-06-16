@@ -14,10 +14,15 @@
                                 <slot name="messages"></slot>
                             </template>
                         </ChatMessagesScroll>
+
                         <slot name="action-response"></slot>
+                        <slot name="files"></slot>
+                        
                     </div>
 
-                    <slot name="footer"></slot>
+                    <div class="px-2 pb-2 pt-1">
+                        <slot name="footer"></slot>
+                    </div>
                 </div>
                 <!-- / -->
 
@@ -39,11 +44,11 @@ export default {
 
     props: [ 'size', ],
 
-    components: { ChatMessagesScroll },
+    components: { ChatMessagesScroll, },
 
     data(){
         return {
-            position: 0,
+
         }
     },
 
@@ -57,7 +62,8 @@ export default {
                 width: this.size.width,
                 height: this.window.minimized ? '' : this.size.height,
             }
-        }
+        },
+
     },
 
     methods: {

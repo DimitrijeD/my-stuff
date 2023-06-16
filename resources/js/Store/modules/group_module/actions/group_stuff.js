@@ -24,6 +24,9 @@ export default {
         dispatch('messagesM/registerMessagesEventListeners')
         dispatch('messagesM/evalSeenState')
 
+        commit('newMessageM/group_id', group.id)
+        commit('filesM/group_id', group.id)
+
         return dispatch('createPermissions')
     },
 
@@ -89,6 +92,10 @@ export default {
                 commit('model_type', e.data.model_type)
                 dispatch('createPermissions')
             })
+    },
+
+    imTyping({ state }, payload){
+        Echo.private(ev.groupChannel(state.id)).whisper(ev.typing(), payload)
     },
 
 }

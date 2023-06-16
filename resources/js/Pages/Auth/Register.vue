@@ -119,7 +119,8 @@ export default {
             data.append('email',                 this.form.email);
             data.append('password',              this.form.password);
             data.append('password_confirmation', this.form.password_confirmation);
-            data.append('profilePicture',        this.form.profilePicture);
+            
+            if(this.form.profilePicture) data.append('profilePicture', this.form.profilePicture);
 
             return data
         },

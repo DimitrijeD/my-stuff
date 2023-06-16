@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
 {
+    const MAX_IMAGE_SIZE = 5120;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -28,7 +29,7 @@ class RegisterRequest extends FormRequest
             'last_name'      => self::getUserNameRules(),
             'email'          => ['required', 'string', 'min:3', 'max:255', 'email', 'unique:users'],
             'password'       => ['required', 'string', 'min:6', 'max:255', 'confirmed'],
-            'profilePicture' => ['required', 'file', 'image', 'max:5120'],
+            'profilePicture' => ['sometimes', 'file', 'image', 'max:'.self::MAX_IMAGE_SIZE],
         ];
     }
 

@@ -28,11 +28,9 @@ use App\Exceptions\ModelGoneException;
 
 class ParticipantsController extends Controller
 { 
-    protected $pivotRepo;
-
-    public function __construct(ParticipantPivotEloquentRepo $pivotRepo)
+    public function __construct(protected ParticipantPivotEloquentRepo $pivotRepo)
     {
-        $this->pivotRepo = $pivotRepo;
+        
     }
 
     public function addUsersToGroup( AddParticipantRequest $request, ParticipantPivotFormatter $pivotFormatter, ChatGroupEloquentRepo $chatGroupRepo )

@@ -5,6 +5,7 @@
             :key="index"
             :block="block"
         />
+        
         <ParticipantsTyping :key="'typing'" />
     </div>
 </template>

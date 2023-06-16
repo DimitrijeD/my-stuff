@@ -5,6 +5,7 @@ namespace App\Models\Chat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\File;
 
 class ChatMessage extends Model
 {
@@ -32,4 +33,8 @@ class ChatMessage extends Model
         return $this->belongsTo(ChatGroup::class, 'group_id', 'id');
     }
 
+    public function files()
+    {
+        return $this->morphMany(File::class, 'fileable', 'parent_model', 'parent_id');
+    }
 }

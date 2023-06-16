@@ -9,10 +9,8 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Database\Factories\UserFactory;
-use App\Http\Response\ApiResponse;
-use App\Models\UserSettings;
 
-class RegisterTest extends TestCase
+class RegisterFailTest extends TestCase
 {
     use RefreshDatabase;
     
@@ -21,7 +19,6 @@ class RegisterTest extends TestCase
         parent::setUp();
 
         Storage::fake('avatars');
-        $image = UploadedFile::fake()->image('avatar.jpg');
 
         $this->userFormData = [
             'first_name' => UserFactory::getDefUser()['first_name'],
@@ -29,35 +26,10 @@ class RegisterTest extends TestCase
             'email'      => UserFactory::getDefUser()['email'],
             'password'              => UserFactory::getDefUser()['password'],
             'password_confirmation' => UserFactory::getDefUser()['password'],
-            'profilePicture' => $image,
+            'profilePicture' => UploadedFile::fake()->image('avatar.jpg'),
         ];
         
         $this->registerEndpoint = '/api/register';
-    }
-
-    public function test_user_stored()
-    {
-        $this->post($this->registerEndpoint, $this->userFormData);
-
-        $this->assertDatabaseHas('users', [
-            'email' => $this->userFormData['email'],
-        ]);
-    }
-
-    public function test_user_register_gets_json()
-    {
-        $response = $this->post($this->registerEndpoint, $this->userFormData);
-             
-        $response->assertStatus(201);
-        $response->assertJsonFragment(ApiResponse::success([
-            'messages' => [ [__('auth.registered') ]],
-        ]));
-
-        $response->assertJsonStructure([
-            'messages' => [],
-            'data' => ['user', 'token'],
-            'response_type'
-        ]);
     }
 
     public function test__required__first_name()
@@ -68,7 +40,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'first_name' => [__('The first name field is required.')],
+                'first_name' => [__('validation.required', ['attribute' => 'first name'])],
             ],
             'response_type' => 'error'
         ]);
@@ -82,7 +54,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'last_name' => [__('The last name field is required.')],
+                'last_name' => [__('validation.required', ['attribute' => 'last name'])],
             ],
             'response_type' => 'error'
         ]);
@@ -96,7 +68,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'email' => [__('The email field is required.')],
+                'email' => [__('validation.required', ['attribute' => 'email'])],
             ],
             'response_type' => 'error'
         ]);
@@ -110,21 +82,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'password' => [__('The password field is required.')],
-            ],
-            'response_type' => 'error'
-        ]);
-    }
-
-    public function test__required__profile_picture()
-    {
-        $this->userFormData['profilePicture'] = '';
-
-        $response = $this->post($this->registerEndpoint, $this->userFormData);
-
-        $response->assertStatus(422)->assertJson([
-            'messages' => [
-                'profilePicture' => [__('The profile picture field is required.')],
+                'password' => [__('validation.required', ['attribute' => 'password'])],
             ],
             'response_type' => 'error'
         ]);
@@ -138,7 +96,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'password' => [__('The password confirmation does not match.')],
+                'password' => [__('validation.confirmed', ['attribute' => 'password'])],
             ],
             'response_type' => 'error'
         ]);
@@ -152,7 +110,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'first_name' => [__('The first name must not be greater than 255 characters.')],
+                'first_name' => [__('validation.max.string', ['attribute' => 'first name', 'max' => 255])],
             ],
             'response_type' => 'error'
         ]);
@@ -166,7 +124,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'first_name' => [__('The first name must be at least 3 characters.')],
+                'first_name' => [__('validation.min.string', ['attribute' => 'first name', 'min' => 3])],
             ],
             'response_type' => 'error'
         ]);
@@ -180,7 +138,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'last_name' => [__('The last name must not be greater than 255 characters.')],
+                'last_name' => [__('validation.max.string', ['attribute' => 'last name', 'max' => 255])],
             ],
             'response_type' => 'error'
         ]);
@@ -194,7 +152,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'last_name' => [__('The last name must be at least 3 characters.')],
+                'last_name' => [__('validation.min.string', ['attribute' => 'last name', 'min' => 3])],
             ],
             'response_type' => 'error'
         ]);
@@ -208,7 +166,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'email' => [__('The email must not be greater than 255 characters.')],
+                'email' => [__('validation.max.string', ['attribute' => 'email', 'max' => 255])],
             ],
             'response_type' => 'error'
         ]);
@@ -222,7 +180,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'email' => [__('The email must be at least 3 characters.')],
+                'email' => [__('validation.min.string', ['attribute' => 'email', 'min' => 3])],
             ],
             'response_type' => 'error'
         ]);
@@ -236,7 +194,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'password' => [__('The password must not be greater than 255 characters.')],
+                'password' => [__('validation.max.string', ['attribute' => 'password', 'max' => 255])],
             ],
             'response_type' => 'error'
         ]);
@@ -250,7 +208,7 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'password' => [__('The password must be at least 6 characters.')],
+                'password' => [__('validation.min.string', ['attribute' => 'password', 'min' => 6])],
             ],
             'response_type' => 'error'
         ]);
@@ -264,51 +222,25 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'email' => [__('The email has already been taken.')],
+                'email' => [__('validation.unique', ['attribute' => 'email'])],
             ],
             'response_type' => 'error'
         ]);
     }
 
-    public function test_image_can_be_jpg()
-    {
-        $this->userFormData['profilePicture'] = UploadedFile::fake()->image('avatar.jpg')->size(5120);
-
-        $response = $this->post($this->registerEndpoint, $this->userFormData);
-
-        $response->assertStatus(201);
-    }
-
-    public function test_image_can_be_png()
-    {
-        $this->userFormData['profilePicture'] = UploadedFile::fake()->image('avatar.png')->size(5120);
-
-        $response = $this->post($this->registerEndpoint, $this->userFormData);
-
-        $response->assertStatus(201);
-    }
-
-    public function test_image_can_be_jpeg()
-    {
-        $this->userFormData['profilePicture'] = UploadedFile::fake()->image('avatar.jpeg')->size(5120);
-
-        $response = $this->post($this->registerEndpoint, $this->userFormData);
-
-        $response->assertStatus(201);
-    }
-
     public function test_image_greater_than_max_size()
     {
-        $this->userFormData['profilePicture'] = UploadedFile::fake()->image('avatar.jpeg')->size(5121);
+        $maxSize = \App\Http\Requests\Auth\RegisterRequest::MAX_IMAGE_SIZE;
+
+        $this->userFormData['profilePicture'] = UploadedFile::fake()->image('avatar.jpeg')->size($maxSize + 1);
 
         $response = $this->post($this->registerEndpoint, $this->userFormData);
 
         $response->assertStatus(422)->assertJson([
             'messages' => [
-                'profilePicture' => [__('The profile picture must not be greater than 5120 kilobytes.')],
+                'profilePicture' => [__('validation.max.file', ['attribute' =>'profile picture', 'max' => $maxSize ])],
             ],
             'response_type' => 'error'
         ]);
     }
-
 }

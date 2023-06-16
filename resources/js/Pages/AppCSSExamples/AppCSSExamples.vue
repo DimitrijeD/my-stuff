@@ -1,17 +1,7 @@
 <template>
     <div v-if="!currentShow" class="container-wide grid grid-cols-2 gap-6">
-        <button 
-            v-for="component in components"
-            class="btn" 
-            @click="currentShow = component">
-                {{ component }}
-        </button>
-
-        <button 
-            v-for="component in components"
-            class="btn" 
-            @click="currentShow = component">
-                {{ component }}
+        <button v-for="component in components" class="btn" @click="currentShow = component">
+            {{ component }}
         </button>
     </div>
     <div v-else class="container-wide">

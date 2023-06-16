@@ -37,16 +37,4 @@ class ValidationSubmitMessageTest extends TestCase
             'response_type' => 'error'
         ]);
     }
-
-    public function test_text_is_required()
-    {
-        $this->userFormData['text'] = '';
-
-        $response = $this->post($this->storeMessageEndpoint, $this->userFormData);
-
-        $response->assertStatus(422)->assertJson([
-            'messages' => [ "text" => [__("The text field is required.")] ],
-            'response_type' => 'error'
-        ]);
-    }
 }
