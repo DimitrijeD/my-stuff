@@ -5,6 +5,7 @@
             <router-link class="nav-btn" to="/">Home</router-link>
             <router-link  v-if="user" class="nav-btn" to="app-css-examples">Examples</router-link>
             <ChatDropdown v-if="user?.email_verified_at" class="px-2"  />
+            <router-link class="nav-btn" to="colorz-test">Test</router-link>
         </div>
         <!-- / -->
 

@@ -13,13 +13,13 @@ use App\Http\Controllers\Chat\MessageController;
 use App\Http\Controllers\Chat\ParticipantsController;
 use App\Http\Controllers\Chat\RoleRuleCachingController;
 
-use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StorageController;
 
-
 Route::group(['middleware' => ['guest', 'throttle:10,1']], function () {  
     Route::post('register', [RegisterController::class, 'register']);
+    
     Route::post('login',           [LoginController::class, 'login']);
     Route::post('forgot-password', [LoginController::class, 'forgotPasswordGiveMeEmail']);
 });
@@ -42,7 +42,7 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
     
     Route::get('logout', [LoginController::class, 'logout']);
 
-    Route::post('users/search', [UsersController::class, 'getMissingUsers']);
+    Route::post('users/search', [UserController::class, 'getMissingUsers']);
 });
 
 Route::group(['prefix' => 'chat', 'middleware' => ['auth:sanctum']], function (){
@@ -77,9 +77,9 @@ Route::group(['prefix' => 'chat', 'middleware' => ['auth:sanctum']], function ()
             Route::post('delete',  [MessageController::class, 'delete']);
             Route::patch('update', [MessageController::class, 'update']);
 
-            Route::get('before-message', [MessageController::class, 'getBeforeMessage' ]); 
+            Route::get('before-message',  [MessageController::class, 'getBeforeMessage' ]); 
             Route::get('latest-messages', [MessageController::class, 'getLatestMessages' ]);
-            Route::get('from-messages', [MessageController::class, 'getMissingMessages']);
+            Route::get('from-messages',   [MessageController::class, 'getMissingMessages']);
 
         });
     });

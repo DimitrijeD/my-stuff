@@ -23,7 +23,7 @@ class FilePathFromUrl
 
     private function trim_path($url) {
         $parts = explode('/', parse_url($url)['path']);
-
+        
         return empty($parts[0])
             ? implode('/', array_slice($parts, 2))
             : implode('/', array_slice($parts, 1));

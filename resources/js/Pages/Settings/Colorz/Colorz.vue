@@ -30,6 +30,21 @@
             </button>
         </div>
 
+        <div>
+            <div class="slidersWrapper">
+                <div class="sliderInputWrapper">
+                    <input 
+                        type="range" 
+                        :min="1" 
+                        :max="360" 
+                        :value="hueMassOffset"
+                        @input="changeSlider($event, 'main')" 
+                        class="w-full"
+                    >
+                </div>
+            </div>
+        </div>
+
         <div class="space-y-36"> 
             <div class="space-y-10" v-for="(scheeme, index) in colorz" :key="`${index}${scheeme.name}`">
                 <h2 class="">{{ scheeme.scheemeName }}</h2>
@@ -154,6 +169,7 @@ export default {
         return {
             colorScheemas: defaultConfig,
             showOnlyBG: true,
+            hueMassOffset: 0,
         }
     },
 
@@ -163,6 +179,7 @@ export default {
             let container = []
 
             for(let i in this.colorScheemas){
+                this.colorScheemas[i].hueMassOffset = this.hueMassOffset
                 let cc = new Colorz(this.colorScheemas[i])
                 cc.make() 
 
@@ -188,14 +205,10 @@ export default {
     methods: {
         usesUsersColorz(){
             this.colorScheemas = this.user.user_setting.colorz 
-
-            // this.isUsingDefault = false
         },
 
         usesDefaultColorz(){
             this.colorScheemas = defaultConfig
-            
-            // this.isUsingDefault = true
         },
 
         // setNumColors($event){
@@ -205,8 +218,12 @@ export default {
         //     }
         // },
 
-        changeSlider(data){
-            this.colorScheemas[data.index][data.path[0]][data.path[1]] = data.value
+        changeSlider(data, type=''){
+            if(type == 'main'){
+                this.hueMassOffset = parseInt(data.target.value)               
+            } else {
+                this.colorScheemas[data.index][data.path[0]][data.path[1]] = data.value
+            }
         },
 
         // hexToHSL(H) {

@@ -2,30 +2,30 @@ import _ from 'lodash';
 window._ = _;
 
 import * as ns from '@/Store/module_namespaces.js'
-window.ns = ns
+window.ns = ns;
 
 window.colorz = new CSSStyleSheet();
 document.adoptedStyleSheets = [colorz];
 
-import axios from 'axios'
+import axios from 'axios';
 
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // axios.defaults.withCredentials = true
 
 window.axios = axios.create({
     baseURL: import.meta.env.VITE_APP_URL + '/api/'
-})
+});
 
 window.axios.interceptors.request.use(function (config) {
-    config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`
+    config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
 
-    return config
+    return config;
 })
 
-import Echo from 'laravel-echo'
+import Echo from 'laravel-echo';
 
-import Pusher from 'pusher-js'
-window.Pusher = Pusher
+import Pusher from 'pusher-js';
+window.Pusher = Pusher;
 
 window.Echo = new Echo({
     broadcaster:  import.meta.env.VITE_PUSHER_BROADCASTER,
@@ -56,4 +56,4 @@ window.Echo = new Echo({
             }
         }
     },
-})
+});

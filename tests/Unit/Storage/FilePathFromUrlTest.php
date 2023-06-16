@@ -10,11 +10,11 @@ class FilePathFromUrlTest extends TestCase
 
     public function test_ok()
     {
-        $asd = (new FilePathFromUrl([
-            'http://localhost/c/ChatGroup/ChatMessage/1673275348_0.png',
-            'http://localhost/c/ChatGroup/ChatMessage/1673274521_0.webp',
-        ]))->get();
+        // $asd = (new FilePathFromUrl([
+        //     'http://localhost/c/ChatGroup/ChatMessage/1673275348_0.png',
+        //     'http://localhost/c/ChatGroup/ChatMessage/1673274521_0.webp',
+        // ]))->get();
 
-        dd($asd);
+        // dd($asd);
     }
 }

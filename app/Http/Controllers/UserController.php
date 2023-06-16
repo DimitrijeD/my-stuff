@@ -7,7 +7,7 @@ use App\MyStuff\Repos\User\UserEloquentRepo;
 
 use App\Http\Requests\Users\GetMissingUsersRequest;
 
-class UsersController extends Controller
+class UserController extends Controller
 {
     /**
      * User has some or no users in store

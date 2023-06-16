@@ -46,7 +46,7 @@ return [
 
         'ChatMessage' => [
             'driver' => 'local',
-            'root' => storage_path('app/c'),
+            'root' => storage_path('app'),
             'url' => env('APP_URL') . '/api/chat/files',
             'visibility' => 'private',
             'throw' => false,
